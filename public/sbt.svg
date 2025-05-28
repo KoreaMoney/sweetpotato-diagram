@@ -1,0 +1,10 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- 검은색 배경 -->
+  <rect width="200" height="200" fill="#000000"/>
+  
+  <!-- sbt 텍스트 -->
+  <text x="100" y="120" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#ffffff" text-anchor="middle">sbt</text>
+  
+  <!-- 주황색 점 -->
+  <rect x="170" y="80" width="20" height="20" fill="#ff6600" rx="3"/>
+</svg> 

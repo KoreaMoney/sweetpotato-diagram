@@ -1,8 +1,11 @@
 {
-  "name": "hy-diagram",
+  "name": "diagram",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
+  "author": "SweetPotato",
+  "license": "MIT",
+  "description": "SweetPotato Diagram component for React",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -13,6 +16,7 @@
     "@tailwindcss/cli": "^4.0.15",
     "@tailwindcss/postcss": "^4.0.15",
     "@tailwindcss/vite": "^4.0.15",
+    "lucide-react": "^0.511.0",
     "postcss": "^8.5.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
