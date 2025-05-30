@@ -18,6 +18,7 @@ const Box = ({
     registerBox = context.registerBox;
     unregisterBox = context.unregisterBox;
   } catch (error) {
+    console.error("DiagramContext 사용 오류:", error);
     // DiagramProvider가 없으면 context 기능을 사용하지 않음
     registerBox = null;
     unregisterBox = null;

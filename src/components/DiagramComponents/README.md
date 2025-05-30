@@ -79,12 +79,43 @@ import { Triangle } from "./DiagramComponents";
 
 ### 4. Valve - 밸브
 
-다양한 타입의 밸브를 표현하는 컴포넌트입니다.
+다양한 타입의 밸브를 표현하는 컴포넌트입니다. **🆕 NEW! 아이콘 및 상태 표시 기능 추가!**
 
 ```jsx
 import { Valve } from "./DiagramComponents";
 
+// 기본 사용법
 <Valve x={170} y={175} type="gate" size={40} isOpen={true} fillColor="#F59E0B" strokeColor="#D97706" />;
+
+// 🆕 NEW! 아이콘 기능 사용
+<Valve
+  x={100}
+  y={100}
+  type="ball"
+  size={40}
+  isOpen={true}
+  showIcon={true} // 아이콘 표시
+  iconPosition="top" // 위치
+  iconSize={16} // 크기
+  showStatus={true} // 상태 표시 모드
+  status="normal" // 정상 상태
+/>;
+
+// 🆕 커스텀 아이콘 사용
+import { ThermometerSun, Gauge, Settings } from "lucide-react";
+
+<Valve
+  x={200}
+  y={100}
+  type="needle"
+  size={40}
+  isOpen={true}
+  showIcon={true}
+  customIcon={<ThermometerSun className="w-4 h-4" />} // 온도 센서 아이콘
+  iconPosition="top"
+  iconColor="text-orange-500"
+  iconSize={18}
+/>;
 ```
 
 **Props:**
@@ -92,6 +123,25 @@ import { Valve } from "./DiagramComponents";
 - `type`: 'gate', 'ball', 'check', 'butterfly', 'needle'
 - `isOpen`: 밸브 열림/닫힘 상태
 - `size`: 밸브 크기
+
+**🆕 NEW! 아이콘 관련 Props:**
+
+- `showIcon`: 아이콘 표시 여부 (boolean)
+- `customIcon`: 커스텀 아이콘 (Lucide 컴포넌트 또는 JSX)
+- `iconPosition`: 아이콘 위치 ('top', 'bottom', 'left', 'right', 'top-left', 'top-right', 'bottom-left', 'bottom-right', 'center')
+- `iconSize`: 아이콘 크기 (픽셀)
+- `iconColor`: 아이콘 색상 (TailwindCSS 클래스)
+- `iconOffset`: 아이콘과 밸브 사이의 거리
+- `showStatus`: 상태 표시 아이콘 모드 (boolean)
+- `status`: 밸브 상태 ('normal', 'warning', 'error', 'maintenance')
+
+**🎯 사용 예시:**
+
+1. **기본 아이콘**: 밸브 타입에 따른 자동 아이콘 표시
+2. **상태 표시**: 시스템 모니터링용 상태 아이콘 (정상/경고/오류/정비)
+3. **커스텀 아이콘**: 온도계, 압력계, 설정 등 특별한 기능 표시
+4. **위치 조정**: 9가지 위치 옵션으로 레이아웃에 맞게 배치
+5. **독립 제어**: 밸브와 아이콘의 색상, 크기 독립적 조절
 
 ### 5. Arrow - 화살표
 

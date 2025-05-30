@@ -188,6 +188,7 @@ const Connector = ({
     getBox = context.getBox;
   } catch (error) {
     // DiagramProvider가 없으면 박스 연결 기능을 사용하지 않음
+    console.log("error", error);
     getBox = null;
   }
 
@@ -224,28 +225,37 @@ const Connector = ({
       case "triangle":
         return `${centerX},${centerY} ${head1X},${head1Y} ${head2X},${head2Y}`;
 
-      case "diamond":
-        const diamondOffset = size * 0.7;
+      case "diamond": {
+        // 화살표 방향 계산 (head1에서 center로의 방향)
         const angle = Math.atan2(head1Y - centerY, head1X - centerX);
-        const perpAngle = angle + Math.PI / 2;
-        const sideX = centerX + diamondOffset * Math.cos(perpAngle);
-        const sideY = centerY + diamondOffset * Math.sin(perpAngle);
-        const backX = centerX - size * 0.5 * Math.cos(angle);
-        const backY = centerY - size * 0.5 * Math.sin(angle);
-        return `${centerX},${centerY} ${sideX},${sideY} ${backX},${backY} ${centerX - (sideX - centerX)},${
-          centerY - (sideY - centerY)
-        }`;
+
+        // 다이아몬드의 4개 점 계산 (앞쪽, 위쪽, 뒤쪽, 아래쪽)
+        const frontX = centerX - size * 0.6 * Math.cos(angle); // 방향 반전
+        const frontY = centerY - size * 0.6 * Math.sin(angle); // 방향 반전
+
+        const backX = centerX + size * 0.6 * Math.cos(angle); // 방향 반전
+        const backY = centerY + size * 0.6 * Math.sin(angle); // 방향 반전
+
+        const topX = centerX + size * 0.4 * Math.cos(angle + Math.PI / 2);
+        const topY = centerY + size * 0.4 * Math.sin(angle + Math.PI / 2);
+
+        const bottomX = centerX + size * 0.4 * Math.cos(angle - Math.PI / 2);
+        const bottomY = centerY + size * 0.4 * Math.sin(angle - Math.PI / 2);
+
+        return `${frontX},${frontY} ${topX},${topY} ${backX},${backY} ${bottomX},${bottomY}`;
+      }
 
       case "circle":
         // 원은 polygon 대신 circle 요소로 처리됨
         return null;
 
-      case "square":
+      case "square": {
         const squareSize = size * 0.8;
         const halfSize = squareSize / 2;
         return `${centerX - halfSize},${centerY - halfSize} ${centerX + halfSize},${centerY - halfSize} ${
           centerX + halfSize
         },${centerY + halfSize} ${centerX - halfSize},${centerY + halfSize}`;
+      }
 
       default:
         return `${centerX},${centerY} ${head1X},${head1Y} ${head2X},${head2Y}`;
@@ -253,7 +263,7 @@ const Connector = ({
   };
 
   // 원형 화살표 렌더링 함수
-  const renderCircleArrow = (centerX, centerY, minX, minY, isStart = false) => {
+  const renderCircleArrow = (centerX, centerY, minX, minY) => {
     if (arrowShape !== "circle") return null;
 
     return <circle cx={centerX - minX} cy={centerY - minY} r={safeArrowSize * 0.6} className={getArrowColorClass()} />;
@@ -757,7 +767,7 @@ const Connector = ({
       {shouldShowEndArrow && arrowHead1 && arrowHead2 && (
         <>
           {arrowShape === "circle" ? (
-            renderCircleArrow(safeEndPoint.x, safeEndPoint.y, minX, minY, false)
+            renderCircleArrow(safeEndPoint.x, safeEndPoint.y, minX, minY)
           ) : (
             <polygon
               points={createArrowShape(
@@ -780,7 +790,7 @@ const Connector = ({
       {shouldShowStartArrow && startArrowHead1 && startArrowHead2 && (
         <>
           {arrowShape === "circle" ? (
-            renderCircleArrow(safeStartPoint.x, safeStartPoint.y, minX, minY, true)
+            renderCircleArrow(safeStartPoint.x, safeStartPoint.y, minX, minY)
           ) : (
             <polygon
               points={createArrowShape(

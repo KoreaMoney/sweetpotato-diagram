@@ -10,6 +10,13 @@ import {
   ArrowLeft,
   Minus,
   Plus,
+  Wrench,
+  Gauge,
+  ThermometerSun,
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 
 const Valve = ({
@@ -20,12 +27,18 @@ const Valve = ({
   isOpen = true,
   className = "text-amber-500 hover:text-amber-600 transition-colors duration-200",
   onClick = null,
-  showIcon = false, // 새로운 prop: lucide 아이콘 표시 여부
-  iconPosition = "top", // 'top', 'bottom', 'left', 'right'
+  showIcon = false, // 아이콘 표시 여부
+  customIcon = null, // 커스텀 아이콘 (lucide 컴포넌트 또는 JSX)
+  iconPosition = "top", // 'top', 'bottom', 'left', 'right', 'top-left', 'top-right', 'bottom-left', 'bottom-right', 'center'
+  iconSize = 16, // 아이콘 크기 (픽셀)
+  iconColor = null, // 아이콘 색상 (null이면 밸브 상태에 따라 자동)
+  iconOffset = 8, // 아이콘과 밸브 사이의 거리
+  showStatus = false, // 상태 표시 아이콘 (정상, 경고, 오류)
+  status = "normal", // 'normal', 'warning', 'error', 'maintenance'
 }) => {
   const handleClick = (event) => {
     if (onClick) {
-      onClick(event, { x, y, size, type, isOpen });
+      onClick(event, { x, y, size, type, isOpen, status });
     }
   };
 
@@ -35,41 +48,107 @@ const Valve = ({
     }
   };
 
-  // 밸브 타입에 따른 lucide 아이콘 선택
-  const getValveIcon = () => {
+  // 밸브 타입에 따른 기본 lucide 아이콘 선택
+  const getDefaultValveIcon = () => {
+    const iconStyle = { width: `${iconSize}px`, height: `${iconSize}px` };
+
     switch (type) {
       case "gate":
-        return isOpen ? <Square className="w-4 h-4" /> : <Minus className="w-4 h-4" />;
+        return isOpen ? <Square style={iconStyle} /> : <Minus style={iconStyle} />;
       case "ball":
-        return isOpen ? <Circle className="w-4 h-4" /> : <Power className="w-4 h-4" />;
+        return isOpen ? <Circle style={iconStyle} /> : <Power style={iconStyle} />;
       case "check":
-        return isOpen ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />;
+        return isOpen ? <ArrowRight style={iconStyle} /> : <ArrowLeft style={iconStyle} />;
       case "butterfly":
-        return isOpen ? <RotateCw className="w-4 h-4" /> : <Settings className="w-4 h-4" />;
+        return isOpen ? <RotateCw style={iconStyle} /> : <Settings style={iconStyle} />;
       case "needle":
-        return isOpen ? <Plus className="w-4 h-4" /> : <Zap className="w-4 h-4" />;
+        return isOpen ? <Plus style={iconStyle} /> : <Zap style={iconStyle} />;
       default:
-        return <Settings className="w-4 h-4" />;
+        return <Settings style={iconStyle} />;
     }
   };
 
-  // 아이콘 위치 계산
+  // 상태 아이콘 선택
+  const getStatusIcon = () => {
+    const iconStyle = { width: `${iconSize}px`, height: `${iconSize}px` };
+
+    switch (status) {
+      case "normal":
+        return <CheckCircle style={iconStyle} />;
+      case "warning":
+        return <AlertTriangle style={iconStyle} />;
+      case "error":
+        return <XCircle style={iconStyle} />;
+      case "maintenance":
+        return <Wrench style={iconStyle} />;
+      default:
+        return <Activity style={iconStyle} />;
+    }
+  };
+
+  // 표시할 아이콘 결정
+  const getDisplayIcon = () => {
+    if (customIcon) {
+      return customIcon;
+    }
+    if (showStatus) {
+      return getStatusIcon();
+    }
+    return getDefaultValveIcon();
+  };
+
+  // 아이콘 위치 계산 (확장된 위치 옵션)
   const getIconPosition = () => {
-    const iconSize = 20;
-    const offset = 8;
+    const halfIcon = iconSize / 2;
+    const offset = iconOffset;
 
     switch (iconPosition) {
       case "top":
-        return { x: size / 2 - iconSize / 2, y: -iconSize - offset };
+        return { x: size / 2 - halfIcon, y: -iconSize - offset };
       case "bottom":
-        return { x: size / 2 - iconSize / 2, y: size + offset };
+        return { x: size / 2 - halfIcon, y: size + offset };
       case "left":
-        return { x: -iconSize - offset, y: size / 2 - iconSize / 2 };
+        return { x: -iconSize - offset, y: size / 2 - halfIcon };
       case "right":
-        return { x: size + offset, y: size / 2 - iconSize / 2 };
+        return { x: size + offset, y: size / 2 - halfIcon };
+      case "top-left":
+        return { x: -halfIcon - offset, y: -halfIcon - offset };
+      case "top-right":
+        return { x: size - halfIcon + offset, y: -halfIcon - offset };
+      case "bottom-left":
+        return { x: -halfIcon - offset, y: size - halfIcon + offset };
+      case "bottom-right":
+        return { x: size - halfIcon + offset, y: size - halfIcon + offset };
+      case "center":
+        return { x: size / 2 - halfIcon, y: size / 2 - halfIcon };
       default:
-        return { x: size / 2 - iconSize / 2, y: -iconSize - offset };
+        return { x: size / 2 - halfIcon, y: -iconSize - offset };
     }
+  };
+
+  // 아이콘 색상 결정
+  const getIconColor = () => {
+    if (iconColor) {
+      return iconColor;
+    }
+
+    if (showStatus) {
+      switch (status) {
+        case "normal":
+          return "text-emerald-600";
+        case "warning":
+          return "text-yellow-500";
+        case "error":
+          return "text-red-500";
+        case "maintenance":
+          return "text-blue-500";
+        default:
+          return "text-gray-500";
+      }
+    }
+
+    // 기본 아이콘의 경우 밸브 상태에 따라
+    return isOpen ? "text-emerald-600" : "text-red-500";
   };
 
   // 밸브 타입에 따른 SVG 경로 생성
@@ -218,25 +297,24 @@ const Valve = ({
         onKeyDown={handleKeyDown}
         tabIndex="0"
         role="button"
-        aria-label={`${type} valve - ${isOpen ? "open" : "closed"}`}
+        aria-label={`${type} valve - ${isOpen ? "open" : "closed"} - status: ${status}`}
       >
         <g className="transition-colors duration-200 hover:opacity-80">{getValvePath()}</g>
       </svg>
 
-      {/* Lucide 아이콘 표시 */}
+      {/* 🆕 개선된 아이콘 표시 */}
       {showIcon && (
         <div
-          className={`absolute flex items-center justify-center transition-all duration-200 ${
-            isOpen ? "text-emerald-600" : "text-red-500"
-          }`}
+          className={`absolute flex items-center justify-center transition-all duration-200 ${getIconColor()}`}
           style={{
             left: iconPos.x,
             top: iconPos.y,
-            width: "20px",
-            height: "20px",
+            width: `${iconSize}px`,
+            height: `${iconSize}px`,
           }}
+          title={showStatus ? `Status: ${status}` : `${type} valve: ${isOpen ? "open" : "closed"}`}
         >
-          {getValveIcon()}
+          {getDisplayIcon()}
         </div>
       )}
 

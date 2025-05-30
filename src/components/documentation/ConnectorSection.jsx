@@ -202,10 +202,6 @@ const ConnectorSection = () => {
               <Connector
                 fromBox={{ id: "custom-demo-start", position: "right" }}
                 toBox={{ id: "custom-demo-end", position: "left" }}
-                boxes={[
-                  { id: "custom-demo-start", x: 20, y: 45, width: 60, height: 25 },
-                  { id: "custom-demo-end", x: 280, y: 120, width: 60, height: 25 },
-                ]}
                 connectionType="custom"
                 bendPoints={[
                   { x: 100, y: 60 },
@@ -239,7 +235,6 @@ const boxes = [
 <Connector
   fromBox={{ id: "start", position: "right" }}
   toBox={{ id: "end", position: "left" }}
-  boxes={boxes}
   connectionType="custom"
   bendPoints={[
     { x: 100, y: 42 },  // 첫 번째 꺾임점
@@ -317,10 +312,6 @@ const boxes = [
               <Connector
                 fromBox={{ id: "uni-start", position: "right" }}
                 toBox={{ id: "uni-end", position: "left" }}
-                boxes={[
-                  { id: "uni-start", x: 30, y: 40, width: 60, height: 25 },
-                  { id: "uni-end", x: 150, y: 40, width: 60, height: 25 },
-                ]}
                 connectionType="straight"
                 className="text-blue-600"
                 showArrow={true}
@@ -353,10 +344,6 @@ const boxes = [
               <Connector
                 fromBox={{ id: "bi-server", position: "right" }}
                 toBox={{ id: "bi-client", position: "left" }}
-                boxes={[
-                  { id: "bi-server", x: 280, y: 40, width: 60, height: 25 },
-                  { id: "bi-client", x: 400, y: 40, width: 60, height: 25 },
-                ]}
                 connectionType="straight"
                 className="text-purple-600"
                 showArrow={true}
@@ -382,7 +369,6 @@ const boxes = [
 <Connector
   fromBox={{ id: "sender", position: "right" }}
   toBox={{ id: "receiver", position: "left" }}
-  boxes={boxes}
   connectionType="straight"
   className="text-blue-600"
   showArrow={true}          // 끝점 화살표만 표시
@@ -395,7 +381,6 @@ const boxes = [
 <Connector
   fromBox={{ id: "server", position: "right" }}
   toBox={{ id: "client", position: "left" }}
-  boxes={boxes}
   connectionType="straight"
   className="text-purple-600"
   showArrow={true}          // 끝점 화살표 표시
@@ -931,10 +916,6 @@ const boxes = [
               <Connector
                 fromBox={{ id: "cpu", position: "right" }}
                 toBox={{ id: "memory-controller", position: "left" }}
-                boxes={[
-                  { id: "cpu", x: 50, y: 50, width: 80, height: 40 },
-                  { id: "memory-controller", x: 200, y: 30, width: 90, height: 35 },
-                ]}
                 connectionType="straight"
                 arrowDirection="both"
                 arrowShape="diamond"
@@ -947,10 +928,6 @@ const boxes = [
               <Connector
                 fromBox={{ id: "memory-controller", position: "right" }}
                 toBox={{ id: "ddr5", position: "left" }}
-                boxes={[
-                  { id: "memory-controller", x: 200, y: 30, width: 90, height: 35 },
-                  { id: "ddr5", x: 350, y: 20, width: 70, height: 30 },
-                ]}
                 connectionType="straight"
                 arrowDirection="both"
                 arrowShape="square"
@@ -963,10 +940,6 @@ const boxes = [
               <Connector
                 fromBox={{ id: "memory-controller", position: "right" }}
                 toBox={{ id: "l3-cache", position: "left" }}
-                boxes={[
-                  { id: "memory-controller", x: 200, y: 30, width: 90, height: 35 },
-                  { id: "l3-cache", x: 350, y: 70, width: 70, height: 25 },
-                ]}
                 connectionType="curved"
                 arrowDirection="both"
                 arrowShape="circle"
@@ -979,10 +952,6 @@ const boxes = [
               <Connector
                 fromBox={{ id: "pcie-controller", position: "right" }}
                 toBox={{ id: "gpu", position: "left" }}
-                boxes={[
-                  { id: "pcie-controller", x: 50, y: 130, width: 80, height: 30 },
-                  { id: "gpu", x: 200, y: 110, width: 70, height: 35 },
-                ]}
                 connectionType="orthogonal"
                 arrowDirection="both"
                 arrowShape="triangle"
@@ -995,10 +964,6 @@ const boxes = [
               <Connector
                 fromBox={{ id: "pcie-controller", position: "right" }}
                 toBox={{ id: "ssd-controller", position: "left" }}
-                boxes={[
-                  { id: "pcie-controller", x: 50, y: 130, width: 80, height: 30 },
-                  { id: "ssd-controller", x: 320, y: 130, width: 80, height: 30 },
-                ]}
                 connectionType="custom"
                 bendPoints={[
                   { x: 150, y: 145 },
@@ -1017,10 +982,6 @@ const boxes = [
               <Connector
                 fromBox={{ id: "power-mgmt", position: "up" }}
                 toBox={{ id: "cpu", position: "bottom" }}
-                boxes={[
-                  { id: "power-mgmt", x: 50, y: 200, width: 80, height: 30 },
-                  { id: "cpu", x: 50, y: 50, width: 80, height: 40 },
-                ]}
                 connectionType="straight"
                 arrowDirection="forward"
                 arrowShape="diamond"
@@ -1033,10 +994,6 @@ const boxes = [
               <Connector
                 fromBox={{ id: "clock-gen", position: "up" }}
                 toBox={{ id: "memory-controller", position: "bottom" }}
-                boxes={[
-                  { id: "clock-gen", x: 200, y: 200, width: 80, height: 30 },
-                  { id: "memory-controller", x: 200, y: 30, width: 90, height: 35 },
-                ]}
                 connectionType="straight"
                 arrowDirection="forward"
                 arrowShape="circle"
@@ -1050,10 +1007,6 @@ const boxes = [
               <Connector
                 fromBox={{ id: "io-controller", position: "left" }}
                 toBox={{ id: "ssd-controller", position: "bottom" }}
-                boxes={[
-                  { id: "io-controller", x: 320, y: 200, width: 80, height: 30 },
-                  { id: "ssd-controller", x: 320, y: 130, width: 80, height: 30 },
-                ]}
                 connectionType="straight"
                 arrowDirection="both"
                 arrowShape="triangle"
@@ -1066,10 +1019,6 @@ const boxes = [
               <Connector
                 fromBox={{ id: "cpu", position: "bottom" }}
                 toBox={{ id: "pcie-controller", position: "top" }}
-                boxes={[
-                  { id: "cpu", x: 50, y: 50, width: 80, height: 40 },
-                  { id: "pcie-controller", x: 50, y: 130, width: 80, height: 30 },
-                ]}
                 connectionType="straight"
                 arrowDirection="backward"
                 arrowShape="diamond"
