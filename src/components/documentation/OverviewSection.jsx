@@ -92,10 +92,13 @@ const OverviewSection = ({ setActiveSection }) => {
           <h3 className="text-white text-lg font-semibold mb-3">NPM 설치</h3>
           <pre className="text-sm">
             {`# NPM으로 설치
-npm install @your-org/diagram-components
+npm install sweetpd
 
 # 또는 Yarn으로 설치
-yarn add @your-org/diagram-components`}
+yarn add sweetpd
+
+# 또는 Pnpm으로 설치
+pnpm add sweetpd`}
           </pre>
         </div>
 
@@ -129,7 +132,7 @@ yarn add @your-org/diagram-components`}
   ImageBox, 
   Arrow, 
   Line 
-} from '@your-org/diagram-components';`}
+} from 'sweetpd';`}
           </pre>
         </div>
 

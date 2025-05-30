@@ -1,0 +1,48 @@
+# 개발 관련 파일들
+src/
+public/
+docs/
+node_modules/
+.git/
+
+# 설정 파일들
+vite.config.js
+postcss.config.mjs
+eslint.config.js
+.gitignore
+
+# 개발용 파일들
+index.html
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# 문서 파일들 (README.md는 포함)
+*.md
+!README.md
+
+# 로그 파일들
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 임시 파일들
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 테스트 파일들
+__tests__/
+*.test.*
+*.spec.*
+
+# 커버리지 리포트
+coverage/
+
+# 환경 변수 파일들
+.env
+.env.local
+.env.production 

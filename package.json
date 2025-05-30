@@ -1,43 +1,89 @@
 {
-  "name": "diagram",
-  "private": true,
-  "version": "0.0.1",
+  "name": "sweetpd",
+  "version": "1.0.0",
   "type": "module",
   "author": "SweetPotato",
   "license": "MIT",
-  "description": "SweetPotato Diagram component for React",
+  "description": "A modern and intuitive diagram editor component for React applications",
+  "keywords": [
+    "react",
+    "diagram",
+    "editor",
+    "three.js",
+    "visualization",
+    "flowchart",
+    "node-editor",
+    "sweetpd"
+  ],
+  "homepage": "https://github.com/sweetpotato/sweetpd",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sweetpotato/sweetpd.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sweetpotato/sweetpd/issues"
+  },
+  "main": "./dist/sweetpd.cjs.js",
+  "module": "./dist/sweetpd.es.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/sweetpd.es.js",
+      "require": "./dist/sweetpd.cjs.js"
+    },
+    "./styles": "./dist/style.css"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:lib": "vite build --mode library",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build:lib",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   },
   "dependencies": {
     "@react-three/drei": "^10.1.2",
     "@react-three/fiber": "^9.1.2",
-    "@tailwindcss/cli": "^4.0.15",
-    "@tailwindcss/postcss": "^4.0.15",
-    "@tailwindcss/vite": "^4.0.15",
-    "@types/three": "^0.176.0",
     "lucide-react": "^0.511.0",
-    "postcss": "^8.5.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-router-dom": "^7.6.1",
-    "tailwindcss": "^4.0.15",
     "three": "^0.176.0",
     "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@tailwindcss/cli": "^4.0.15",
+    "@tailwindcss/postcss": "^4.0.15",
+    "@tailwindcss/vite": "^4.0.15",
     "@types/node": "^22.13.11",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
+    "@types/three": "^0.176.0",
     "@vitejs/plugin-react-swc": "^3.8.0",
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
-    "vite": "^6.2.0"
-  }
+    "postcss": "^8.5.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.6.1",
+    "tailwindcss": "^4.0.15",
+    "typescript": "^5.3.3",
+    "vite": "^6.2.0",
+    "vite-plugin-dts": "^4.5.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "packageManager": "pnpm@8.0.0"
 }
