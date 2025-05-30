@@ -118,177 +118,167 @@ export const systemExampleBoxes = [
 
 // 기본 예제 코드 템플릿들
 export const codeTemplates = {
-  boxStraight: `<Box 
-  id="box1"
-  x={50} 
-  y={50} 
-  width={80} 
-  height={30} 
-  text="시작" 
-  className="bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-sm"
-/>
-<Box 
-  id="box2"
-  x={200} 
-  y={100} 
-  width={80} 
-  height={30} 
-  text="끝" 
-  className="bg-emerald-600 text-white border-emerald-800 border-2 rounded-lg text-sm"
-/>
-<Connector
-  fromBox={{ id: "box1", position: "right" }}
-  toBox={{ id: "box2", position: "left" }}
-  boxes={[
-    { id: "box1", x: 50, y: 50, width: 80, height: 30 },
-    { id: "box2", x: 200, y: 100, width: 80, height: 30 }
-  ]}
-  connectionType="straight"
-  className="text-blue-600"
-  showArrow={true}
-  strokeWidth={2}
-/>`,
+  boxStraight: `<DiagramProvider>
+  <Box 
+    id="box1"
+    x={50} 
+    y={50} 
+    width={80} 
+    height={30} 
+    text="시작" 
+    className="bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-sm"
+  />
+  <Box 
+    id="box2"
+    x={200} 
+    y={100} 
+    width={80} 
+    height={30} 
+    text="끝" 
+    className="bg-emerald-600 text-white border-emerald-800 border-2 rounded-lg text-sm"
+  />
+  <Connector
+    fromBox={{ id: "box1", position: "right" }}
+    toBox={{ id: "box2", position: "left" }}
+    connectionType="straight"
+    className="text-blue-600"
+    showArrow={true}
+    strokeWidth={2}
+  />
+</DiagramProvider>`,
 
-  boxOrthogonal: `<Box 
-  id="boxA"
-  x={50} 
-  y={30} 
-  width={80} 
-  height={30} 
-  text="A" 
-  className="bg-red-500 text-white border-red-700 border-2 rounded-lg text-sm"
-/>
-<Box 
-  id="boxB"
-  x={200} 
-  y={120} 
-  width={80} 
-  height={30} 
-  text="B" 
-  className="bg-amber-500 text-white border-amber-700 border-2 rounded-lg text-sm"
-/>
-<Connector
-  fromBox={{ id: "boxA", position: "bottom" }}
-  toBox={{ id: "boxB", position: "top" }}
-  boxes={[
-    { id: "boxA", x: 50, y: 30, width: 80, height: 30 },
-    { id: "boxB", x: 200, y: 120, width: 80, height: 30 }
-  ]}
-  connectionType="orthogonal"
-  stepOffset={30}
-  className="text-red-500"
-  showArrow={true}
-  strokeWidth={2}
-/>`,
+  boxOrthogonal: `<DiagramProvider>
+  <Box 
+    id="boxA"
+    x={50} 
+    y={30} 
+    width={80} 
+    height={30} 
+    text="A" 
+    className="bg-red-500 text-white border-red-700 border-2 rounded-lg text-sm"
+  />
+  <Box 
+    id="boxB"
+    x={200} 
+    y={120} 
+    width={80} 
+    height={30} 
+    text="B" 
+    className="bg-amber-500 text-white border-amber-700 border-2 rounded-lg text-sm"
+  />
+  <Connector
+    fromBox={{ id: "boxA", position: "bottom" }}
+    toBox={{ id: "boxB", position: "top" }}
+    connectionType="orthogonal"
+    stepOffset={30}
+    className="text-red-500"
+    showArrow={true}
+    strokeWidth={2}
+  />
+</DiagramProvider>`,
 
-  boxCurved: `{/* Box 컴포넌트들 */}
-<Box 
-  id="start"
-  x={50} 
-  y={30} 
-  width={80} 
-  height={30} 
-  text="시작" 
-  className="bg-purple-600 text-white border-purple-800 border-2 
-             rounded-lg text-sm hover:shadow-lg transition-all duration-300"
-/>
-<Box 
-  id="end"
-  x={200} 
-  y={120} 
-  width={80} 
-  height={30} 
-  text="끝" 
-  className="bg-pink-600 text-white border-pink-800 border-2 
-             rounded-lg text-sm hover:shadow-lg transition-all duration-300"
-/>
+  boxCurved: `<DiagramProvider>
+  {/* Box 컴포넌트들 */}
+  <Box 
+    id="start"
+    x={50} 
+    y={30} 
+    width={80} 
+    height={30} 
+    text="시작" 
+    className="bg-purple-600 text-white border-purple-800 border-2 
+               rounded-lg text-sm hover:shadow-lg transition-all duration-300"
+  />
+  <Box 
+    id="end"
+    x={200} 
+    y={120} 
+    width={80} 
+    height={30} 
+    text="끝" 
+    className="bg-pink-600 text-white border-pink-800 border-2 
+               rounded-lg text-sm hover:shadow-lg transition-all duration-300"
+  />
 
-{/* Connector 컴포넌트 - 박스 연결 방식 */}
-<Connector
-  fromBox={{ id: "start", position: "right" }}
-  toBox={{ id: "end", position: "left" }}
-  boxes={[
-    { id: "start", x: 50, y: 30, width: 80, height: 30 },
-    { id: "end", x: 200, y: 120, width: 80, height: 30 }
-  ]}
-  connectionType="curved"
-  className="text-purple-600 hover:text-purple-700 transition-colors duration-200"
-  showArrow={true}
-  strokeWidth={3}
-/>`,
+  {/* Connector 컴포넌트 - 자동 박스 감지 */}
+  <Connector
+    fromBox={{ id: "start", position: "right" }}
+    toBox={{ id: "end", position: "left" }}
+    connectionType="curved"
+    className="text-purple-600 hover:text-purple-700 transition-colors duration-200"
+    showArrow={true}
+    strokeWidth={3}
+  />
+</DiagramProvider>`,
 
-  autoType: `{/* Box 컴포넌트들 */}
-<Box 
-  id="auto1"
-  x={50} 
-  y={30} 
-  width={80} 
-  height={30} 
-  text="A" 
-  className="bg-orange-600 text-white border-orange-800 border-2 
-             rounded-lg text-sm hover:shadow-lg transition-all duration-300"
-/>
-<Box 
-  id="auto2"
-  x={200} 
-  y={120} 
-  width={80} 
-  height={30} 
-  text="B" 
-  className="bg-yellow-600 text-white border-yellow-800 border-2 
-             rounded-lg text-sm hover:shadow-lg transition-all duration-300"
-/>
+  autoType: `<DiagramProvider>
+  {/* Box 컴포넌트들 */}
+  <Box 
+    id="auto1"
+    x={50} 
+    y={30} 
+    width={80} 
+    height={30} 
+    text="A" 
+    className="bg-orange-600 text-white border-orange-800 border-2 
+               rounded-lg text-sm hover:shadow-lg transition-all duration-300"
+  />
+  <Box 
+    id="auto2"
+    x={200} 
+    y={120} 
+    width={80} 
+    height={30} 
+    text="B" 
+    className="bg-yellow-600 text-white border-yellow-800 border-2 
+               rounded-lg text-sm hover:shadow-lg transition-all duration-300"
+  />
 
-{/* Connector 컴포넌트 - 박스 연결 방식 */}
-<Connector
-  fromBox={{ id: "auto1", position: "right" }}
-  toBox={{ id: "auto2", position: "top" }}
-  boxes={[
-    { id: "auto1", x: 50, y: 30, width: 80, height: 30 },
-    { id: "auto2", x: 200, y: 120, width: 80, height: 30 }
-  ]}
-  connectionType="auto"
-  className="text-orange-500 hover:text-orange-600 transition-colors duration-200"
-  showArrow={true}
-  strokeWidth={2}
-/>`,
+  {/* Connector 컴포넌트 - 자동 박스 감지 */}
+  <Connector
+    fromBox={{ id: "auto1", position: "right" }}
+    toBox={{ id: "auto2", position: "top" }}
+    connectionType="auto"
+    className="text-orange-500 hover:text-orange-600 transition-colors duration-200"
+    showArrow={true}
+    strokeWidth={2}
+  />
+</DiagramProvider>`,
 
-  animated: `{/* Box 컴포넌트들 */}
-<Box 
-  id="data"
-  x={50} 
-  y={50} 
-  width={80} 
-  height={30} 
-  text="데이터" 
-  className="bg-teal-600 text-white border-teal-800 border-2 
-             rounded-lg text-sm hover:shadow-lg transition-all duration-300"
-/>
-<Box 
-  id="process"
-  x={200} 
-  y={100} 
-  width={80} 
-  height={30} 
-  text="처리" 
-  className="bg-cyan-600 text-white border-cyan-800 border-2 
-             rounded-lg text-sm hover:shadow-lg transition-all duration-300"
-/>
+  animated: `<DiagramProvider>
+  {/* Box 컴포넌트들 */}
+  <Box 
+    id="data"
+    x={50} 
+    y={50} 
+    width={80} 
+    height={30} 
+    text="데이터" 
+    className="bg-teal-600 text-white border-teal-800 border-2 
+               rounded-lg text-sm hover:shadow-lg transition-all duration-300"
+  />
+  <Box 
+    id="process"
+    x={200} 
+    y={100} 
+    width={80} 
+    height={30} 
+    text="처리" 
+    className="bg-cyan-600 text-white border-cyan-800 border-2 
+               rounded-lg text-sm hover:shadow-lg transition-all duration-300"
+  />
 
-{/* Connector 컴포넌트 - 박스 연결 방식 */}
-<Connector
-  fromBox={{ id: "data", position: "right" }}
-  toBox={{ id: "process", position: "left" }}
-  boxes={[
-    { id: "data", x: 50, y: 50, width: 80, height: 30 },
-    { id: "process", x: 200, y: 100, width: 80, height: 30 }
-  ]}
-  connectionType="straight"
-  className="text-teal-500 hover:text-teal-600 transition-colors duration-200"
-  showArrow={true}
-  strokeWidth={3}
-  animated={true}
-/>`,
+  {/* Connector 컴포넌트 - 자동 박스 감지 */}
+  <Connector
+    fromBox={{ id: "data", position: "right" }}
+    toBox={{ id: "process", position: "left" }}
+    connectionType="straight"
+    className="text-teal-500 hover:text-teal-600 transition-colors duration-200"
+    showArrow={true}
+    strokeWidth={3}
+    animated={true}
+  />
+</DiagramProvider>`,
 };
 
 // 그리드 예제 데이터

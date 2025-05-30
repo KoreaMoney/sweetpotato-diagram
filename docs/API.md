@@ -101,34 +101,71 @@ Box 컴포넌트는 자동으로 4개의 연결점을 생성합니다:
 
 ## Connector 컴포넌트
 
-컴포넌트들을 연결하는 다양한 형태의 선을 그리는 컴포넌트입니다.
+컴포넌트들을 연결하는 다양한 형태의 선을 그리는 컴포넌트입니다. 좌표 기반 연결과 박스 ID 기반 연결을 모두 지원합니다.
 
 ### Props
 
-| 속성                  | 타입                  | 기본값               | 필수 | 설명             |
-| --------------------- | --------------------- | -------------------- | ---- | ---------------- |
-| `startPoint`          | `Point`               | -                    | ✅   | 시작점 좌표      |
-| `endPoint`            | `Point`               | -                    | ✅   | 끝점 좌표        |
-| `connectionType`      | `ConnectionType`      | `"straight"`         | ❌   | 연결 타입        |
-| `color`               | `string`              | `"#6B7280"`          | ❌   | 선 색상          |
-| `showArrow`           | `boolean`             | `true`               | ❌   | 화살표 표시 여부 |
-| `strokeWidth`         | `number`              | `2`                  | ❌   | 선 두께          |
-| `arrowSize`           | `number`              | `8`                  | ❌   | 화살표 크기      |
-| `animated`            | `boolean`             | `false`              | ❌   | 애니메이션 효과  |
-| `dashArray`           | `string`              | `""`                 | ❌   | 점선 패턴        |
-| `orthogonalDirection` | `OrthogonalDirection` | `"horizontal-first"` | ❌   | 직교 연결 방향   |
-| `stepOffset`          | `number`              | `20`                 | ❌   | 꺾임점 오프셋    |
-| `bendPoints`          | `Point[]`             | `[]`                 | ❌   | 커스텀 경로 점들 |
+#### 🎯 박스 연결 방식 (권장)
 
-### 타입 정의
+| 속성      | 타입     | 기본값 | 필수 | 설명                          |
+| --------- | -------- | ------ | ---- | ----------------------------- |
+| `fromBox` | `BoxRef` | -      | ✅\* | 시작 박스 정보 (박스 연결 시) |
+| `toBox`   | `BoxRef` | -      | ✅\* | 도착 박스 정보 (박스 연결 시) |
 
 ```typescript
+interface BoxRef {
+  id: string; // 박스 ID
+  position: ConnectionPosition; // 연결 위치
+  offset?: Point; // 추가 오프셋 (선택사항)
+}
+
+type ConnectionPosition = "top" | "right" | "bottom" | "left" | "center";
+
 interface Point {
   x: number;
   y: number;
 }
+```
 
-type ConnectionType = "straight" | "orthogonal" | "curved" | "stepped" | "custom";
+#### 📍 좌표 연결 방식 (기존)
+
+| 속성         | 타입    | 기본값 | 필수 | 설명        |
+| ------------ | ------- | ------ | ---- | ----------- |
+| `startPoint` | `Point` | -      | ✅\* | 시작점 좌표 |
+| `endPoint`   | `Point` | -      | ✅\* | 끝점 좌표   |
+
+#### ⚙️ 연결 설정
+
+| 속성                  | 타입                  | 기본값       | 필수 | 설명                    |
+| --------------------- | --------------------- | ------------ | ---- | ----------------------- |
+| `connectionType`      | `ConnectionType`      | `"straight"` | ❌   | 연결 타입               |
+| `orthogonalDirection` | `OrthogonalDirection` | `"auto"`     | ❌   | 직교 연결 방향          |
+| `stepOffset`          | `number`              | `50`         | ❌   | 직교 연결 중간점 오프셋 |
+| `bendPoints`          | `Point[]`             | `[]`         | ❌   | 커스텀 경로 점들        |
+| `cornerRadius`        | `number`              | `0`          | ❌   | 모서리 둥글기           |
+
+#### 🎨 스타일링
+
+| 속성          | 타입      | 기본값                                                               | 필수 | 설명            |
+| ------------- | --------- | -------------------------------------------------------------------- | ---- | --------------- |
+| `strokeWidth` | `number`  | `2`                                                                  | ❌   | 선 두께         |
+| `className`   | `string`  | `"text-gray-500 hover:text-gray-600 transition-colors duration-200"` | ❌   | CSS 클래스      |
+| `animated`    | `boolean` | `false`                                                              | ❌   | 애니메이션 효과 |
+
+#### 🏹 화살표 설정
+
+| 속성             | 타입      | 기본값  | 필수 | 설명                    |
+| ---------------- | --------- | ------- | ---- | ----------------------- |
+| `showArrow`      | `boolean` | `true`  | ❌   | 끝점 화살표 표시 여부   |
+| `showStartArrow` | `boolean` | `false` | ❌   | 시작점 화살표 표시 여부 |
+| `arrowSize`      | `number`  | `8`     | ❌   | 화살표 크기             |
+
+_\* fromBox/toBox 또는 startPoint/endPoint 중 하나는 필수입니다._
+
+### 타입 정의
+
+```typescript
+type ConnectionType = "straight" | "orthogonal" | "curved" | "stepped" | "custom" | "auto";
 
 type OrthogonalDirection = "horizontal-first" | "vertical-first" | "auto";
 ```
@@ -196,6 +233,55 @@ type OrthogonalDirection = "horizontal-first" | "vertical-first" | "auto";
 />
 ```
 
+#### 6. auto - 자동 선택 (박스 연결 전용)
+
+박스들의 위치를 분석하여 최적의 연결 방식을 자동으로 선택합니다.
+
+```jsx
+<Connector fromBox={{ id: "box1", position: "right" }} toBox={{ id: "box2", position: "left" }} connectionType="auto" />
+```
+
+### 박스 연결 사용법
+
+#### 기본 박스 연결
+
+```jsx
+<Connector
+  fromBox={{ id: "box1", position: "right" }}
+  toBox={{ id: "box2", position: "left" }}
+  connectionType="straight"
+/>
+```
+
+#### 오프셋을 사용한 미세 조정
+
+```jsx
+<Connector
+  fromBox={{
+    id: "box1",
+    position: "right",
+    offset: { x: 10, y: -5 },
+  }}
+  toBox={{
+    id: "box2",
+    position: "left",
+    offset: { x: -10, y: 5 },
+  }}
+/>
+```
+
+#### 센터 연결
+
+```jsx
+<Connector
+  fromBox={{ id: "box1", position: "center" }}
+  toBox={{ id: "box2", position: "center" }}
+  connectionType="straight"
+  showArrow={false}
+  className="text-red-500"
+/>
+```
+
 ### 고급 기능
 
 #### 애니메이션
@@ -206,15 +292,78 @@ type OrthogonalDirection = "horizontal-first" | "vertical-first" | "auto";
   endPoint={{ x: 300, y: 50 }}
   connectionType="straight"
   animated={true}
-  color="#14B8A6"
+  className="text-emerald-500"
 />
 ```
 
-#### 점선 패턴
+#### 양방향 화살표
 
 ```jsx
-<Connector startPoint={{ x: 100, y: 50 }} endPoint={{ x: 300, y: 50 }} connectionType="straight" dashArray="5,5" />
+<Connector
+  fromBox={{ id: "box1", position: "right" }}
+  toBox={{ id: "box2", position: "left" }}
+  showArrow={true}
+  showStartArrow={true}
+  arrowSize={10}
+  className="text-blue-500"
+/>
 ```
+
+#### 모서리 둥글기
+
+```jsx
+<Connector
+  fromBox={{ id: "box1", position: "bottom" }}
+  toBox={{ id: "box2", position: "top" }}
+  connectionType="orthogonal"
+  cornerRadius={10}
+/>
+```
+
+### 💡 사용팁
+
+#### 1. 연결 방식 선택
+
+- **박스 연결**: 컴포넌트 간 연결 시 권장 (자동 업데이트)
+- **좌표 연결**: 고정된 위치나 세밀한 제어가 필요할 때 사용
+
+#### 2. connectionType 선택 가이드
+
+- `straight`: 단순한 직선 연결
+- `curved`: 부드러운 시각적 효과가 필요할 때
+- `orthogonal`: 복잡한 다이어그램에서 가독성 향상
+- `auto`: 박스 연결 시 최적의 경로 자동 선택
+- `custom`: 장애물 회피나 특별한 경로가 필요할 때
+
+#### 3. 성능 최적화
+
+- 애니메이션은 시각적 효과는 좋지만 많은 연결선에서는 성능에 영향
+- 복잡한 다이어그램에서는 `connectionType="orthogonal"`이 가독성에 좋음
+- `strokeWidth`는 1-4 범위에서 사용 권장
+
+#### 4. 스타일링 팁
+
+- `className`을 통해 Tailwind CSS 클래스 적용 가능
+- 호버 효과와 트랜지션으로 상호작용성 향상
+- 색상별로 연결 유형을 구분하여 시각적 구조화
+
+#### 5. 박스 연결 시 주의사항
+
+- 반드시 `DiagramProvider`로 감싸서 사용
+- 박스 ID가 실제로 존재하는지 확인
+- 박스가 이동하면 연결선도 자동으로 업데이트됨
+
+#### 6. 오프셋 활용
+
+- 여러 연결선이 같은 점에서 시작/끝날 때 오프셋으로 분산
+- 박스 크기를 고려한 적절한 오프셋 값 설정
+- 음수 오프셋으로 연결점을 안쪽으로 이동 가능
+
+#### 7. 디버깅 팁
+
+- 개발자 도구에서 SVG 요소 검사하여 경로 확인
+- `console.log`로 박스 정보와 연결점 좌표 확인
+- 연결이 안 되면 박스 ID와 position 값 재확인
 
 ---
 

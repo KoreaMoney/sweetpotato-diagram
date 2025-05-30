@@ -154,6 +154,38 @@ import { Connector } from "./DiagramComponents";
   strokeWidth={3}
 />
 
+// 🆕 NEW! 화살표 방향, 모양, 색상 커스터마이징
+<Connector
+  startPoint={{ x: 100, y: 100 }}
+  endPoint={{ x: 300, y: 150 }}
+  arrowDirection="both"        // 양방향 화살표
+  arrowShape="diamond"         // 다이아몬드 모양
+  arrowColor="red"            // 빨간색 화살표
+  arrowSize={15}              // 화살표 크기
+  connectionType="curved"
+  strokeWidth={3}
+/>
+
+// 🆕 원형 화살표
+<Connector
+  startPoint={{ x: 50, y: 200 }}
+  endPoint={{ x: 250, y: 200 }}
+  arrowDirection="forward"
+  arrowShape="circle"
+  arrowColor="green"
+  arrowSize={12}
+/>
+
+// 🆕 사각형 화살표 (역방향)
+<Connector
+  startPoint={{ x: 100, y: 250 }}
+  endPoint={{ x: 300, y: 250 }}
+  arrowDirection="backward"
+  arrowShape="square"
+  arrowColor="purple"
+  arrowSize={18}
+/>
+
 // 직교 연결 (L자형)
 <Connector
   startPoint={{ x: 100, y: 100 }}
@@ -194,14 +226,14 @@ import { Connector } from "./DiagramComponents";
 **Props:**
 
 - `connectionType`: 'straight', 'curved', 'orthogonal', 'stepped', 'custom'
+- **🆕 `arrowDirection`**: 'forward', 'backward', 'both', 'none' - 화살표 방향 제어
+- **🆕 `arrowShape`**: 'triangle', 'diamond', 'circle', 'square' - 화살표 모양 설정
+- **🆕 `arrowColor`**: 'current', 'red', 'blue', 'green', 'purple', 등 - 화살표 색상 지정
+- `arrowSize`: 화살표 크기 (8-24) - **기존 prop 확장됨**
 - `bendPoints`: 커스텀 경로의 중간 꺾임점들 (custom 타입에서 사용)
 - `orthogonalDirection`: 'horizontal-first', 'vertical-first', 'auto'
 - `stepOffset`: 직교 연결에서 중간 지점 오프셋
 - `strokeWidth`: 선 두께 (1-10)
-- `arrowSize`: 화살표 크기
-- `showArrow`: 화살표 표시 여부
-- `animated`: 흐름 애니메이션 효과
-- `dashArray`: 점선 패턴 (예: '5,5', '10,3')
 
 ## 연결점 시스템
 

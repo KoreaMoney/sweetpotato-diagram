@@ -1,3 +1,6 @@
+import React, { useEffect } from "react";
+import { useDiagram } from "./DiagramContext";
+
 const Box = ({
   id = "",
   text = "",
@@ -8,6 +11,34 @@ const Box = ({
   className = "bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-sm",
   onClick = null,
 }) => {
+  // DiagramContext를 optional하게 사용
+  let registerBox, unregisterBox;
+  try {
+    const context = useDiagram();
+    registerBox = context.registerBox;
+    unregisterBox = context.unregisterBox;
+  } catch (error) {
+    // DiagramProvider가 없으면 context 기능을 사용하지 않음
+    registerBox = null;
+    unregisterBox = null;
+  }
+
+  // Box 정보를 Context에 등록/업데이트 (Context가 있을 때만)
+  useEffect(() => {
+    if (id && registerBox) {
+      registerBox(id, { x, y, width, height });
+    }
+  }, [id, x, y, width, height, registerBox]);
+
+  // 컴포넌트 언마운트 시 등록 해제 (Context가 있을 때만)
+  useEffect(() => {
+    return () => {
+      if (id && unregisterBox) {
+        unregisterBox(id);
+      }
+    };
+  }, [id, unregisterBox]);
+
   const handleClick = (event) => {
     if (onClick) {
       onClick(event, { id, x, y, width, height });

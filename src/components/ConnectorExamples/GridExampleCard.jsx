@@ -1,23 +1,35 @@
-import { Box, Connector } from "../DiagramComponents";
+import { Box, Connector, DiagramProvider } from "../DiagramComponents";
 
 const GridExampleCard = ({ example }) => {
-  const { title, boxes, connector, description } = example;
+  if (!example || !example.boxes) {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        <h4 className="text-lg font-semibold mb-4">예제를 불러올 수 없습니다</h4>
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <h3 className="text-lg font-semibold mb-4">{title}</h3>
-      <div className="relative h-32 border border-gray-200 rounded bg-gray-50">
-        {/* 박스들 렌더링 */}
-        {boxes.map((box) => (
-          <Box key={box.id} {...box} />
-        ))}
+    <div className="bg-white p-6 rounded-lg shadow-lg">
+      <h4 className="text-lg font-semibold mb-4">{example.title}</h4>
+      <DiagramProvider>
+        <div className="relative h-48 border border-gray-200 rounded bg-gray-50 overflow-hidden">
+          {/* 박스들 렌더링 */}
+          {example.boxes.map((box) => (
+            <Box key={box.id} {...box} />
+          ))}
 
-        {/* 커넥터 렌더링 */}
-        <Connector {...connector} boxes={boxes} />
-      </div>
-      <div className="mt-2 text-sm text-gray-600">
-        <code className="bg-gray-100 px-2 py-1 rounded">{description}</code>
-      </div>
+          {/* 연결선 렌더링 - connector (단수형) 사용 */}
+          {example.connector && (
+            <Connector
+              key={`${example.connector.fromBox.id}-${example.connector.toBox.id}`}
+              {...example.connector}
+              showArrow={true}
+            />
+          )}
+        </div>
+      </DiagramProvider>
+      {example.description && <p className="mt-4 text-sm text-gray-600">{example.description}</p>}
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import { useJSXParser } from "../hooks/useJSXParser";
 import { gridExamples } from "../data/connectorExampleData";
 
 // 분할된 컴포넌트들 import (index 파일 사용)
@@ -7,14 +6,11 @@ import {
   PositionExample,
   GridExampleCard,
   SystemExample,
-  CodeEditor,
-  LivePreview,
   UsageGuide,
 } from "./ConnectorExamples/index";
 import logo from "@/assets/logo.png";
-const ConnectorExamples = () => {
-  const { editableCode, parsedComponents, handleCodeChange } = useJSXParser();
 
+const ConnectorExamples = () => {
   return (
     <div className="w-full min-h-screen bg-gray-50 p-8">
       <h1 className="text-2xl font-bold text-gray-800 mb-8 flex items-center">
@@ -38,17 +34,8 @@ const ConnectorExamples = () => {
       {/* 복잡한 시스템 예제 */}
       <SystemExample />
 
-      {/* 수정 가능한 코드 예제 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* 코드 에디터 */}
-        <CodeEditor editableCode={editableCode} onCodeChange={handleCodeChange} />
-
-        {/* 실시간 미리보기 */}
-        <LivePreview parsedComponents={parsedComponents} />
-
-        {/* 사용법 안내 */}
-        <UsageGuide />
-      </div>
+      {/* 실시간 코드 편집기 */}
+      <UsageGuide />
     </div>
   );
 };
