@@ -1,4 +1,4 @@
-# 🔗 HY-Diagram - 현대자동차 다이어그램 컴포넌트 라이브러리
+# 🔗 Diagram - 다이어그램 컴포넌트 라이브러리
 
 [![React](https://img.shields.io/badge/React-19.0.0-blue.svg)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.2.0-brightgreen.svg)](https://vitejs.dev/)
@@ -14,7 +14,7 @@
 - 🎨 **커스터마이징**: 완전히 사용자 정의 가능한 스타일링
 - ⚡ **고성능**: React 19 + Vite 6 + SWC로 최적화
 - 📱 **반응형**: 모든 화면 크기에서 완벽 동작
-- 🔧 **TypeScript**: 완전한 타입 안전성
+- 🔧 **TypeScript**: 완전한 타입 안전성 (리팩토링 예정)
 
 ## 🚀 빠른 시작
 

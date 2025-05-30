@@ -1,8 +1,12 @@
+import logo from "@/assets/logo.png";
+
 const IntroductionSection = () => {
   return (
     <div className="bg-gradient-to-br from-blue-50 to-indigo-100 p-8 rounded-lg shadow-lg mb-8">
       <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">📊 Connector 컴포넌트 사용 가이드</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+          <img src={logo} alt="logo" className="w-10 h-10 inline-block" /> Connector Guide
+        </h2>
 
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           <div className="bg-white p-6 rounded-lg shadow">

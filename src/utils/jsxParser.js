@@ -108,8 +108,6 @@ export const parseBoxComponents = (jsxCode) => {
         "bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-sm"
       ),
     };
-
-    console.log(`Parsed box ${index}:`, box);
     return box;
   });
 };
@@ -148,14 +146,6 @@ export const parseConnectorComponents = (jsxCode, boxes) => {
         "text-cyan-500 hover:text-cyan-600 transition-colors duration-200"
       ),
     };
-
-    console.log(`Parsed connector ${index}:`, {
-      ...connector,
-      boxesCount: connector.boxes.length,
-      fromBoxId: connector.fromBox?.id,
-      toBoxId: connector.toBox?.id,
-    });
-
     return connector;
   });
 };
@@ -170,7 +160,6 @@ export const parseJSXComponents = (jsxCode) => {
     const boxes = parseBoxComponents(jsxCode);
     const connectors = parseConnectorComponents(jsxCode, boxes);
 
-    console.log("Final parsed components:", { boxes, connectors });
     return { boxes, connectors };
   } catch (error) {
     console.error("JSX parsing error:", error);

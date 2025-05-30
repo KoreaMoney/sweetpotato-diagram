@@ -9,7 +9,7 @@ const systemExampleBoxes = [
     height: 35,
     text: "입력",
     className:
-      "bg-blue-600 text-white border-blue-800 border-2 rounded-lg text-xs hover:shadow-lg transition-all duration-300",
+      "bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-xs hover:shadow-lg transition-all duration-300",
   },
   {
     id: "process1",

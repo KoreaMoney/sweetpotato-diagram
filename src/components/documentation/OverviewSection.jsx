@@ -285,7 +285,7 @@ yarn add @your-org/diagram-components`}
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActiveSection("box")}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-[#0066ff] transition-colors text-sm"
           >
             📦 Box 시작하기
           </button>

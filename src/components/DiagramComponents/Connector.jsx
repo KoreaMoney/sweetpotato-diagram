@@ -154,7 +154,7 @@
  *   - arrowShape: 화살표 모양 제어 (triangle, diamond, circle, square)
  */
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useDiagram } from "./DiagramContext";
 
 const Connector = ({
@@ -169,7 +169,7 @@ const Connector = ({
   connectionType = "straight", // 'straight', 'curved', 'orthogonal', 'stepped', 'custom'
   strokeWidth = 2,
   animated = false,
-  className = "text-gray-500 hover:text-gray-600 transition-colors duration-200",
+  className = "stroke-[#0066ff] hover:stroke-black transition-all duration-300",
   showArrow = true,
   showStartArrow = false, // 시작점 화살표 표시 여부 (양방향 화살표용) - 🆕 NEW!
   arrowSize = 8,
@@ -181,6 +181,8 @@ const Connector = ({
   orthogonalDirection = "auto", // 'horizontal-first', 'vertical-first', 'auto'
   stepOffset = 50, // orthogonal 연결에서 중간 지점 오프셋
 }) => {
+  const [isReady, setIsReady] = useState(false);
+
   // DiagramContext를 optional하게 사용
   let getBox = null;
   try {
@@ -190,6 +192,33 @@ const Connector = ({
     // DiagramProvider가 없으면 박스 연결 기능을 사용하지 않음
     console.log("error", error);
     getBox = null;
+  }
+
+  // 박스 연결이 필요한 경우 박스들이 준비될 때까지 기다림
+  useEffect(() => {
+    if (fromBox && toBox && getBox) {
+      const checkBoxes = () => {
+        const startBox = getBox(fromBox.id);
+        const endBox = getBox(toBox.id);
+
+        if (startBox && endBox) {
+          setIsReady(true);
+        } else {
+          // 박스가 아직 등록되지 않은 경우 다음 프레임에서 다시 확인
+          setTimeout(checkBoxes, 0);
+        }
+      };
+
+      checkBoxes();
+    } else {
+      // 박스 연결이 필요하지 않은 경우 즉시 준비
+      setIsReady(true);
+    }
+  }, [fromBox, toBox, getBox]);
+
+  // 박스들이 준비되지 않은 경우 렌더링하지 않음
+  if (!isReady) {
+    return null;
   }
 
   // arrowDirection에 따른 화살표 표시 설정
@@ -309,27 +338,14 @@ const Connector = ({
 
     // 박스 연결 방식이 지정된 경우 (그리고 Context가 있을 때만)
     if (fromBox && toBox && fromBox.id && toBox.id && getBox) {
-      console.log("Connector: Attempting box connection", {
-        fromBoxId: fromBox.id,
-        toBoxId: toBox.id,
-      });
-
       const startBox = getBox(fromBox.id);
       const endBox = getBox(toBox.id);
-
-      console.log("Connector: Found boxes", { startBox, endBox });
 
       if (startBox && endBox) {
         actualStartPoint = getBoxConnectionPoint(startBox, fromBox.position, fromBox.offset);
         actualEndPoint = getBoxConnectionPoint(endBox, toBox.position, toBox.offset);
-
-        console.log("Connector: Calculated connection points", {
-          actualStartPoint,
-          actualEndPoint,
-          fromPosition: fromBox.position,
-          toPosition: toBox.position,
-        });
       } else {
+        // 이 시점에서는 박스들이 이미 확인되었으므로 기본값 사용
         console.warn("Connector: Box not found!", {
           fromBoxId: fromBox.id,
           toBoxId: toBox.id,

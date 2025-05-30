@@ -21,7 +21,7 @@ const LivePreview = ({ parsedComponents }) => {
               className:
                 typeof boxProps.className === "string"
                   ? boxProps.className
-                  : "bg-blue-600 text-white border-blue-800 border-2 rounded-lg text-sm",
+                  : "bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-sm",
             };
 
             return <Box key={safeBoxProps.id} {...safeBoxProps} />;

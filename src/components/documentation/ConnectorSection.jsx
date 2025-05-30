@@ -296,7 +296,7 @@ const boxes = [
                 width={60}
                 height={25}
                 text="송신기"
-                className="bg-blue-600 text-white border-blue-800 border-2 rounded-lg text-xs"
+                className="bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-xs"
                 onClick={() => addToast("송신기: 데이터 전송 📡", "info")}
               />
               <Box
@@ -800,7 +800,7 @@ const boxes = [
                 width={80}
                 height={40}
                 text="CPU Core"
-                className="bg-blue-600 text-white border-blue-800 border-2 rounded-lg text-xs font-bold"
+                className="bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-xs font-bold"
                 onClick={() => addToast("CPU: 중앙처리장치 🧠", "info")}
               />
 

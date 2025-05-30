@@ -99,37 +99,41 @@ const Documentation = () => {
 
   return (
     <DiagramProvider>
-      <div className="flex h-screen bg-gray-100">
-        <div className="w-64 bg-white shadow-lg">
-          <div className="p-6 border-b">
-            <h1 className="text-lg font-bold text-gray-800">
-              <img src={logo} alt="logo" className="w-6 h-6 inline-block mr-2" />
-              Documentation
-            </h1>
+      <div className="min-h-screen bg-gray-100 pb-20">
+        <div className="flex">
+          {/* 사이드바 - sticky로 고정 */}
+          <div className="w-64 bg-white shadow-lg sticky top-0 h-screen">
+            <div className="p-6 border-b">
+              <h1 className="text-lg font-bold text-gray-800">
+                <img src={logo} alt="logo" className="w-6 h-6 inline-block mr-2" />
+                Documentation
+              </h1>
+            </div>
+            <nav className="p-4 overflow-y-auto h-[calc(100vh-100px)]">
+              <ul className="space-y-2">
+                {sections.map((section) => (
+                  <li key={section.id}>
+                    <button
+                      onClick={() => setActiveSection(section.id)}
+                      className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                        activeSection === section.id
+                          ? "bg-blue-100 text-blue-800 font-medium"
+                          : "text-gray-600 hover:bg-gray-100"
+                      }`}
+                    >
+                      <span className="mr-2">{section.icon}</span>
+                      {section.title}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
-          <nav className="p-4">
-            <ul className="space-y-2">
-              {sections.map((section) => (
-                <li key={section.id}>
-                  <button
-                    onClick={() => setActiveSection(section.id)}
-                    className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-                      activeSection === section.id
-                        ? "bg-blue-100 text-blue-800 font-medium"
-                        : "text-gray-600 hover:bg-gray-100"
-                    }`}
-                  >
-                    <span className="mr-2">{section.icon}</span>
-                    {section.title}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
 
-        <div className="flex-1 overflow-auto">
-          <div className="max-w-4xl mx-auto p-8">{renderContent()}</div>
+          {/* 메인 콘텐츠 */}
+          <div className="flex-1">
+            <div className="max-w-4xl mx-auto p-8 pb-32">{renderContent()}</div>
+          </div>
         </div>
       </div>
     </DiagramProvider>

@@ -24,7 +24,7 @@ const ConnectorBidirectionalTest = () => {
             width={100}
             height={40}
             text="서버"
-            className="bg-blue-600 text-white border-blue-800 border-2 rounded-lg"
+            className="bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg"
           />
           <Box
             id="client"

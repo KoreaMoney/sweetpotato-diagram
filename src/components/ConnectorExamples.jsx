@@ -12,10 +12,10 @@ import logo from "@/assets/logo.png";
 
 const ConnectorExamples = () => {
   return (
-    <div className="w-full min-h-screen bg-gray-50 p-8">
+    <div className="w-full bg-gray-50 p-8 pb-24">
       <h1 className="text-2xl font-bold text-gray-800 mb-8 flex items-center">
         <img src={logo} alt="logo" className="w-6 h-6 inline-block mr-2" />
-        SweetPotato Connector
+        SweetPD Connector
       </h1>
 
       {/* 박스 연결 방식 소개 */}

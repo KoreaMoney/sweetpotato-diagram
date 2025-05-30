@@ -7,7 +7,7 @@ const codeTemplates = {
     width={80} 
     height={30} 
     text="시작" 
-    className="bg-blue-600 text-white border-blue-800 border-2 rounded-lg text-sm"
+    className="bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-sm"
   />
   <Box 
     id="end"
