@@ -1,27 +1,26 @@
 {
   "name": "sweetpd",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "type": "module",
-  "author": "SweetPotato",
+  "author": "KimDowon",
   "license": "MIT",
   "description": "A modern and intuitive diagram editor component for React applications",
   "keywords": [
     "react",
     "diagram",
     "editor",
-    "three.js",
     "visualization",
     "flowchart",
     "node-editor",
     "sweetpd"
   ],
-  "homepage": "https://github.com/sweetpotato/sweetpd",
+  "homepage": "https://github.com/KoreaMoney/sweetpotato-diagram",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sweetpotato/sweetpd.git"
+    "url": "https://github.com/KoreaMoney/sweetpotato-diagram"
   },
   "bugs": {
-    "url": "https://github.com/sweetpotato/sweetpd/issues"
+    "url": "https://github.com/KoreaMoney/sweetpotato-diagram"
   },
   "main": "./dist/sweetpd.cjs.js",
   "module": "./dist/sweetpd.es.js",

@@ -1,6 +1,5 @@
-# 📚 HY-Diagram API 문서
-
-현대자동차 다이어그램 컴포넌트 라이브러리의 상세 API 문서입니다.
+# 📚 Diagram API 문서
+다이어그램 컴포넌트 라이브러리의 상세 API 문서입니다.
 
 ## 📋 목차
 
@@ -74,7 +73,7 @@ interface BoxInfo {
 import { Box } from "@/components/DiagramComponents";
 
 <Box
-  id="hydrogen-tank"
+  id="drogen-tank"
   x={100}
   y={50}
   width={120}
@@ -794,7 +793,7 @@ interface ValveProps {
 
 ```jsx
 // 커스텀 색상 테마 정의
-const hydrogenTheme = {
+const drogenTheme = {
   primary: "#3B82F6", // 수소 블루
   secondary: "#10B981", // 에너지 그린
   accent: "#F59E0B", // 경고 앰버
@@ -803,7 +802,7 @@ const hydrogenTheme = {
 };
 
 // 테마 적용
-<Box backgroundColor={hydrogenTheme.primary} borderColor={hydrogenTheme.primary} textColor="#FFFFFF" />;
+<Box backgroundColor={drogenTheme.primary} borderColor={drogenTheme.primary} textColor="#FFFFFF" />;
 ```
 
 ### 애니메이션 체인
@@ -885,8 +884,6 @@ const RealTimeDiagram = () => {
 
 ---
 
-**이 문서는 HY-Diagram v0.0.1 기준으로 작성되었습니다.**
+**이 문서는 Diagram v0.1.0 기준으로 작성되었습니다.**
 
-마지막 업데이트: 2024년 12월
-
-**Made with ❤️ by SweetPotato Team**
+**Made by KIM DOWON**
