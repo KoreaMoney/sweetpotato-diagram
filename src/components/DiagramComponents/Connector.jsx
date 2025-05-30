@@ -1,3 +1,128 @@
+/**
+ * Connector 컴포넌트
+ *
+ * 두 점 또는 박스 간의 연결선을 그리는 컴포넌트입니다.
+ * 다양한 연결 스타일과 화살표, 애니메이션을 지원합니다.
+ *
+ * @param {Object} props - 컴포넌트 props
+ *
+ * === 기본 좌표 연결 방식 ===
+ * @param {Object} startPoint - 시작점 좌표 { x: number, y: number }
+ * @param {Object} endPoint - 끝점 좌표 { x: number, y: number }
+ *
+ * === 박스 연결 방식 ===
+ * @param {Object} fromBox - 시작 박스 정보 { id: string, position: string, offset: { x: number, y: number } }
+ *   - position: "top" | "right" | "bottom" | "left" | "center"
+ * @param {Object} toBox - 도착 박스 정보 { id: string, position: string, offset: { x: number, y: number } }
+ * @param {Array} boxes - 모든 박스 정보 배열 [{ id: string, x: number, y: number, width: number, height: number }]
+ *
+ * === 연결 스타일 ===
+ * @param {string} connectionType - 연결 타입
+ *   - "straight": 직선 연결 (기본값)
+ *   - "curved": 곡선 연결 (베지어 곡선)
+ *   - "orthogonal": 직각 연결 (ㄱ자 모양)
+ *   - "stepped": 계단식 연결
+ *   - "custom": 사용자 정의 경로 (bendPoints 사용)
+ *   - "auto": 박스 위치에 따라 자동 선택
+ *
+ * === 스타일링 ===
+ * @param {number} strokeWidth - 선 두께 (기본값: 2)
+ * @param {string} className - CSS 클래스 (기본값: "text-gray-500 hover:text-gray-600 transition-colors duration-200")
+ * @param {boolean} animated - 애니메이션 효과 (기본값: false)
+ *
+ * === 화살표 ===
+ * @param {boolean} showArrow - 끝점 화살표 표시 (기본값: true)
+ * @param {boolean} showStartArrow - 시작점 화살표 표시 (기본값: false)
+ * @param {number} arrowSize - 화살표 크기 (기본값: 8)
+ *
+ * === 고급 설정 ===
+ * @param {Array} bendPoints - 중간 꺾임점들 [{ x: number, y: number }] (connectionType: "custom"일 때 사용)
+ * @param {number} cornerRadius - 모서리 둥글기 (기본값: 0)
+ * @param {string} orthogonalDirection - 직교 연결 방향 "horizontal-first" | "vertical-first" | "auto"
+ * @param {number} stepOffset - 직교 연결에서 중간 지점 오프셋 (기본값: 50)
+ *
+ * === 사용 예시 ===
+ *
+ * // 1. 기본 직선 연결
+ * <Connector
+ *   startPoint={{ x: 100, y: 100 }}
+ *   endPoint={{ x: 200, y: 200 }}
+ * />
+ *
+ * // 2. 곡선 연결 with 애니메이션
+ * <Connector
+ *   startPoint={{ x: 100, y: 100 }}
+ *   endPoint={{ x: 300, y: 150 }}
+ *   connectionType="curved"
+ *   animated={true}
+ *   strokeWidth={3}
+ * />
+ *
+ * // 3. 박스 간 연결 (자동 연결점 계산)
+ * <Connector
+ *   fromBox={{ id: "box1", position: "right" }}
+ *   toBox={{ id: "box2", position: "left" }}
+ *   boxes={[
+ *     { id: "box1", x: 50, y: 50, width: 100, height: 60 },
+ *     { id: "box2", x: 250, y: 80, width: 120, height: 80 }
+ *   ]}
+ *   connectionType="auto"
+ * />
+ *
+ * // 4. 직교 연결 (ㄱ자 모양)
+ * <Connector
+ *   fromBox={{ id: "box1", position: "bottom" }}
+ *   toBox={{ id: "box2", position: "top" }}
+ *   boxes={boxesArray}
+ *   connectionType="orthogonal"
+ *   orthogonalDirection="vertical-first"
+ *   stepOffset={80}
+ * />
+ *
+ * // 5. 사용자 정의 경로 (중간점 지정)
+ * <Connector
+ *   startPoint={{ x: 100, y: 100 }}
+ *   endPoint={{ x: 400, y: 300 }}
+ *   connectionType="custom"
+ *   bendPoints={[
+ *     { x: 200, y: 100 },
+ *     { x: 200, y: 250 },
+ *     { x: 350, y: 250 }
+ *   ]}
+ * />
+ *
+ * // 6. 양방향 화살표
+ * <Connector
+ *   startPoint={{ x: 100, y: 100 }}
+ *   endPoint={{ x: 300, y: 200 }}
+ *   showArrow={true}
+ *   showStartArrow={true}
+ *   arrowSize={10}
+ *   className="text-blue-500"
+ * />
+ *
+ * // 7. 박스 연결 with 오프셋
+ * <Connector
+ *   fromBox={{
+ *     id: "box1",
+ *     position: "right",
+ *     offset: { x: 10, y: -5 }
+ *   }}
+ *   toBox={{
+ *     id: "box2",
+ *     position: "left",
+ *     offset: { x: -10, y: 5 }
+ *   }}
+ *   boxes={boxesArray}
+ * />
+ *
+ * === 주의사항 ===
+ * - 박스 연결 방식 사용시 반드시 boxes 배열에 해당 박스 정보가 있어야 합니다
+ * - startPoint/endPoint와 fromBox/toBox는 동시에 사용할 수 없습니다 (박스 연결이 우선)
+ * - connectionType이 "custom"일 때는 bendPoints 배열을 제공해야 합니다
+ * - 애니메이션은 성능에 영향을 줄 수 있으므로 필요한 경우에만 사용하세요
+ */
+
 const Connector = ({
   // 기존 방식 (좌표 직접 지정)
   startPoint = null,
