@@ -2,7 +2,7 @@
 
 A modern and intuitive diagram component library for React applications. Built with React, Three.js, and TailwindCSS.
 
-![SweetPD Demo](https://via.placeholder.com/800x400?text=SweetPD+Diagram+Components)
+![SweetPD Demo](https://sweetpotato-diagram.vercel.app/)
 
 ## ✨ Features
 
