@@ -2,8 +2,6 @@
 
 A modern and intuitive diagram component library for React applications. Built with React, Three.js, and TailwindCSS.
 
-![SweetPD Demo](https://sweetpotato-diagram.vercel.app/)
-
 ## ✨ Features
 
 - 🎨 **Modern UI**: Beautiful and intuitive interface
