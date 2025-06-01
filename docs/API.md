@@ -1,4 +1,5 @@
 # 📚 Diagram API 문서
+
 다이어그램 컴포넌트 라이브러리의 상세 API 문서입니다.
 
 ## 📋 목차
@@ -17,7 +18,6 @@
 - [유틸리티 컴포넌트](#유틸리티-컴포넌트)
   - [CodeEditor 컴포넌트](#codeeditor-컴포넌트)
   - [DiagramContext](#diagramcontext)
-- [TypeScript 타입 정의](#typescript-타입-정의)
 - [고급 사용법](#고급-사용법)
 
 ---
@@ -54,17 +54,17 @@
 
 ##### onClick
 
-```typescript
-onClick?: (event: MouseEvent, boxInfo: BoxInfo) => void
-
-interface BoxInfo {
-  id: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  text: string;
-}
+```jsx
+// 함수 타입: (event, boxInfo) => void
+// boxInfo 객체 구조:
+// {
+//   id: string,
+//   x: number,
+//   y: number,
+//   width: number,
+//   height: number,
+//   text: string
+// }
 ```
 
 #### 사용 예시
@@ -125,20 +125,16 @@ import { Box } from "@/components/DiagramComponents";
 
 ##### onPositionChange
 
-```typescript
-onPositionChange?: (newX: number, newY: number, elementId: string) => void
+```jsx
+// 함수 타입: (newX, newY, elementId) => void
 ```
 
 ##### onDragStart / onDragEnd
 
-```typescript
-onDragStart?: (event: DragEvent, elementId: string) => void
-onDragEnd?: (event: DragEvent, elementId: string, position: Position) => void
-
-interface Position {
-  x: number;
-  y: number;
-}
+```jsx
+// onDragStart 함수 타입: (event, elementId) => void
+// onDragEnd 함수 타입: (event, elementId, position) => void
+// position 객체: { x: number, y: number }
 ```
 
 #### 사용 예시
@@ -641,147 +637,6 @@ function DiagramCanvas() {
       </div>
     </div>
   );
-}
-```
-
----
-
-## TypeScript 타입 정의
-
-### 기본 타입들
-
-```typescript
-// 위치 정보
-interface Position {
-  x: number;
-  y: number;
-}
-
-// 크기 정보
-interface Size {
-  width: number;
-  height: number;
-}
-
-// 색상 정보
-interface Color {
-  primary: string;
-  secondary?: string;
-  accent?: string;
-}
-
-// 다이어그램 요소
-interface DiagramElement {
-  id: string;
-  type: "box" | "valve" | "triangle" | "image";
-  position: Position;
-  size: Size;
-  props: Record<string, any>;
-  metadata?: Record<string, any>;
-}
-
-// 연결 정보
-interface Connection {
-  id: string;
-  fromElementId: string;
-  toElementId: string;
-  fromPosition: ConnectionPosition;
-  toPosition: ConnectionPosition;
-  style: ConnectionStyle;
-  metadata?: Record<string, any>;
-}
-
-// 연결 위치
-type ConnectionPosition =
-  | "top"
-  | "right"
-  | "bottom"
-  | "left"
-  | "center"
-  | "top-left"
-  | "top-right"
-  | "bottom-left"
-  | "bottom-right";
-
-// 연결 스타일
-interface ConnectionStyle {
-  strokeColor: string;
-  strokeWidth: number;
-  connectionType: "straight" | "orthogonal" | "curved" | "stepped" | "bezier";
-  dashArray?: string;
-  animated?: boolean;
-  bidirectional?: boolean;
-}
-
-// 밸브 상태
-type ValveStatus = "normal" | "warning" | "error" | "maintenance";
-type ValveType = "gate" | "ball" | "check" | "butterfly" | "needle" | "safety";
-
-// 이벤트 핸들러 타입들
-type ElementClickHandler = (event: MouseEvent, elementInfo: any) => void;
-type PositionChangeHandler = (newX: number, newY: number, elementId: string) => void;
-type CodeChangeHandler = (newCode: string) => void;
-```
-
-### 컴포넌트 Props 타입들
-
-```typescript
-// Box 컴포넌트
-interface BoxProps {
-  id?: string;
-  x?: number;
-  y?: number;
-  width?: number;
-  height?: number;
-  text?: string;
-  backgroundColor?: string;
-  textColor?: string;
-  borderColor?: string;
-  borderWidth?: number;
-  borderRadius?: number;
-  fontSize?: number;
-  className?: string;
-  onClick?: ElementClickHandler;
-  onDoubleClick?: ElementClickHandler;
-  onMouseEnter?: () => void;
-  onMouseLeave?: () => void;
-}
-
-// Connector 컴포넌트
-interface ConnectorProps {
-  fromElementId?: string;
-  toElementId?: string;
-  fromPosition?: ConnectionPosition;
-  toPosition?: ConnectionPosition;
-  strokeColor?: string;
-  strokeWidth?: number;
-  connectionType?: ConnectionStyle["connectionType"];
-  bidirectional?: boolean;
-  animated?: boolean;
-  dashArray?: string;
-  showArrow?: boolean;
-  arrowSize?: number;
-  label?: string;
-  labelPosition?: "start" | "middle" | "end";
-  offset?: Position;
-}
-
-// Valve 컴포넌트
-interface ValveProps {
-  id?: string;
-  x?: number;
-  y?: number;
-  size?: number;
-  type?: ValveType;
-  isOpen?: boolean;
-  color?: string;
-  showStatus?: boolean;
-  status?: ValveStatus;
-  showIcon?: boolean;
-  iconPosition?: string;
-  customIcon?: React.ReactNode;
-  onToggle?: (isOpen: boolean) => void;
-  onClick?: ElementClickHandler;
 }
 ```
 
