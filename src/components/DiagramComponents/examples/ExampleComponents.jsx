@@ -143,6 +143,15 @@ export const MultiConnectionExample = ({ isAnimated }) => (
       text="Bottom"
       className="bg-[#0066ff] text-white border-blue-600 border-2 rounded-lg"
     />
+    <Box
+      id="box4"
+      x={250}
+      y={220}
+      width={120}
+      height={70}
+      text="Left"
+      className="bg-purple-600 text-white border-purple-800 border-2 rounded-lg"
+    />
     <Connector
       fromBox={{ id: "center", position: "top" }}
       toBox={{ id: "box1", position: "bottom" }}
@@ -168,6 +177,23 @@ export const MultiConnectionExample = ({ isAnimated }) => (
       strokeWidth={3}
       className="stroke-[#0066ff] hover:stroke-black transition-all duration-300"
       orthogonalDirection="vertical-first"
+      animated={isAnimated}
+    />
+    <Connector
+      fromBox={{ id: "center", position: "left" }}
+      toBox={{ id: "box4", position: "right" }}
+      connectionType="custom"
+      bendPoints={[
+        { x: 450, y: 265 }, // center 왼쪽에서 조금 더 왼쪽으로
+        { x: 420, y: 265 }, // 더 왼쪽으로 이동
+        { x: 420, y: 180 }, // 위로 올라가기
+        { x: 330, y: 180 }, // box4 위쪽으로 이동
+        { x: 330, y: 255 }, // box4 연결점 높이로 내려가기
+        { x: 370, y: 255 }, // box4의 right 연결점 (250 + 120 = 370, 220 + 35 = 255)
+      ]}
+      arrowDirection="forward"
+      strokeWidth={3}
+      className="stroke-purple-600 hover:stroke-purple-800 transition-all duration-300"
       animated={isAnimated}
     />
   </>

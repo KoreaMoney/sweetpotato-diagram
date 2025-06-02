@@ -130,7 +130,7 @@ export const EXAMPLE_METADATA = {
 
   multiConnection: {
     title: "Multiple Connections",
-    description: "Example of connecting multiple boxes simultaneously",
+    description: "Example of connecting multiple boxes with different connection types including custom bending",
     difficulty: "Advanced",
     icon: "🔀",
     supportsAnimation: true,
@@ -174,6 +174,16 @@ export const EXAMPLE_METADATA = {
   className="bg-[#0066ff] text-white border-blue-600 border-2 rounded-lg"
 />
 
+<Box
+  id="box4"
+  x={250}
+  y={220}
+  width={120}
+  height={70}
+  text="Left"
+  className="bg-purple-600 text-white border-purple-800 border-2 rounded-lg"
+/>
+
 <Connector
   fromBox={{ id: "center", position: "top" }}
   toBox={{ id: "box1", position: "bottom" }}
@@ -201,6 +211,24 @@ export const EXAMPLE_METADATA = {
   strokeWidth={3}
   className="stroke-[#0066ff] hover:stroke-black transition-all duration-300"
   orthogonalDirection="vertical-first"
+  animated={true}
+/>
+
+<Connector
+  fromBox={{ id: "center", position: "left" }}
+  toBox={{ id: "box4", position: "right" }}
+  connectionType="custom"
+  bendPoints={[
+    { x: 450, y: 265 },
+    { x: 420, y: 265 },
+    { x: 420, y: 180 },
+    { x: 330, y: 180 },
+    { x: 330, y: 255 },
+    { x: 370, y: 255 },
+  ]}
+  arrowDirection="forward"
+  strokeWidth={3}
+  className="stroke-purple-600 hover:stroke-purple-800 transition-all duration-300"
   animated={true}
 />`,
   },

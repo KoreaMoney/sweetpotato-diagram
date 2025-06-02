@@ -219,23 +219,29 @@ import { ImageBox } from "@/components/DiagramComponents";
 
 #### Props
 
-| 속성             | 타입      | 기본값       | 필수 | 설명             |
-| ---------------- | --------- | ------------ | ---- | ---------------- |
-| `fromElementId`  | `string`  | `""`         | ❌   | 시작 요소 ID     |
-| `toElementId`    | `string`  | `""`         | ❌   | 끝 요소 ID       |
-| `fromPosition`   | `string`  | `"center"`   | ❌   | 시작점 위치      |
-| `toPosition`     | `string`  | `"center"`   | ❌   | 끝점 위치        |
-| `strokeColor`    | `string`  | `"#6B7280"`  | ❌   | 선 색상          |
-| `strokeWidth`    | `number`  | `2`          | ❌   | 선 두께          |
-| `connectionType` | `string`  | `"straight"` | ❌   | 연결 타입        |
-| `bidirectional`  | `boolean` | `false`      | ❌   | 양방향 연결 여부 |
-| `animated`       | `boolean` | `false`      | ❌   | 애니메이션 효과  |
-| `dashArray`      | `string`  | `""`         | ❌   | 점선 패턴        |
-| `showArrow`      | `boolean` | `true`       | ❌   | 화살표 표시 여부 |
-| `arrowSize`      | `number`  | `8`          | ❌   | 화살표 크기      |
-| `label`          | `string`  | `""`         | ❌   | 연결선 라벨      |
-| `labelPosition`  | `string`  | `"middle"`   | ❌   | 라벨 위치        |
-| `offset`         | `object`  | `{x:0,y:0}`  | ❌   | 위치 오프셋      |
+| 속성             | 타입      | 기본값       | 필수 | 설명                      |
+| ---------------- | --------- | ------------ | ---- | ------------------------- |
+| `fromElementId`  | `string`  | `""`         | ❌   | 시작 요소 ID              |
+| `toElementId`    | `string`  | `""`         | ❌   | 끝 요소 ID                |
+| `fromBox`        | `object`  | `null`       | ❌   | 시작 박스 정보 (NEW!)     |
+| `toBox`          | `object`  | `null`       | ❌   | 끝 박스 정보 (NEW!)       |
+| `fromPosition`   | `string`  | `"center"`   | ❌   | 시작점 위치               |
+| `toPosition`     | `string`  | `"center"`   | ❌   | 끝점 위치                 |
+| `strokeColor`    | `string`  | `"#6B7280"`  | ❌   | 선 색상                   |
+| `strokeWidth`    | `number`  | `2`          | ❌   | 선 두께                   |
+| `connectionType` | `string`  | `"straight"` | ❌   | 연결 타입                 |
+| `bendPoints`     | `array`   | `undefined`  | ❌   | 사용자 정의 꺾임점 (NEW!) |
+| `bidirectional`  | `boolean` | `false`      | ❌   | 양방향 연결 여부          |
+| `animated`       | `boolean` | `false`      | ❌   | 애니메이션 효과           |
+| `dashArray`      | `string`  | `""`         | ❌   | 점선 패턴                 |
+| `showArrow`      | `boolean` | `true`       | ❌   | 화살표 표시 여부          |
+| `arrowDirection` | `string`  | `"forward"`  | ❌   | 화살표 방향 (NEW!)        |
+| `arrowSize`      | `number`  | `8`          | ❌   | 화살표 크기               |
+| `arrowShape`     | `string`  | `"triangle"` | ❌   | 화살표 모양 (NEW!)        |
+| `arrowColor`     | `string`  | `"current"`  | ❌   | 화살표 색상 (NEW!)        |
+| `label`          | `string`  | `""`         | ❌   | 연결선 라벨               |
+| `labelPosition`  | `string`  | `"middle"`   | ❌   | 라벨 위치                 |
+| `offset`         | `object`  | `{x:0,y:0}`  | ❌   | 위치 오프셋               |
 
 #### 연결 위치 (Position)
 
@@ -255,23 +261,156 @@ import { ImageBox } from "@/components/DiagramComponents";
 - `"orthogonal"` - 직교 (L자형)
 - `"curved"` - 곡선
 - `"stepped"` - 계단식
-- `"bezier"` - 베지어 곡선
+- `"custom"` - 사용자 정의 경로 (bendPoints 사용)
+- `"auto"` - 박스 위치에 따라 자동 선택
+
+#### bendPoints (사용자 정의 꺾임점)
+
+`connectionType="custom"`일 때 사용하는 중간 꺾임점들의 배열입니다.
+
+**형식**: `[{ x: number, y: number }, ...]`
+
+```jsx
+// 장애물을 우회하는 복잡한 경로
+<Connector
+  fromBox={{ id: "start", position: "right" }}
+  toBox={{ id: "end", position: "left" }}
+  connectionType="custom"
+  bendPoints={[
+    { x: 130, y: 65 },
+    { x: 130, y: 30 },
+    { x: 250, y: 30 },
+    { x: 250, y: 165 },
+  ]}
+  strokeColor="#3B82F6"
+  strokeWidth={2}
+  showArrow={true}
+/>
+```
+
+#### fromBox / toBox (박스 연결)
+
+DiagramProvider를 통해 자동으로 Box 정보를 감지하여 연결하는 새로운 방식입니다.
+
+**형식**: `{ id: string, position: string, offset?: { x: number, y: number } }`
+
+```jsx
+<Connector
+  fromBox={{
+    id: "source-box",
+    position: "right",
+    offset: { x: 10, y: -5 }, // 선택적 오프셋
+  }}
+  toBox={{
+    id: "target-box",
+    position: "left",
+  }}
+  connectionType="auto"
+/>
+```
+
+#### 화살표 방향 (Arrow Direction)
+
+- `"forward"` - 끝점에만 화살표 (기본값)
+- `"backward"` - 시작점에만 화살표
+- `"both"` - 양방향 화살표
+- `"none"` - 화살표 없음
+
+#### 화살표 모양 (Arrow Shape)
+
+- `"triangle"` - 삼각형 (기본값)
+- `"diamond"` - 다이아몬드
+- `"circle"` - 원형
+- `"square"` - 사각형
+
+#### 화살표 색상 (Arrow Color)
+
+- `"current"` - 부모 요소 색상 상속 (기본값)
+- `"red"`, `"blue"`, `"green"`, `"yellow"`, `"purple"`, `"pink"`, `"indigo"`, `"gray"`, `"black"`, `"white"`
+- 또는 커스텀 색상 문자열
+
+#### ⚠️ 중요한 변경사항 및 주의점
+
+1. **bendPoints 유지**: 다른 속성을 수정해도 bendPoints가 초기화되지 않습니다.
+2. **자동 Fallback**: `connectionType="custom"`인데 `bendPoints`가 없으면 자동으로 `"straight"`로 변경됩니다.
+3. **개발자 경고**: 설정 오류 시 콘솔에 명확한 경고 메시지가 표시됩니다.
+4. **boxes prop 제거**: 이제 DiagramProvider를 통해 자동으로 Box 정보를 가져옵니다.
 
 #### 사용 예시
 
 ```jsx
 import { Connector } from '@/components/DiagramComponents';
 
-// 기본 연결
+// 🆕 새로운 방식: fromBox/toBox 자동 연결
 <Connector
-  fromElementId="source-box"
-  toElementId="target-box"
+  fromBox={{ id: "source-box", position: "right" }}
+  toBox={{ id: "target-box", position: "left" }}
+  connectionType="auto"
   strokeColor="#10B981"
   strokeWidth={3}
   showArrow={true}
 />
 
-// 양방향 애니메이션 연결
+// 🆕 사용자 정의 경로 (bendPoints)
+<Connector
+  fromBox={{ id: "start", position: "right" }}
+  toBox={{ id: "end", position: "left" }}
+  connectionType="custom"
+  bendPoints={[
+    { x: 130, y: 65 },
+    { x: 130, y: 30 },
+    { x: 250, y: 30 },
+    { x: 250, y: 165 }
+  ]}
+  strokeColor="#3B82F6"
+  strokeWidth={2}
+  showArrow={true}
+/>
+
+// 🆕 양방향 화살표 with 다이아몬드 모양
+<Connector
+  fromBox={{ id: "boxA", position: "right" }}
+  toBox={{ id: "boxB", position: "left" }}
+  connectionType="curved"
+  arrowDirection="both"
+  arrowShape="diamond"
+  arrowColor="red"
+  arrowSize={12}
+  strokeColor="#EF4444"
+  strokeWidth={3}
+/>
+
+// 🆕 원형 화살표 with 애니메이션
+<Connector
+  fromBox={{ id: "sensor", position: "bottom" }}
+  toBox={{ id: "controller", position: "top" }}
+  connectionType="orthogonal"
+  arrowShape="circle"
+  arrowColor="green"
+  animated={true}
+  strokeColor="#10B981"
+  strokeWidth={2}
+/>
+
+// 🆕 오프셋을 사용한 정밀한 연결
+<Connector
+  fromBox={{
+    id: "tank",
+    position: "right",
+    offset: { x: 5, y: -10 }
+  }}
+  toBox={{
+    id: "engine",
+    position: "left",
+    offset: { x: -5, y: 10 }
+  }}
+  connectionType="straight"
+  strokeColor="#F59E0B"
+  strokeWidth={4}
+  showArrow={true}
+/>
+
+// 🔧 기존 방식도 여전히 지원
 <Connector
   fromElementId="tank"
   toElementId="engine"
@@ -283,18 +422,6 @@ import { Connector } from '@/components/DiagramComponents';
   strokeColor="#3B82F6"
   label="수소 공급"
   labelPosition="middle"
-/>
-
-// 곡선 점선 연결
-<Connector
-  fromElementId="sensor"
-  toElementId="controller"
-  connectionType="curved"
-  dashArray="5,5"
-  strokeColor="#EF4444"
-  strokeWidth={2}
-  showArrow={true}
-  arrowSize={12}
 />
 ```
 
@@ -764,6 +891,155 @@ export default ComprehensiveTest;
 
 ## 고급 사용법
 
+### 🆕 bendPoints를 활용한 복잡한 경로 설계
+
+```jsx
+// 복잡한 시스템 다이어그램에서 장애물 회피
+const ComplexFlowDiagram = () => {
+  return (
+    <DiagramProvider>
+      {/* 시작점 */}
+      <Box id="source" x={50} y={100} text="데이터 소스" />
+
+      {/* 장애물 */}
+      <Box id="firewall" x={200} y={80} text="방화벽" className="bg-red-500" />
+      <Box id="proxy" x={200} y={140} text="프록시" className="bg-yellow-500" />
+
+      {/* 목적지 */}
+      <Box id="target" x={400} y={100} text="타겟 서버" />
+
+      {/* 장애물을 우회하는 복잡한 경로 */}
+      <Connector
+        fromBox={{ id: "source", position: "right" }}
+        toBox={{ id: "target", position: "left" }}
+        connectionType="custom"
+        bendPoints={[
+          { x: 150, y: 115 }, // 시작점에서 조금 나오기
+          { x: 150, y: 50 }, // 위로 올라가서
+          { x: 350, y: 50 }, // 장애물들 위로 지나가기
+          { x: 350, y: 115 }, // 아래로 내려오기
+        ]}
+        strokeColor="#10B981"
+        strokeWidth={3}
+        arrowShape="diamond"
+        animated={true}
+      />
+    </DiagramProvider>
+  );
+};
+```
+
+### 🆕 동적 bendPoints 계산
+
+```jsx
+// 실시간으로 bendPoints 계산하기
+const DynamicBendPoints = () => {
+  const [obstacles, setObstacles] = useState([{ x: 200, y: 80, width: 100, height: 40 }]);
+
+  // 장애물을 피하는 경로 자동 계산
+  const calculateBendPoints = useCallback((start, end, obstacles) => {
+    const bendPoints = [];
+
+    // 간단한 A* 알고리즘 또는 경로 찾기 로직
+    const midX = (start.x + end.x) / 2;
+    const obstacleTop = Math.min(...obstacles.map((o) => o.y)) - 20;
+
+    bendPoints.push({ x: midX, y: start.y }, { x: midX, y: obstacleTop }, { x: midX, y: end.y });
+
+    return bendPoints;
+  }, []);
+
+  const dynamicBendPoints = useMemo(
+    () => calculateBendPoints({ x: 50, y: 100 }, { x: 400, y: 150 }, obstacles),
+    [obstacles, calculateBendPoints]
+  );
+
+  return (
+    <Connector
+      fromBox={{ id: "start", position: "right" }}
+      toBox={{ id: "end", position: "left" }}
+      connectionType="custom"
+      bendPoints={dynamicBendPoints}
+      strokeColor="#3B82F6"
+      strokeWidth={2}
+    />
+  );
+};
+```
+
+### 🆕 bendPoints 문제 해결 가이드
+
+#### 문제 1: bendPoints가 저장되지 않거나 사라짐
+
+```jsx
+// ❌ 잘못된 방법 - 빈 배열로 초기화
+const [connectorProps, setConnectorProps] = useState({
+  bendPoints: [], // 이렇게 하면 안됨!
+  strokeWidth: 2
+});
+
+// ✅ 올바른 방법 - undefined로 유지
+const [connectorProps, setConnectorProps] = useState({
+  // bendPoints를 명시적으로 설정하지 않음
+  strokeWidth: 2
+});
+
+// ✅ 또는 조건부로만 전달
+<Connector
+  {...connectorProps}
+  {/* bendPoints가 있을 때만 전달 */}
+  {...(bendPoints && bendPoints.length > 0 && { bendPoints })}
+/>
+```
+
+#### 문제 2: custom 타입인데 bendPoints가 없어서 경고 발생
+
+```jsx
+// 브라우저 콘솔에서 확인할 수 있는 메시지들:
+// ✅ "✅ bendPoints 파싱 성공: 4개 포인트"
+// ⚠️ "⚠️ connectionType='custom'이지만 bendPoints가 정의되지 않았습니다. 'straight' 타입으로 fallback합니다."
+
+// 해결 방법:
+const SafeCustomConnector = ({ bendPoints, ...props }) => {
+  // bendPoints가 없으면 다른 연결 타입 사용
+  const safeConnectionType = (bendPoints && bendPoints.length > 0)
+    ? "custom"
+    : "straight";
+
+  return (
+    <Connector
+      {...props}
+      connectionType={safeConnectionType}
+      {/* bendPoints가 유효할 때만 전달 */}
+      {...(bendPoints && bendPoints.length > 0 && { bendPoints })}
+    />
+  );
+};
+```
+
+#### 문제 3: bendPoints 좌표가 올바르지 않음
+
+```jsx
+// 좌표 검증 함수
+const validateBendPoints = (points) => {
+  if (!Array.isArray(points)) return false;
+
+  return points.every(
+    (point) => point && typeof point.x === "number" && typeof point.y === "number" && !isNaN(point.x) && !isNaN(point.y)
+  );
+};
+
+// 사용 예시
+const bendPoints = [
+  { x: 100, y: 50 },
+  { x: 200, y: 100 },
+];
+
+if (!validateBendPoints(bendPoints)) {
+  console.error("유효하지 않은 bendPoints:", bendPoints);
+}
+```
+
 ### 커스텀 테마
 
 ```jsx
@@ -859,6 +1135,22 @@ const RealTimeDiagram = () => {
 
 ---
 
-**이 문서는 Diagram v0.1.0 기준으로 작성되었습니다.**
+**이 문서는 Diagram v0.2.0 기준으로 작성되었습니다.**
+
+### 🆕 v0.2.0 새로운 기능
+
+- **bendPoints 지원**: `connectionType="custom"`으로 복잡한 경로 생성 가능
+- **자동 Box 연결**: `fromBox`/`toBox`로 DiagramProvider를 통한 자동 연결
+- **고급 화살표**: 양방향, 다양한 모양(diamond, circle, square), 커스텀 색상
+- **자동 Fallback**: 설정 오류 시 안전한 기본값으로 자동 전환
+- **개발자 도구**: 콘솔 경고 및 디버깅 지원
+- **bendPoints 유지**: 속성 변경 시에도 bendPoints 유지
+- **JSX 파싱 개선**: 메타데이터에서 bendPoints 정확한 파싱
+
+### 🔧 v0.2.0 수정사항
+
+- **bendPoints 안정성**: Run 버튼 클릭 시에도 bendPoints 유지
+- **Multiple Connections 오류 해결**: JSX 파싱에서 bendPoints 누락 문제 수정
+- **성능 최적화**: 불필요한 재렌더링 방지
 
 **Made by KIM DOWON**

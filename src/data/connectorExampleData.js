@@ -279,6 +279,91 @@ export const codeTemplates = {
     animated={true}
   />
 </DiagramProvider>`,
+
+  customBendPoints: `<DiagramProvider>
+  {/* Box 컴포넌트들 */}
+  <Box 
+    id="start"
+    x={50} 
+    y={50} 
+    width={80} 
+    height={30} 
+    text="출발점" 
+    className="bg-indigo-600 text-white border-indigo-800 border-2 
+               rounded-lg text-sm hover:shadow-lg transition-all duration-300"
+  />
+  <Box 
+    id="obstacle"
+    x={140} 
+    y={100} 
+    width={80} 
+    height={40} 
+    text="장애물" 
+    className="bg-gray-400 text-white border-gray-600 border-2 
+               rounded-lg text-sm"
+  />
+  <Box 
+    id="end"
+    x={280} 
+    y={150} 
+    width={80} 
+    height={30} 
+    text="도착점" 
+    className="bg-rose-600 text-white border-rose-800 border-2 
+               rounded-lg text-sm hover:shadow-lg transition-all duration-300"
+  />
+
+  {/* 사용자 정의 경로로 장애물 우회 */}
+  <Connector
+    fromBox={{ id: "start", position: "right" }}
+    toBox={{ id: "end", position: "left" }}
+    connectionType="custom"
+    bendPoints={[
+      { x: 130, y: 65 },  // 첫 번째 꺾임점
+      { x: 130, y: 30 },  // 위로 올라가기
+      { x: 250, y: 30 },  // 장애물 위로 지나가기
+      { x: 250, y: 165 }  // 아래로 내려가기
+    ]}
+    className="text-indigo-500 hover:text-indigo-600 transition-colors duration-200"
+    showArrow={true}
+    strokeWidth={2}
+  />
+</DiagramProvider>`,
+
+  arrowVariations: `<DiagramProvider>
+  {/* Box 컴포넌트들 */}
+  <Box 
+    id="boxA"
+    x={50} 
+    y={30} 
+    width={80} 
+    height={30} 
+    text="양방향" 
+    className="bg-amber-600 text-white border-amber-800 border-2 
+               rounded-lg text-sm hover:shadow-lg transition-all duration-300"
+  />
+  <Box 
+    id="boxB"
+    x={200} 
+    y={80} 
+    width={80} 
+    height={30} 
+    text="연결" 
+    className="bg-orange-600 text-white border-orange-800 border-2 
+               rounded-lg text-sm hover:shadow-lg transition-all duration-300"
+  />
+
+  {/* 양방향 화살표 */}
+  <Connector
+    fromBox={{ id: "boxA", position: "right" }}
+    toBox={{ id: "boxB", position: "left" }}
+    connectionType="curved"
+    arrowDirection="both"
+    arrowSize={12}
+    className="text-amber-500 hover:text-amber-600 transition-colors duration-200"
+    strokeWidth={2}
+  />
+</DiagramProvider>`,
 };
 
 // 그리드 예제 데이터
@@ -494,5 +579,126 @@ export const gridExamples = [
       animated: true,
     },
     description: "animated={true}",
+  },
+  {
+    id: "custom-bendpoints",
+    title: "7. 사용자 정의 경로 (bendPoints)",
+    boxes: [
+      {
+        id: "custom-start",
+        x: 10,
+        y: 50,
+        width: 80,
+        height: 30,
+        text: "출발점",
+        className:
+          "bg-indigo-600 text-white border-indigo-800 border-2 rounded-lg text-xs hover:shadow-lg transition-all duration-300",
+      },
+      {
+        id: "custom-end",
+        x: 200,
+        y: 120,
+        width: 80,
+        height: 30,
+        text: "도착점",
+        className:
+          "bg-rose-600 text-white border-rose-800 border-2 rounded-lg text-xs hover:shadow-lg transition-all duration-300",
+      },
+      {
+        id: "obstacle",
+        x: 110,
+        y: 80,
+        width: 60,
+        height: 25,
+        text: "장애물",
+        className: "bg-gray-400 text-white border-gray-600 border-2 rounded-lg text-xs",
+      },
+    ],
+    connector: {
+      fromBox: { id: "custom-start", position: "right" },
+      toBox: { id: "custom-end", position: "left" },
+      connectionType: "custom",
+      bendPoints: [
+        { x: 100, y: 65 }, // 첫 번째 꺾임점
+        { x: 100, y: 40 }, // 위로 올라가기
+        { x: 190, y: 40 }, // 장애물 위로 지나가기
+        { x: 190, y: 135 }, // 아래로 내려가기
+      ],
+      className: "text-indigo-500 hover:text-indigo-600 transition-colors duration-200",
+      showArrow: true,
+      strokeWidth: 2,
+    },
+    description: 'connectionType="custom" + bendPoints 사용',
+  },
+  {
+    id: "stepped",
+    title: "8. 계단식 연결",
+    boxes: [
+      {
+        id: "step-start",
+        x: 10,
+        y: 30,
+        width: 80,
+        height: 30,
+        text: "시작",
+        className:
+          "bg-emerald-600 text-white border-emerald-800 border-2 rounded-lg text-xs hover:shadow-lg transition-all duration-300",
+      },
+      {
+        id: "step-end",
+        x: 200,
+        y: 100,
+        width: 80,
+        height: 30,
+        text: "끝",
+        className:
+          "bg-violet-600 text-white border-violet-800 border-2 rounded-lg text-xs hover:shadow-lg transition-all duration-300",
+      },
+    ],
+    connector: {
+      fromBox: { id: "step-start", position: "right" },
+      toBox: { id: "step-end", position: "left" },
+      connectionType: "stepped",
+      className: "text-emerald-500 hover:text-emerald-600 transition-colors duration-200",
+      showArrow: true,
+      strokeWidth: 2,
+    },
+    description: 'connectionType="stepped"',
+  },
+  {
+    id: "arrow-directions",
+    title: "9. 다양한 화살표 방향",
+    boxes: [
+      {
+        id: "arrow-start",
+        x: 10,
+        y: 50,
+        width: 80,
+        height: 30,
+        text: "양방향",
+        className:
+          "bg-amber-600 text-white border-amber-800 border-2 rounded-lg text-xs hover:shadow-lg transition-all duration-300",
+      },
+      {
+        id: "arrow-end",
+        x: 150,
+        y: 50,
+        width: 80,
+        height: 30,
+        text: "연결",
+        className:
+          "bg-orange-600 text-white border-orange-800 border-2 rounded-lg text-xs hover:shadow-lg transition-all duration-300",
+      },
+    ],
+    connector: {
+      fromBox: { id: "arrow-start", position: "right" },
+      toBox: { id: "arrow-end", position: "left" },
+      connectionType: "straight",
+      arrowDirection: "both",
+      arrowSize: 10,
+      className: "text-amber-500 hover:text-amber-600 transition-colors duration-200",
+      strokeWidth: 2,
+    },
+    description: 'arrowDirection="both"',
   },
 ];

@@ -174,7 +174,7 @@ const Connector = ({
   arrowDirection = "forward", // 'forward', 'backward', 'both', 'none'
   arrowColor = "current", // 'current', 'red', 'blue', etc.
   arrowShape = "triangle", // 'triangle', 'diamond', 'circle', 'square'
-  bendPoints = [], // 중간 꺾임점들 [{ x: 150, y: 100 }, { x: 150, y: 200 }]
+  bendPoints, // 중간 꺾임점들 [{ x: 150, y: 100 }, { x: 150, y: 200 }] - 기본값 제거
   cornerRadius = 0, // 모서리 둥글기
   orthogonalDirection = "auto", // 'horizontal-first', 'vertical-first', 'auto'
   stepOffset = 50, // orthogonal 연결에서 중간 지점 오프셋
@@ -188,6 +188,9 @@ const Connector = ({
     // DiagramProvider가 없으면 박스 연결 기능을 사용하지 않음
     getBox = null;
   }
+
+  // bendPoints를 안전하게 처리 - undefined는 그대로 유지
+  const safeBendPoints = Array.isArray(bendPoints) ? bendPoints : undefined;
 
   // arrowDirection에 따른 화살표 표시 설정
   const shouldShowEndArrow =
@@ -322,6 +325,12 @@ const Connector = ({
           actualStartPoint = calculatedStart;
           actualEndPoint = calculatedEnd;
         }
+      } else {
+        // 박스를 찾지 못했지만 safeBendPoints가 있는 경우, safeBendPoints 사용
+        if (safeBendPoints && safeBendPoints.length >= 2) {
+          actualStartPoint = safeBendPoints[0];
+          actualEndPoint = safeBendPoints[safeBendPoints.length - 1];
+        }
       }
     }
 
@@ -346,6 +355,14 @@ const Connector = ({
 
   // 자동 연결 타입 결정 (박스 연결시)
   const getAutoConnectionType = () => {
+    // custom 타입인데 bendPoints가 없으면 straight로 fallback
+    if (connectionType === "custom" && (!safeBendPoints || safeBendPoints.length === 0)) {
+      console.warn(
+        "⚠️ connectionType='custom'이지만 bendPoints가 정의되지 않았습니다. 'straight' 타입으로 fallback합니다."
+      );
+      return "straight";
+    }
+
     if (connectionType !== "auto") return connectionType;
 
     if (fromBox && toBox && fromBox.position && toBox.position) {
@@ -443,17 +460,24 @@ const Connector = ({
 
     let path = `M ${x1} ${y1}`;
 
-    // bendPoints가 배열인지 확인하고 중간 꺾임점들을 통과
-    if (Array.isArray(bendPoints) && bendPoints.length > 0) {
-      bendPoints.forEach((point) => {
+    // safeBendPoints가 정의되어 있고 배열인지 확인하고 중간 꺾임점들을 통과
+    if (safeBendPoints && safeBendPoints.length > 0) {
+      safeBendPoints.forEach((point) => {
         if (point && typeof point.x === "number" && typeof point.y === "number") {
           path += ` L ${point.x} ${point.y}`;
         }
       });
-    }
 
-    // 최종 목적지
-    path += ` L ${x2} ${y2}`;
+      // safeBendPoints의 마지막 점에서 endPoint로 연결
+      // 단, 마지막 bendPoint가 endPoint와 다른 경우에만
+      const lastBend = safeBendPoints[safeBendPoints.length - 1];
+      if (lastBend && (lastBend.x !== x2 || lastBend.y !== y2)) {
+        path += ` L ${x2} ${y2}`;
+      }
+    } else {
+      // safeBendPoints가 없으면 직선 연결
+      path += ` L ${x2} ${y2}`;
+    }
 
     return path;
   };
@@ -599,8 +623,8 @@ const Connector = ({
       finalX2 = x2,
       finalY2 = y2;
 
-    if (finalConnectionType === "custom" && Array.isArray(bendPoints) && bendPoints.length > 0) {
-      const lastBend = bendPoints[bendPoints.length - 1];
+    if (finalConnectionType === "custom" && safeBendPoints && safeBendPoints.length > 0) {
+      const lastBend = safeBendPoints[safeBendPoints.length - 1];
       if (lastBend && typeof lastBend.x === "number" && typeof lastBend.y === "number") {
         finalX1 = lastBend.x;
         finalY1 = lastBend.y;
@@ -679,8 +703,8 @@ const Connector = ({
       startX2 = x2,
       startY2 = y2;
 
-    if (finalConnectionType === "custom" && Array.isArray(bendPoints) && bendPoints.length > 0) {
-      const firstBend = bendPoints[0];
+    if (finalConnectionType === "custom" && safeBendPoints && safeBendPoints.length > 0) {
+      const firstBend = safeBendPoints[0];
       if (firstBend && typeof firstBend.x === "number" && typeof firstBend.y === "number") {
         startX2 = firstBend.x;
         startY2 = firstBend.y;
@@ -719,10 +743,12 @@ const Connector = ({
     : { startArrowHead1: null, startArrowHead2: null };
 
   // SVG 영역 계산 (bendPoints 포함)
-  const safeBendPoints = Array.isArray(bendPoints)
-    ? bendPoints.filter((p) => p && typeof p.x === "number" && typeof p.y === "number" && !isNaN(p.x) && !isNaN(p.y))
+  const filteredBendPoints = safeBendPoints
+    ? safeBendPoints.filter(
+        (p) => p && typeof p.x === "number" && typeof p.y === "number" && !isNaN(p.x) && !isNaN(p.y)
+      )
     : [];
-  const allPoints = [safeStartPoint, safeEndPoint, ...safeBendPoints];
+  const allPoints = [safeStartPoint, safeEndPoint, ...filteredBendPoints];
   const minX = Math.min(...allPoints.map((p) => p.x)) - safeArrowSize;
   const minY = Math.min(...allPoints.map((p) => p.y)) - safeArrowSize;
   const maxX = Math.max(...allPoints.map((p) => p.x)) + safeArrowSize;
@@ -829,7 +855,7 @@ const Connector = ({
       />
 
       {/* bendPoints 표시 (디버깅용) */}
-      {safeBendPoints.map((point, index) => (
+      {filteredBendPoints.map((point, index) => (
         <circle
           key={index}
           cx={point.x - minX}

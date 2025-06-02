@@ -11,9 +11,9 @@ const GridExampleCard = ({ example }) => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">
-      <h4 className="text-lg font-semibold mb-4">{example.title}</h4>
+      <h4 className="text-lg font-semibold mb-4 text-gray-800 leading-relaxed">{example.title}</h4>
       <DiagramProvider>
-        <div className="relative h-48 border border-gray-200 rounded bg-gray-50 overflow-hidden">
+        <div className="relative h-56 border border-gray-200 rounded bg-gray-50 overflow-hidden mb-4">
           {/* 박스들 렌더링 */}
           {example.boxes.map((box) => (
             <Box key={box.id} {...box} />
@@ -29,7 +29,11 @@ const GridExampleCard = ({ example }) => {
           )}
         </div>
       </DiagramProvider>
-      {example.description && <p className="mt-4 text-sm text-gray-600">{example.description}</p>}
+      {example.description && (
+        <div className="bg-gray-100 p-3 rounded text-sm text-gray-700 font-mono">
+          <code className="break-words">{example.description}</code>
+        </div>
+      )}
     </div>
   );
 };

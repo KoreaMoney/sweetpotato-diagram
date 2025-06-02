@@ -24,6 +24,7 @@ export const parseProps = (propsString) => {
       animated: /animated=\{(true|false)\}/,
       strokeWidth: /strokeWidth=\{(\d+)\}/,
       orthogonalDirection: /orthogonalDirection=["']([^"']+)["']/,
+      bendPoints: /bendPoints=\{(\[[\s\S]*?\])\}/,
     };
 
     // 각 패턴을 적용하여 props 추출
@@ -47,6 +48,26 @@ export const parseProps = (propsString) => {
             if (idMatch && positionMatch) {
               props[key] = { id: idMatch[1], position: positionMatch[1] };
             }
+          }
+        } else if (key === "bendPoints") {
+          // bendPoints 배열 파싱
+          try {
+            const arrayString = match[1];
+            // bendPoints 파싱을 위한 정규식
+            const pointMatches = arrayString.matchAll(/{\s*x:\s*(\d+)\s*,\s*y:\s*(\d+)\s*}/g);
+            const bendPoints = [];
+            for (const pointMatch of pointMatches) {
+              bendPoints.push({
+                x: parseInt(pointMatch[1]),
+                y: parseInt(pointMatch[2]),
+              });
+            }
+            if (bendPoints.length > 0) {
+              props[key] = bendPoints;
+              console.log(`✅ jsxParser bendPoints 파싱 성공: ${bendPoints.length}개 포인트`, bendPoints);
+            }
+          } catch (error) {
+            console.error("bendPoints 파싱 오류:", error);
           }
         } else {
           props[key] = match[1];

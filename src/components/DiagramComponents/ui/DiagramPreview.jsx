@@ -6,6 +6,9 @@ import React from "react";
 import { getDifficultyColor } from "../examples/exampleMetadata";
 
 const DiagramPreview = ({ ExampleComponent, isAnimated, isCustomMode, currentTemplate, parseError }) => {
+  // 컴포넌트 리마운트를 위한 stable key 생성
+  const stableKey = `${isCustomMode ? "custom" : currentTemplate?.title || "unknown"}-${isAnimated}`;
+
   return (
     <div className="flex-1 bg-gray-100 relative overflow-hidden">
       {/* 헤더 정보 */}
@@ -40,7 +43,9 @@ const DiagramPreview = ({ ExampleComponent, isAnimated, isCustomMode, currentTem
       </div>
 
       {/* 다이어그램 렌더링 영역 */}
-      <div className="w-full h-full relative">{ExampleComponent && <ExampleComponent isAnimated={isAnimated} />}</div>
+      <div className="w-full h-full relative">
+        {ExampleComponent && <ExampleComponent key={stableKey} isAnimated={isAnimated} />}
+      </div>
     </div>
   );
 };

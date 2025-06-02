@@ -38,7 +38,8 @@ const LivePreview = ({ parsedComponents }) => {
               showArrow: connectorProps.showArrow !== false,
               strokeWidth: connectorProps.strokeWidth || 2,
               className: connectorProps.className || "text-blue-600",
-              bendPoints: Array.isArray(connectorProps.bendPoints) ? connectorProps.bendPoints : [],
+              ...(Array.isArray(connectorProps.bendPoints) &&
+                connectorProps.bendPoints.length > 0 && { bendPoints: connectorProps.bendPoints }),
             };
 
             return <Connector key={safeProps.id} {...safeProps} />;

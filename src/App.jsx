@@ -11,6 +11,7 @@ import Valve from "./components/DiagramComponents/Valve";
 import ImageBox from "./components/DiagramComponents/ImageBox";
 import TypingEffect from "./components/TypingEffect";
 import logo from "./assets/logo.png";
+import Connector from "./components/DiagramComponents/Connector";
 
 function App() {
   const [activeTab, setActiveTab] = useState("home");
@@ -125,10 +126,10 @@ function App() {
         <Box
           id="test-box-2"
           x={200}
-          y={100}
+          y={80}
           width={120}
           height={60}
-          text="(200,100)"
+          text="(200,80)"
           className="bg-green-500 text-white border-green-600 border-2 rounded"
         />
 
@@ -177,6 +178,34 @@ function App() {
         <Triangle x={50} y={300} size={40} direction="up" />
         <Valve x={150} y={300} size={50} type="ball" isOpen={true} />
         <ImageBox id="img-test" x={250} y={300} width={80} height={60} text="Image" icon="⚙️" iconType="emoji" />
+
+        {/* Connector examples */}
+        <Connector
+          fromBox={{ id: "box1", position: "right" }}
+          toBox={{ id: "box2", position: "left" }}
+          connectionType="straight"
+          showArrow={true}
+        />
+
+        <Connector
+          fromBox={{ id: "start", position: "right" }}
+          toBox={{ id: "end", position: "left" }}
+          connectionType="custom"
+          bendPoints={[
+            { x: 700, y: 65 },
+            { x: 700, y: 30 },
+            { x: 650, y: 30 },
+            { x: 700, y: 165 },
+          ]}
+          showArrow={true}
+        />
+
+        <Connector
+          fromBox={{ id: "boxA", position: "right" }}
+          toBox={{ id: "boxB", position: "left" }}
+          arrowDirection="both"
+          arrowSize={12}
+        />
       </div>
 
       <div className="p-4 bg-white rounded-lg border">

@@ -15,17 +15,32 @@ const UsageGuide = () => {
   />
   <Box 
     id="box2"
-    x={200} 
-    y={100} 
+    x={280} 
+    y={120} 
     width={80} 
     height={30} 
     text="끝" 
-    className="bg-green-600 text-white border-green-800 border-2 rounded-lg text-sm"
+    className="bg-emerald-600 text-white border-emerald-800 border-2 rounded-lg text-sm"
+  />
+  <Box 
+    id="obstacle"
+    x={140} 
+    y={80} 
+    width={60} 
+    height={25} 
+    text="장애물" 
+    className="bg-gray-400 text-white border-gray-600 border-2 rounded-lg text-xs"
   />
   <Connector
     fromBox={{ id: "box1", position: "right" }}
     toBox={{ id: "box2", position: "left" }}
-    connectionType="straight"
+    connectionType="custom"
+    bendPoints={[
+      { x: 130, y: 65 },
+      { x: 130, y: 30 },
+      { x: 250, y: 30 },
+      { x: 250, y: 135 }
+    ]}
     showArrow={true}
     strokeWidth={2}
     className="text-blue-600"
@@ -97,6 +112,49 @@ const UsageGuide = () => {
         const typeMatch = propsString.match(/connectionType=["']([^"']+)["']/);
         if (typeMatch) props.connectionType = typeMatch[1];
 
+        // bendPoints 추출 (복잡한 객체 배열) - 개선된 파싱
+        const bendPointsMatch = propsString.match(/bendPoints={\[\s*([\s\S]*?)\s*\]}/);
+        if (bendPointsMatch) {
+          try {
+            const bendPointsStr = bendPointsMatch[1];
+            // 각 bendPoint를 파싱 - 더 유연한 패턴으로 수정
+            const pointMatches = bendPointsStr.matchAll(/{\s*x:\s*(\d+)\s*,\s*y:\s*(\d+)\s*}/g);
+            const bendPoints = [];
+            for (const pointMatch of pointMatches) {
+              bendPoints.push({
+                x: parseInt(pointMatch[1]),
+                y: parseInt(pointMatch[2]),
+              });
+            }
+            if (bendPoints.length > 0) {
+              props.bendPoints = bendPoints;
+              console.log(`✅ bendPoints 파싱 성공: ${bendPoints.length}개 포인트`, bendPoints);
+            } else {
+              // 더 복잡한 형태의 bendPoints 파싱 시도 (여러 줄, 공백 등)
+              const multilinePointMatches = bendPointsStr.matchAll(/{\s*x:\s*(\d+)\s*,\s*y:\s*(\d+)\s*},?\s*/g);
+              const multilineBendPoints = [];
+              for (const pointMatch of multilinePointMatches) {
+                multilineBendPoints.push({
+                  x: parseInt(pointMatch[1]),
+                  y: parseInt(pointMatch[2]),
+                });
+              }
+              if (multilineBendPoints.length > 0) {
+                props.bendPoints = multilineBendPoints;
+                console.log(
+                  `✅ bendPoints 멀티라인 파싱 성공: ${multilineBendPoints.length}개 포인트`,
+                  multilineBendPoints
+                );
+              } else {
+                console.warn(`⚠️ bendPoints 파싱 실패 - 패턴을 찾을 수 없습니다:`, bendPointsStr);
+              }
+            }
+            // bendPoints가 비어있으면 undefined로 유지 (빈 배열 설정하지 않음)
+          } catch (error) {
+            console.error("bendPoints 파싱 오류:", error);
+          }
+        }
+
         // showArrow 추출
         const arrowMatch = propsString.match(/showArrow={true}/);
         if (arrowMatch) props.showArrow = true;
@@ -116,6 +174,14 @@ const UsageGuide = () => {
         // dashArray 추출
         const dashMatch = propsString.match(/dashArray=["']([^"']+)["']/);
         if (dashMatch) props.dashArray = dashMatch[1];
+
+        // arrowDirection 추출
+        const arrowDirMatch = propsString.match(/arrowDirection=["']([^"']+)["']/);
+        if (arrowDirMatch) props.arrowDirection = arrowDirMatch[1];
+
+        // arrowSize 추출
+        const arrowSizeMatch = propsString.match(/arrowSize={(\d+)}/);
+        if (arrowSizeMatch) props.arrowSize = parseInt(arrowSizeMatch[1]);
 
         props.id = `connector-${Math.random()}`;
         connectors.push(props);
@@ -139,22 +205,43 @@ const UsageGuide = () => {
         <LivePreview parsedComponents={parsedComponents} />
       </div>
 
-      <div className="mt-6 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-        <h4 className="font-semibold text-blue-800 mb-2">💡 화살표 표시 팁</h4>
-        <ul className="text-sm text-blue-700 space-y-1">
-          <li>
-            • <code className="bg-blue-100 px-1 rounded">showArrow={`{true}`}</code>를 추가하면 화살표가 표시됩니다
-          </li>
-          <li>
-            • <code className="bg-blue-100 px-1 rounded">strokeWidth</code>로 선 두께를 조절할 수 있습니다
-          </li>
-          <li>
-            • <code className="bg-blue-100 px-1 rounded">className</code>으로 색상과 스타일을 변경할 수 있습니다
-          </li>
-          <li>
-            • <code className="bg-blue-100 px-1 rounded">animated={`{true}`}</code>로 애니메이션을 추가할 수 있습니다
-          </li>
-        </ul>
+      <div className="mt-6 space-y-4">
+        <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+          <h4 className="font-semibold text-blue-800 mb-2">💡 기본 속성 팁</h4>
+          <ul className="text-sm text-blue-700 space-y-1">
+            <li>
+              • <code className="bg-blue-100 px-1 rounded">showArrow={`{true}`}</code>를 추가하면 화살표가 표시됩니다
+            </li>
+            <li>
+              • <code className="bg-blue-100 px-1 rounded">strokeWidth</code>로 선 두께를 조절할 수 있습니다
+            </li>
+            <li>
+              • <code className="bg-blue-100 px-1 rounded">className</code>으로 색상과 스타일을 변경할 수 있습니다
+            </li>
+            <li>
+              • <code className="bg-blue-100 px-1 rounded">animated={`{true}`}</code>로 애니메이션을 추가할 수 있습니다
+            </li>
+          </ul>
+        </div>
+
+        <div className="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+          <h4 className="font-semibold text-green-800 mb-2">🛠️ 고급 기능</h4>
+          <ul className="text-sm text-green-700 space-y-1">
+            <li>
+              • <code className="bg-green-100 px-1 rounded">connectionType="custom"</code> +{" "}
+              <code className="bg-green-100 px-1 rounded">bendPoints</code>로 사용자 정의 경로 생성
+            </li>
+            <li>
+              • <code className="bg-green-100 px-1 rounded">arrowDirection="both"</code>로 양방향 화살표 설정
+            </li>
+            <li>
+              • <code className="bg-green-100 px-1 rounded">connectionType="orthogonal"</code>로 직각 연결
+            </li>
+            <li>
+              • <code className="bg-green-100 px-1 rounded">connectionType="curved"</code>로 곡선 연결
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );
