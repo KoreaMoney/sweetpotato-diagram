@@ -181,7 +181,7 @@ function App() {
 
         {/* Connector examples */}
         <Connector
-          fromBox={{ id: "box1", position: "right" }}
+          fromBox={{ id: "source", position: "right", offset: { x: 5, y: -10 } }}
           toBox={{ id: "box2", position: "left" }}
           connectionType="straight"
           showArrow={true}
@@ -204,7 +204,8 @@ function App() {
           fromBox={{ id: "boxA", position: "right" }}
           toBox={{ id: "boxB", position: "left" }}
           arrowDirection="both"
-          arrowSize={12}
+          arrowShape="diamond"
+          arrowColor="red"
         />
       </div>
 
