@@ -154,7 +154,7 @@
  *   - arrowShape: 화살표 모양 제어 (triangle, diamond, circle, square)
  */
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useDiagram } from "./DiagramContext";
 
 const Connector = ({
@@ -184,7 +184,7 @@ const Connector = ({
   try {
     const context = useDiagram();
     getBox = context.getBox;
-  } catch (error) {
+  } catch {
     // DiagramProvider가 없으면 박스 연결 기능을 사용하지 않음
     getBox = null;
   }

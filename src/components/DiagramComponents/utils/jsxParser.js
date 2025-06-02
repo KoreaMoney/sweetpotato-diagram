@@ -40,7 +40,7 @@ export const parseProps = (propsString) => {
             const objString = match[1].replace(/'/g, '"');
             const cleanObjString = objString.replace(/(\w+):/g, '"$1":');
             props[key] = JSON.parse(`{${cleanObjString}}`);
-          } catch (e) {
+          } catch {
             // 간단한 파싱 시도
             const idMatch = match[1].match(/id:\s*["']([^"']+)["']/);
             const positionMatch = match[1].match(/position:\s*["']([^"']+)["']/);

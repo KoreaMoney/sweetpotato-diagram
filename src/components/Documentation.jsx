@@ -9,7 +9,6 @@ import ImageBoxSection from "./documentation/ImageBoxSection";
 import ArrowSection from "./documentation/ArrowSection";
 import LineSection from "./documentation/LineSection";
 import ExamplesSection from "./documentation/ExamplesSection";
-import logo from "@/assets/logo.png";
 
 const Documentation = () => {
   const [activeSection, setActiveSection] = useState("overview");

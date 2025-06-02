@@ -7,7 +7,7 @@ import Box from "../Box";
 import Connector from "../Connector";
 
 // 기본 연결 예제
-export const BasicExample = ({ isAnimated }) => (
+export const BasicExample = () => (
   <>
     <Box
       id="box1"
@@ -72,7 +72,7 @@ export const CurvedExample = ({ isAnimated }) => (
 );
 
 // 직교 연결 예제
-export const OrthogonalExample = ({ isAnimated }) => (
+export const OrthogonalExample = () => (
   <>
     <Box
       id="box1"
@@ -187,7 +187,7 @@ export const CustomExample = ({ elements, isAnimated }) => {
         } else if (element.type === "Connector") {
           // showArrow prop을 arrowDirection prop으로 변환
           const props = { ...element.props };
-          if (props.hasOwnProperty("showArrow")) {
+          if (Object.prototype.hasOwnProperty.call(props, "showArrow")) {
             props.arrowDirection = props.showArrow ? "forward" : "none";
             delete props.showArrow;
           }
