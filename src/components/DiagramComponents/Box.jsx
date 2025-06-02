@@ -11,6 +11,9 @@ const Box = ({
   className = "bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-sm",
   onClick = null,
 }) => {
+  // 디버깅: props 확인
+  console.log("Box props:", { id, text, width, height, x, y, className });
+
   // DiagramContext를 optional하게 사용
   let registerBox, unregisterBox;
   try {
@@ -66,7 +69,12 @@ const Box = ({
   const connectionPoints = getConnectionPoints();
 
   return (
-    <div className={`absolute ${className}`} style={{ left: x, top: y }} data-box-id={id}>
+    <div
+      className="absolute"
+      style={{ left: `${x}px`, top: `${y}px` }}
+      data-box-id={id}
+      data-debug={`Box-${id || "unnamed"}-${x}-${y}-${width}-${height}`}
+    >
       {/* 메인 박스 */}
       <div
         className={`flex items-center justify-center cursor-pointer select-none transition-all duration-200 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${className}`}

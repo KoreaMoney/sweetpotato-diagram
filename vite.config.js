@@ -16,6 +16,18 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
+    test: {
+      globals: true,
+      environment: "jsdom",
+      setupFiles: ["./src/test/setup.js"],
+      css: true,
+      include: ["src/**/*.{test,spec}.{js,jsx,ts,tsx}"],
+      exclude: ["node_modules/**", "dist/**", "src/test/e2e/**", "**/*.{config,setup}.{js,ts}"],
+      coverage: {
+        reporter: ["text", "json", "html"],
+        exclude: ["node_modules/", "dist/", "src/test/e2e/", "**/*.{config,setup}.{js,ts}"],
+      },
+    },
   };
 
   if (isLibrary) {
