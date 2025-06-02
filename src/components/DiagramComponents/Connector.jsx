@@ -205,7 +205,7 @@ const Connector = ({
           setIsReady(true);
         } else {
           // 박스가 아직 등록되지 않은 경우 다음 프레임에서 다시 확인
-          setTimeout(checkBoxes, 0);
+          setTimeout(checkBoxes, 50); // 50ms로 증가하여 안정성 향상
         }
       };
 
@@ -222,8 +222,11 @@ const Connector = ({
   }
 
   // arrowDirection에 따른 화살표 표시 설정
-  const shouldShowEndArrow = arrowDirection === "forward" || arrowDirection === "both" || showArrow;
-  const shouldShowStartArrow = arrowDirection === "backward" || arrowDirection === "both" || showStartArrow;
+  const shouldShowEndArrow =
+    arrowDirection === "none" ? false : arrowDirection === "forward" || arrowDirection === "both";
+
+  const shouldShowStartArrow =
+    arrowDirection === "none" ? false : arrowDirection === "backward" || arrowDirection === "both";
 
   // 화살표 색상 클래스 생성
   const getArrowColorClass = () => {
@@ -259,11 +262,11 @@ const Connector = ({
         const angle = Math.atan2(head1Y - centerY, head1X - centerX);
 
         // 다이아몬드의 4개 점 계산 (앞쪽, 위쪽, 뒤쪽, 아래쪽)
-        const frontX = centerX - size * 0.6 * Math.cos(angle); // 방향 반전
-        const frontY = centerY - size * 0.6 * Math.sin(angle); // 방향 반전
+        const frontX = centerX - size * 0.6 * Math.cos(angle);
+        const frontY = centerY - size * 0.6 * Math.sin(angle);
 
-        const backX = centerX + size * 0.6 * Math.cos(angle); // 방향 반전
-        const backY = centerY + size * 0.6 * Math.sin(angle); // 방향 반전
+        const backX = centerX + size * 0.6 * Math.cos(angle);
+        const backY = centerY + size * 0.6 * Math.sin(angle);
 
         const topX = centerX + size * 0.4 * Math.cos(angle + Math.PI / 2);
         const topY = centerY + size * 0.4 * Math.sin(angle + Math.PI / 2);

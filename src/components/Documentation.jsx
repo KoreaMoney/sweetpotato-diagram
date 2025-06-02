@@ -16,11 +16,11 @@ const Documentation = () => {
 
   const sections = [
     { id: "overview", title: "Getting Started", icon: "🚀" },
-    { id: "box", title: "Component API", icon: "🧩" },
+    { id: "box", title: "Box", icon: "🧩" },
     { id: "connector", title: "Connectors", icon: "🔗" },
-    { id: "triangle", title: "Styling Guide", icon: "🎨" },
-    { id: "valve", title: "Advanced Usage", icon: "⚡" },
-    { id: "imagebox", title: "Complete Examples", icon: "💡" },
+    { id: "triangle", title: "Triangle", icon: "🎨" },
+    { id: "valve", title: "Valve", icon: "⚡" },
+    { id: "imagebox", title: "Image Box", icon: "💡" },
     { id: "arrow", title: "Arrow", icon: "➡️" },
     { id: "line", title: "Line", icon: "📏" },
     { id: "examples", title: "Examples", icon: "💡" },
@@ -99,41 +99,39 @@ const Documentation = () => {
 
   return (
     <DiagramProvider>
-      <div className="min-h-screen bg-gray-100 pb-20">
-        <div className="flex">
-          {/* Sidebar - sticky positioning */}
-          <div className="w-64 bg-white shadow-lg sticky top-0 h-screen">
-            <div className="p-6 border-b">
-              <h1 className="text-lg font-bold text-gray-800">
-                <img src={logo} alt="logo" className="w-6 h-6 inline-block mr-2" />
-                Documentation
-              </h1>
-            </div>
-            <nav className="p-4 overflow-y-auto h-[calc(100vh-100px)]">
-              <ul className="space-y-2">
-                {sections.map((section) => (
-                  <li key={section.id}>
-                    <button
-                      onClick={() => setActiveSection(section.id)}
-                      className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-                        activeSection === section.id
-                          ? "bg-blue-100 text-blue-800 font-medium"
-                          : "text-gray-600 hover:bg-gray-100"
-                      }`}
-                    >
-                      <span className="mr-2">{section.icon}</span>
-                      {section.title}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+      <div className="h-full bg-gray-100 flex">
+        {/* Sidebar - fixed height with internal scroll */}
+        <div className="w-64 bg-white shadow-lg flex-shrink-0 flex flex-col h-full">
+          <div className="p-6 border-b flex-shrink-0">
+            <h1 className="text-lg font-bold text-gray-800">
+              <img src={logo} alt="logo" className="w-6 h-6 inline-block mr-2" />
+              Documentation
+            </h1>
           </div>
+          <nav className="p-4 overflow-y-auto flex-1">
+            <ul className="space-y-2">
+              {sections.map((section) => (
+                <li key={section.id}>
+                  <button
+                    onClick={() => setActiveSection(section.id)}
+                    className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                      activeSection === section.id
+                        ? "bg-blue-100 text-blue-800 font-medium"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    <span className="mr-2">{section.icon}</span>
+                    {section.title}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
 
-          {/* Main Content */}
-          <div className="flex-1">
-            <div className="max-w-4xl mx-auto p-8 pb-32">{renderContent()}</div>
-          </div>
+        {/* Main Content - scrollable */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-4xl mx-auto p-8">{renderContent()}</div>
         </div>
       </div>
     </DiagramProvider>

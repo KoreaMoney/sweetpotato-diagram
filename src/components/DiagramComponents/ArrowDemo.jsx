@@ -53,17 +53,17 @@ const ArrowDemo = () => {
 
   return (
     <DiagramProvider>
-      <div className="h-screen p-4 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
-        <div className="max-w-6xl mx-auto h-full flex flex-col">
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full">
+      <div className="h-full p-4 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-y-auto">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
             {/* 헤더 */}
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 text-white flex-shrink-0">
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 text-white">
               <h2 className="text-2xl font-bold flex items-center gap-3">🔺 Arrow Demo</h2>
               <p className="text-purple-100 mt-1">Real-time arrow styling and animation demo</p>
             </div>
 
             {/* 컨트롤 패널 */}
-            <div className="p-4 bg-gray-50 border-b flex-shrink-0">
+            <div className="p-4 bg-gray-50 border-b">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* 화살표 방향 */}
                 <div className="bg-white p-3 rounded-lg shadow-sm">
@@ -152,14 +152,12 @@ const ArrowDemo = () => {
             </div>
 
             {/* 미리보기와 코드 영역 */}
-            <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="space-y-4 p-4">
               {/* 미리보기 영역 */}
-              <div className="flex-1 p-4">
-                <div className="relative w-full h-full bg-white border-2 border-gray-200 rounded-lg overflow-hidden">
-                  <h3 className="absolute top-4 left-4 text-lg font-semibold text-gray-700 z-20 bg-white px-3 py-1 rounded-lg shadow-sm">
-                    Live Preview
-                  </h3>
+              <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">Live Preview</h3>
 
+                <div className="relative w-full h-96 bg-gray-50 border border-gray-300 rounded-lg overflow-hidden">
                   <Connector
                     startPoint={{ x: 100, y: 200 }}
                     endPoint={{ x: 500, y: 250 }}
@@ -192,9 +190,9 @@ const ArrowDemo = () => {
               </div>
 
               {/* 코드 예시 */}
-              <div className="p-4 bg-gray-50 border-t flex-shrink-0">
-                <h4 className="text-lg font-semibold text-gray-700 mb-2">Current JSX Code:</h4>
-                <div className="bg-gray-900 rounded-lg p-3 overflow-x-auto">
+              <div className="bg-white border-2 border-gray-200 rounded-lg p-4">
+                <h4 className="text-lg font-semibold text-gray-700 mb-4">Current JSX Code:</h4>
+                <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
                   <pre className="text-sm text-green-400">
                     {`<Connector
   startPoint={{ x: 100, y: 200 }}

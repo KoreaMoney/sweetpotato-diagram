@@ -82,7 +82,13 @@ const Triangle = ({
   const connectionPoints = getConnectionPoints();
 
   return (
-    <div className={`absolute ${className}`} style={{ left: x, top: y }}>
+    <div
+      className={`absolute ${className}`}
+      style={{
+        left: `${x}px`,
+        top: `${y}px`,
+      }}
+    >
       <svg
         width={size}
         height={size}
@@ -105,8 +111,8 @@ const Triangle = ({
           key={position}
           className="absolute w-2 h-2 bg-emerald-600 rounded-full opacity-0 hover:opacity-100 transition-all duration-200 cursor-crosshair hover:scale-150 hover:bg-emerald-500"
           style={{
-            left: point.x - x - 4,
-            top: point.y - y - 4,
+            left: `${point.x - x - 4}px`,
+            top: `${point.y - y - 4}px`,
           }}
           data-connection-point={position}
           data-x={point.x}

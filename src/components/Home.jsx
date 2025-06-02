@@ -13,7 +13,7 @@ const Home = () => {
   const imageRef = useRef(null);
   const animationRef = useRef(null);
 
-  const fullText = "SweetPD";
+  const fullText = "Sweet-Diagram";
   const typingSpeed = 150; // 타이핑 속도 (ms)
   const deletingSpeed = 100; // 삭제 속도 (ms)
   const pauseTime = 4000; // 타이핑 완료 후 대기 시간 (ms)

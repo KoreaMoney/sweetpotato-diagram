@@ -9,6 +9,7 @@ import DraggableBox from "./components/DiagramComponents/DraggableBox";
 import Triangle from "./components/DiagramComponents/Triangle";
 import Valve from "./components/DiagramComponents/Valve";
 import ImageBox from "./components/DiagramComponents/ImageBox";
+import TypingEffect from "./components/TypingEffect";
 import logo from "./assets/logo.png";
 
 function App() {
@@ -28,10 +29,16 @@ function App() {
     <div className="p-8 text-center">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-5xl font-bold text-gray-800 mb-4">SweetPD</h1>
+          <h1 className="text-5xl font-bold text-gray-800 mb-4 flex items-center justify-center">Sweet-Diagram</h1>
           <p className="text-xl text-gray-600 mb-8">
-            Modern and intuitive React diagram editor components with drag & drop and interactive diagram editing
-            features.
+            <TypingEffect
+              text="Modern and intuitive React diagram editor components with drag & drop and interactive diagram editing features."
+              speed={60}
+              delay={800}
+              showCursor={true}
+              cursorChar="|"
+              className="inline-block"
+            />
           </p>
         </div>
 
@@ -211,9 +218,10 @@ function App() {
                 <div className="flex items-center">
                   <button
                     onClick={() => setActiveTab("home")}
-                    className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                    className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors flex items-center"
                   >
-                    SweetPD
+                    <img src={logo} alt="logo" className="w-6 h-6 mr-2" />
+                    Sweet-Diagram
                   </button>
                 </div>
 
@@ -244,7 +252,7 @@ function App() {
           <footer className="bg-white border-t border-gray-200 flex-shrink-0">
             <div className="max-w-7xl mx-auto px-4 py-3">
               <div className="flex justify-between items-center text-sm text-gray-500">
-                <span>Made with ❤️ by KimDowon</span>
+                <span>Made with 💻 by KimDowon</span>
                 <div className="flex items-center gap-4">
                   <span>Active: {tabs.find((tab) => tab.id === activeTab)?.label}</span>
                   <span className="flex items-center gap-1">

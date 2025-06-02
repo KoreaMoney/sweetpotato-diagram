@@ -15,7 +15,7 @@ const ConnectorExamples = () => {
     <div className="w-full bg-gray-50 p-8 pb-24">
       <h1 className="text-2xl font-bold text-gray-800 mb-8 flex items-center">
         <img src={logo} alt="logo" className="w-6 h-6 inline-block mr-2" />
-        SweetPD Connector
+        sweet-diagram Connector
       </h1>
 
       {/* 박스 연결 방식 소개 */}

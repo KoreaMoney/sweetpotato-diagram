@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDiagram } from "./DiagramContext";
-import baseImage from "@/assets/chip.png";
+import baseImage from "@/assets/logo.png";
 
 const ImageBox = ({
   id = "",
@@ -88,7 +88,14 @@ const ImageBox = ({
   const connectionPoints = getConnectionPoints();
 
   return (
-    <div className="absolute" style={{ left: x, top: y }} data-box-id={id}>
+    <div
+      className="absolute"
+      style={{
+        left: `${x}px`,
+        top: `${y}px`,
+      }}
+      data-box-id={id}
+    >
       {/* 메인 박스 - 이미지만 포함 */}
       <div
         className={`relative cursor-pointer select-none p-2 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 ${className}`}
@@ -128,8 +135,8 @@ const ImageBox = ({
           key={position}
           className="absolute w-2 h-2 bg-gray-600 rounded-full opacity-0 hover:opacity-100 transition-all duration-200 cursor-crosshair hover:scale-150 hover:bg-gray-500"
           style={{
-            left: point.x - x - 4,
-            top: point.y - y - 4,
+            left: `${point.x - x - 4}px`,
+            top: `${point.y - y - 4}px`,
           }}
           data-connection-point={position}
           data-box-id={id}

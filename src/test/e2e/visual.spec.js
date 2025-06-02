@@ -1,11 +1,11 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("SweetPD 시각적 테스트", () => {
+test.describe("sweet-diagram 시각적 테스트", () => {
   test("메인 페이지가 로드되어야 합니다", async ({ page }) => {
     await page.goto("/");
 
     // 페이지 제목 확인
-    await expect(page).toHaveTitle(/SweetPD/);
+    await expect(page).toHaveTitle(/sweet-diagram/);
 
     // 메인 컨테이너가 존재하는지 확인
     await expect(page.locator("#root")).toBeVisible();

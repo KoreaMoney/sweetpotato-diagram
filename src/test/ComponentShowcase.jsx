@@ -11,7 +11,7 @@ const ComponentShowcase = () => {
   return (
     <DiagramProvider>
       <div className="min-h-screen bg-gray-50 p-8">
-        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">SweetPD 컴포넌트 쇼케이스</h1>
+        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">Sweet-Diagram 컴포넌트 쇼케이스</h1>
 
         {selectedComponent && (
           <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg max-w-4xl mx-auto">

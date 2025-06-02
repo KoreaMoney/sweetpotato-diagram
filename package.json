@@ -10,12 +10,7 @@
     "diagram",
     "editor",
     "visualization",
-    "flowchart",
-    "node-editor",
-    "sweetpd",
-    "3d",
-    "three.js",
-    "component",
+    "sweet-diagram",
     "javascript"
   ],
   "homepage": "https://sweetpotato-diagram.vercel.app",
@@ -26,8 +21,8 @@
   "bugs": {
     "url": "https://github.com/KoreaMoney/sweetpotato-diagram/issues"
   },
-  "main": "./dist/sweetpd.cjs.js",
-  "module": "./dist/sweetpd.es.js",
+  "main": "./dist/sweet-diagram.cjs.js",
+  "module": "./dist/sweet-diagram.es.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
@@ -36,8 +31,8 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/sweetpd.es.js",
-      "require": "./dist/sweetpd.cjs.js"
+      "import": "./dist/sweet-diagram.es.js",
+      "require": "./dist/sweet-diagram.cjs.js"
     },
     "./styles": "./dist/style.css"
   },

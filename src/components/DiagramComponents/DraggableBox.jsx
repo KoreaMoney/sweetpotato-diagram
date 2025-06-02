@@ -13,6 +13,20 @@ const DraggableBox = ({
   onDrag,
   ...props
 }) => {
+  console.log(`🚀 ${id} DraggableBox 생성 - 전달받은 props:`, {
+    id,
+    initialX: initialX,
+    initialY: initialY,
+    width,
+    height,
+    title,
+    color,
+    초기값변환: {
+      x: Number(initialX) || 0,
+      y: Number(initialY) || 0,
+    },
+  });
+
   // DiagramContext를 optional하게 사용
   let registerBox, unregisterBox, updateBoxPosition;
   try {
@@ -31,7 +45,12 @@ const DraggableBox = ({
   const boxRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [position, setPosition] = useState({ x: initialX, y: initialY });
+
+  // 초기 위치를 명확하게 설정
+  const [position, setPosition] = useState({
+    x: Number(initialX) || 0,
+    y: Number(initialY) || 0,
+  });
 
   // 드래그 중 임시 위치 (DOM transform 사용)
   const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
@@ -40,30 +59,71 @@ const DraggableBox = ({
   const isRegisteredRef = useRef(false);
   const lastPositionRef = useRef({ x: initialX, y: initialY });
 
+  // initialX, initialY가 변경되면 즉시 position 업데이트
+  useEffect(() => {
+    const newX = Number(initialX) || 0;
+    const newY = Number(initialY) || 0;
+    console.log(`📍 ${id} 위치 설정:`, {
+      initialX,
+      initialY,
+      newX,
+      newY,
+      width,
+      height,
+      계산된위치: { x: newX, y: newY },
+    });
+    setPosition({ x: newX, y: newY });
+    lastPositionRef.current = { x: newX, y: newY };
+  }, [initialX, initialY, id]);
+
   // 초기 박스 등록 (한 번만 실행)
   useEffect(() => {
-    if (boxRef.current && registerBox && id && !isRegisteredRef.current) {
-      const boxInfo = {
-        x: position.x,
-        y: position.y,
-        width,
-        height,
-        element: boxRef.current,
-        title,
-        color,
-      };
-      registerBox(id, boxInfo);
-      isRegisteredRef.current = true;
-      lastPositionRef.current = { x: position.x, y: position.y };
-    }
+    // DOM 요소가 완전히 렌더링된 후에 등록하도록 약간의 지연 추가
+    const timer = setTimeout(() => {
+      if (boxRef.current && registerBox && id && !isRegisteredRef.current) {
+        console.log(`📦 ${id} 박스 등록:`, {
+          position,
+          width,
+          height,
+          element: !!boxRef.current,
+        });
+
+        const boxInfo = {
+          x: position.x,
+          y: position.y,
+          width,
+          height,
+          element: boxRef.current,
+          title,
+          color,
+        };
+        registerBox(id, boxInfo);
+        isRegisteredRef.current = true;
+        lastPositionRef.current = { x: position.x, y: position.y };
+
+        // 등록 직후 확인 로그
+        setTimeout(() => {
+          if (registerBox && id) {
+            // registerBox를 통해 등록된 상태를 간접적으로 확인
+            console.log(`✅ ${id} 박스 등록 완료 - Context 함수들:`, {
+              registerBox: !!registerBox,
+              unregisterBox: !!unregisterBox,
+              updateBoxPosition: !!updateBoxPosition,
+            });
+          }
+        }, 100);
+      }
+    }, 10); // 10ms 지연
 
     return () => {
+      clearTimeout(timer);
       if (unregisterBox && id && isRegisteredRef.current) {
+        console.log(`🗑️ ${id} 박스 등록 해제`);
         unregisterBox(id);
         isRegisteredRef.current = false;
       }
     };
-  }, [id]); // 오직 id 변경 시에만 재실행
+  }, [id, registerBox, unregisterBox, position.x, position.y]);
 
   // 박스 속성 업데이트 (위치 제외)
   useEffect(() => {
@@ -187,19 +247,26 @@ const DraggableBox = ({
   // 드래그 중일 때와 아닐 때 다른 스타일 적용
   const transformStyle = isDragging ? { transform: `translate(${dragPosition.x}px, ${dragPosition.y}px)` } : {};
 
+  // 실제 적용될 스타일 확인
+  const finalStyle = {
+    left: `${position.x}px`,
+    top: `${position.y}px`,
+    width: `${width}px`,
+    height: `${height}px`,
+    position: "absolute",
+    ...transformStyle,
+  };
+
+  console.log(`🎨 ${id} 렌더링 스타일:`, finalStyle);
+
   return (
     <div
       ref={boxRef}
       className={`absolute border-2 rounded-xl shadow-md cursor-move select-none ${
         colorClasses[color] || colorClasses.primary
       } ${isDragging ? "scale-110 shadow-2xl z-50 rotate-1" : "z-10 transition-all duration-300"}`}
-      style={{
-        left: position.x,
-        top: position.y,
-        width,
-        height,
-        ...transformStyle,
-      }}
+      style={finalStyle}
+      data-box-id={id}
       onMouseDown={handleMouseDown}
       {...props}
     >

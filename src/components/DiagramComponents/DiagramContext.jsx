@@ -10,7 +10,7 @@ export const useDiagram = () => {
   return context;
 };
 
-export const DiagramProvider = ({ children }) => {
+export const DiagramProvider = ({ children, className = "", style = {} }) => {
   const [boxes, setBoxes] = useState(new Map());
   const [connections, setConnections] = useState([]);
   const [selectedConnection, setSelectedConnection] = useState(null);
@@ -18,9 +18,10 @@ export const DiagramProvider = ({ children }) => {
 
   // Box 등록 - 위치 정보 포함
   const registerBox = useCallback((id, boxInfo) => {
+    console.log(`🏪 DiagramContext - ${id} 박스 등록 시도:`, boxInfo);
     setBoxes((prev) => {
       const newBoxes = new Map(prev);
-      newBoxes.set(id, {
+      const boxData = {
         id,
         x: boxInfo.x,
         y: boxInfo.y,
@@ -28,7 +29,10 @@ export const DiagramProvider = ({ children }) => {
         height: boxInfo.height,
         element: boxInfo.element, // DOM 요소 참조
         ...boxInfo,
-      });
+      };
+      newBoxes.set(id, boxData);
+      console.log(`✅ DiagramContext - ${id} 박스 등록 완료:`, boxData);
+      console.log(`📊 현재 등록된 박스들:`, Array.from(newBoxes.keys()));
       return newBoxes;
     });
   }, []);
@@ -64,7 +68,9 @@ export const DiagramProvider = ({ children }) => {
   // Box 정보 가져오기
   const getBox = useCallback(
     (id) => {
-      return boxes.get(id);
+      const box = boxes.get(id);
+      console.log(`🔍 DiagramContext - ${id} 박스 조회:`, box ? "찾음" : "없음", box);
+      return box;
     },
     [boxes]
   );
@@ -165,7 +171,23 @@ export const DiagramProvider = ({ children }) => {
     containerRef,
   };
 
-  return <DiagramContext.Provider value={value}>{children}</DiagramContext.Provider>;
+  // 기본 스타일과 사용자 스타일 병합
+  const defaultStyle = {
+    position: "relative",
+    width: "100%",
+    height: "100%",
+    ...style,
+  };
+
+  const combinedClassName = `sweet-diagram-provider diagram-container ${className}`;
+
+  return (
+    <DiagramContext.Provider value={value}>
+      <div ref={containerRef} className={combinedClassName} style={defaultStyle}>
+        {children}
+      </div>
+    </DiagramContext.Provider>
+  );
 };
 
 export default DiagramContext;

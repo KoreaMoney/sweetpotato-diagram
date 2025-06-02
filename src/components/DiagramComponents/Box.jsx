@@ -66,27 +66,23 @@ const Box = ({
 
   return (
     <div
-      className="absolute z-10"
+      className={`absolute z-10 ${className}`}
       style={{
-        left: x,
-        top: y,
+        left: `${x}px`, // 명시적으로 px 단위 추가
+        top: `${y}px`, // 명시적으로 px 단위 추가
+        width: `${width}px`,
+        height: `${height}px`,
         transform: "translate3d(0,0,0)", // GPU 가속 활용
       }}
       data-box-id={id}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      tabIndex="0"
+      role="button"
+      aria-label={`Box component: ${text} ${id ? `(ID: ${id})` : ""}`}
     >
-      {/* 메인 박스 */}
-      <div
-        className={`flex items-center justify-center cursor-pointer select-none transition-all duration-200 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${className}`}
-        style={{
-          width: width,
-          height: height,
-        }}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-        tabIndex="0"
-        role="button"
-        aria-label={`Box component: ${text} ${id ? `(ID: ${id})` : ""}`}
-      >
+      {/* 메인 박스 내용 */}
+      <div className="flex items-center justify-center w-full h-full cursor-pointer select-none transition-all duration-200 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
         <span className="font-medium text-center px-2 leading-tight">{text}</span>
       </div>
 
@@ -96,8 +92,8 @@ const Box = ({
           key={position}
           className="absolute w-2 h-2 bg-[#0066ff] rounded-full opacity-0 hover:opacity-100 transition-all duration-200 cursor-crosshair hover:scale-150 hover:bg-[#0066ff] z-20"
           style={{
-            left: point.x - x - 4,
-            top: point.y - y - 4,
+            left: `${point.x - x - 4}px`,
+            top: `${point.y - y - 4}px`,
           }}
           data-connection-point={position}
           data-box-id={id}

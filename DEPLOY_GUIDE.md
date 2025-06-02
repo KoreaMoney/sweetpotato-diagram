@@ -1,6 +1,6 @@
-# SweetPD npm 배포 가이드
+# sweet-diagram npm 배포 가이드
 
-이 가이드는 SweetPD 패키지를 npm에 배포하는 방법을 설명합니다.
+이 가이드는 sweet-diagram 패키지를 npm에 배포하는 방법을 설명합니다.
 
 ## 🚀 배포 준비사항
 
@@ -22,7 +22,7 @@ npm login
 npm에서 패키지명이 사용 가능한지 확인하세요:
 
 ```bash
-npm search sweetpd
+npm search sweet-diagram
 ```
 
 ## 📦 배포 과정
@@ -112,7 +112,7 @@ npm publish
 ### 1. 패키지명 충돌
 
 - npm에서 패키지명이 이미 사용 중인 경우 다른 이름을 사용해야 합니다
-- 현재 패키지명: `sweetpd`
+- 현재 패키지명: `sweet-diagram`
 
 ### 2. 버전 관리
 
@@ -147,25 +147,25 @@ git push origin main --tags
 
 ### 1. npm 웹사이트에서 확인
 
-[https://www.npmjs.com/package/sweetpd](https://www.npmjs.com/package/sweetpd)에서 패키지가 정상적으로 배포되었는지 확인하세요.
+[https://www.npmjs.com/package/sweet-diagram](https://www.npmjs.com/package/sweet-diagram)에서 패키지가 정상적으로 배포되었는지 확인하세요.
 
 ### 2. 설치 테스트
 
 새로운 프로젝트에서 설치 테스트:
 
 ```bash
-mkdir test-sweetpd
-cd test-sweetpd
+mkdir test-sweet-diagram
+cd test-sweet-diagram
 npm init -y
-npm install sweetpd
+npm install sweet-diagram
 ```
 
 ### 3. 사용 테스트
 
 ```jsx
 // test.js
-import { SweetDiagram } from "sweetpd";
-console.log("SweetPD 설치 성공!");
+import { SweetDiagram } from "sweet-diagram";
+console.log("sweet-diagram 설치 성공!");
 ```
 
 ## 📈 배포 통계

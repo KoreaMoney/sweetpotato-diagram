@@ -34,9 +34,9 @@ export default defineConfig(({ mode }) => {
     config.build = {
       lib: {
         entry: path.resolve(__dirname, "src/index.js"),
-        name: "SweetPD",
+        name: "sweet-diagram",
         formats: ["es", "cjs"],
-        fileName: (format) => `sweetpd.${format}.js`,
+        fileName: (format) => `sweet-diagram.${format}.js`,
       },
       rollupOptions: {
         external: ["react", "react-dom", "react/jsx-runtime"],
