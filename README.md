@@ -1,43 +1,20 @@
-# SweetPD
+# SweetPD - 다이어그램 에디터 컴포넌트
 
-A modern and intuitive diagram component library for React applications. Built with React, Three.js, and TailwindCSS.
+현대적이고 직관적인 React용 다이어그램 에디터 컴포넌트입니다. 드래그 앤 드롭과 인터랙티브한 다이어그램 편집 기능을 제공합니다.
 
-## ✨ Features
+## 🚀 빠른 시작
 
-- 🎨 **Modern UI**: Beautiful and intuitive interface
-- 🎯 **Drag & Drop**: Easy component manipulation with DraggableBox
-- 🔗 **Smart Connections**: Intelligent Connector system with bidirectional support
-- 🎮 **Interactive**: Full mouse and keyboard support
-- 📱 **Responsive**: Works on all screen sizes
-- 🎭 **Customizable**: Highly configurable components with TailwindCSS
-- ⚡ **Performance**: Optimized with React 19 and Vite
-- 📚 **Documentation**: Built-in interactive documentation
-
-## 📦 Installation
-
-### npm
+### 설치
 
 ```bash
-npm install sweetpd
+npm install sweet-diagram
 ```
 
-### pnpm
-
-```bash
-pnpm add sweetpd
-```
-
-### Yarn (including Yarn Berry)
-
-```bash
-yarn add sweetpd
-```
-
-## 🚀 Quick Start
+### 기본 사용법
 
 ```jsx
 import React from "react";
-import { SweetDiagram, DiagramProvider } from "sweetpd";
+import { SweetDiagram, DiagramProvider } from "sweet-diagram";
 
 function App() {
   return (
@@ -52,343 +29,244 @@ function App() {
 export default App;
 ```
 
-## 📖 Components
+## 📦 컴포넌트
 
-### Core Components
-
-#### Box
-
-Basic box component for diagram elements.
+### 개별 컴포넌트 사용
 
 ```jsx
-import { Box, DiagramProvider } from "sweetpd";
+import { Box, Arrow, Connector, Triangle, Valve, ImageBox, DiagramProvider, useDiagram } from "sweet-diagram";
 
-<DiagramProvider>
-  <Box
-    id="sample-box"
-    x={100}
-    y={100}
-    width={120}
-    height={60}
-    text="Sample Box"
-    backgroundColor="#3B82F6"
-    textColor="#FFFFFF"
-    onClick={(event, boxInfo) => console.log("Box clicked", boxInfo)}
-  />
-</DiagramProvider>;
-```
-
-#### DraggableBox
-
-Draggable version of the Box component.
-
-```jsx
-import { DraggableBox, DiagramProvider } from "sweetpd";
-
-<DiagramProvider>
-  <DraggableBox
-    id="draggable-box"
-    initialX={100}
-    initialY={100}
-    text="Drag me!"
-    onPositionChange={(newX, newY) => console.log(`New position: ${newX}, ${newY}`)}
-  />
-</DiagramProvider>;
-```
-
-#### Connector
-
-Smart bidirectional connector between components.
-
-```jsx
-import { Connector, Box, DiagramProvider } from "sweetpd";
-
-<DiagramProvider>
-  <Box id="box1" x={50} y={50} text="Box 1" />
-  <Box id="box2" x={200} y={150} text="Box 2" />
-  <Connector
-    fromElementId="box1"
-    toElementId="box2"
-    strokeColor="#10B981"
-    strokeWidth={3}
-    bidirectional={true}
-    animated={true}
-  />
-</DiagramProvider>;
-```
-
-#### Arrow
-
-Directional arrow component.
-
-```jsx
-import { Arrow } from "sweetpd";
-
-<Arrow startX={100} startY={100} endX={200} endY={150} color="#EF4444" strokeWidth={2} arrowSize={10} />;
-```
-
-#### Line
-
-Simple line component.
-
-```jsx
-import { Line } from "sweetpd";
-
-<Line startX={0} startY={0} endX={100} endY={100} strokeColor="#6B7280" strokeWidth={2} />;
-```
-
-### Specialized Components
-
-#### Triangle
-
-Triangle shape component.
-
-```jsx
-import { Triangle } from "sweetpd";
-
-<Triangle x={150} y={75} size={30} direction="up" fillColor="#F59E0B" borderColor="#D97706" />;
-```
-
-#### Valve
-
-Specialized valve component for system diagrams.
-
-```jsx
-import { Valve } from "sweetpd";
-
-<Valve
-  id="main-valve"
-  x={300}
-  y={200}
-  size={40}
-  isOpen={true}
-  onToggle={(isOpen) => console.log(`Valve is ${isOpen ? "open" : "closed"}`)}
-/>;
-```
-
-#### ImageBox
-
-Box component with image support.
-
-```jsx
-import { ImageBox } from "sweetpd";
-
-<ImageBox
-  id="image-component"
-  x={200}
-  y={100}
-  imageUrl="/path/to/image.png"
-  text="Image Box"
-  width={150}
-  height={100}
-/>;
-```
-
-### Utility Components
-
-#### CodeEditor
-
-Real-time code editor for component configuration.
-
-```jsx
-import { CodeEditor } from "sweetpd";
-
-<CodeEditor
-  initialCode={`<Box x={100} y={100} text="Sample Box" />`}
-  onCodeChange={(newCode) => console.log("Code changed:", newCode)}
-/>;
-```
-
-#### Documentation
-
-Interactive documentation component.
-
-```jsx
-import { Documentation } from "sweetpd";
-
-<Documentation />;
-```
-
-## 🎣 Context & Hooks
-
-### DiagramProvider
-
-Context provider for diagram state management.
-
-```jsx
-import { DiagramProvider, useDiagram } from "sweetpd";
-
-function App() {
+function CustomDiagram() {
   return (
     <DiagramProvider>
-      <YourDiagramComponents />
-    </DiagramProvider>
-  );
-}
+      <div className="w-full h-screen relative">
+        {/* 기본 박스 */}
+        <Box id="box1" x={100} y={100} width={120} height={60} text="시작" className="bg-blue-500 text-white" />
 
-function YourComponent() {
-  const { state, dispatch } = useDiagram();
-  // Use diagram state
-}
-```
+        {/* 드래그 가능한 박스 */}
+        <DraggableBox
+          id="dragbox1"
+          initialX={300}
+          initialY={100}
+          width={150}
+          height={80}
+          title="드래그 가능"
+          color="green"
+        />
 
-## 📚 Demo Components
+        {/* 연결선 */}
+        <Connector
+          startPoint={{ x: 220, y: 130 }}
+          endPoint={{ x: 300, y: 140 }}
+          connectionType="curved"
+          showArrow={true}
+        />
 
-### ConnectorExamples
+        {/* 화살표 */}
+        <Arrow startPoint={{ x: 100, y: 200 }} endPoint={{ x: 200, y: 200 }} arrowSize={10} />
 
-Pre-built examples showcasing Connector capabilities.
+        {/* 삼각형 */}
+        <Triangle x={500} y={100} size={40} direction="up" />
 
-```jsx
-import { ConnectorExamples } from "sweetpd";
+        {/* 밸브 */}
+        <Valve x={100} y={300} size={50} type="ball" isOpen={true} />
 
-<ConnectorExamples />;
-```
-
-### ArrowDemo
-
-Interactive demo for Arrow component.
-
-```jsx
-import { ArrowDemo } from "sweetpd";
-
-<ArrowDemo />;
-```
-
-## 🎨 Styling
-
-The library uses TailwindCSS for styling. All components are fully customizable:
-
-```jsx
-<Box
-  className="hover:shadow-lg transition-all duration-300"
-  backgroundColor="#8B5CF6"
-  borderColor="#7C3AED"
-  // ... other props
-/>
-```
-
-## 📊 Complete Example
-
-```jsx
-import React from "react";
-import { DiagramProvider, Box, DraggableBox, Connector, Valve, Triangle } from "sweetpd";
-
-function SystemDiagram() {
-  return (
-    <DiagramProvider>
-      <div className="w-full h-screen bg-gray-50 relative">
-        {/* Static components */}
-        <Box id="input" x={50} y={100} text="Input" backgroundColor="#3B82F6" />
-
-        <Box id="output" x={400} y={100} text="Output" backgroundColor="#10B981" />
-
-        {/* Draggable component */}
-        <DraggableBox id="processor" initialX={200} initialY={100} text="Processor" backgroundColor="#F59E0B" />
-
-        {/* Control valve */}
-        <Valve id="control-valve" x={125} y={125} isOpen={true} />
-
-        {/* Direction indicator */}
-        <Triangle x={325} y={115} size={20} direction="right" fillColor="#EF4444" />
-
-        {/* Connections */}
-        <Connector fromElementId="input" toElementId="control-valve" strokeColor="#3B82F6" />
-
-        <Connector fromElementId="processor" toElementId="output" strokeColor="#10B981" bidirectional={true} />
+        {/* 이미지 박스 */}
+        <ImageBox id="imgbox1" x={300} y={300} width={100} height={80} text="이미지" icon="🔧" iconType="emoji" />
       </div>
     </DiagramProvider>
   );
 }
 ```
 
-## 🔧 Development
+## �� 주요 기능
 
-```bash
-# Clone the repository
-git clone https://github.com/sweetpotato/sweetpd.git
+- **드래그 앤 드롭**: DraggableBox로 직관적인 컴포넌트 조작
+- **다양한 도형**: Box, Arrow, Triangle, Valve, Connector 등
+- **스마트 연결**: 자동 연결점 감지 및 곡선/직각 연결선
+- **상호작용**: 클릭, 드래그, 호버 효과 지원
+- **스타일링**: TailwindCSS 기반 완전 커스터마이징
+- **상태 관리**: Zustand 기반 효율적인 상태 관리
+- **완전한 JavaScript**: TypeScript 없이도 모든 기능 사용 가능
 
-# Install dependencies
-npm install
-# or
-pnpm install
-# or
-yarn install
+## 🔧 고급 사용법
 
-# Start development server
-npm run dev
+### 커스텀 훅 사용
 
-# Build library
-npm run build:lib
+```jsx
+import { useDiagram } from "sweet-diagram";
 
-# Run linting
-npm run lint
+function DiagramController() {
+  const { registerBox, unregisterBox, updateBoxPosition, getBoxInfo } = useDiagram();
+
+  const handleAddBox = () => {
+    const newBox = {
+      id: `box-${Date.now()}`,
+      x: Math.random() * 400,
+      y: Math.random() * 300,
+      width: 120,
+      height: 60,
+    };
+
+    registerBox(newBox.id, newBox);
+  };
+
+  return (
+    <div className="p-4">
+      <button onClick={handleAddBox} className="px-4 py-2 bg-blue-500 text-white rounded">
+        박스 추가
+      </button>
+    </div>
+  );
+}
 ```
 
-## 📦 Publishing to NPM
+### 이벤트 핸들링
 
-### Prerequisites
+```jsx
+function InteractiveDiagram() {
+  const handleBoxClick = (event, boxInfo) => {
+    console.log("클릭된 박스:", boxInfo);
+  };
 
-1. Create an NPM account at [npmjs.com](https://www.npmjs.com/)
-2. Login to NPM in your terminal:
-   ```bash
-   npm login
-   ```
+  const handleDrag = (newPosition) => {
+    console.log("드래그 위치:", newPosition);
+  };
 
-### Publishing Steps
+  return (
+    <DiagramProvider>
+      <Box id="interactive-box" x={100} y={100} width={150} height={70} text="클릭해보세요" onClick={handleBoxClick} />
 
-1. **Build the library:**
-
-   ```bash
-   npm run build:lib
-   ```
-
-2. **Test the package locally:**
-
-   ```bash
-   npm pack --dry-run
-   ```
-
-3. **Publish to NPM:**
-   ```bash
-   npm publish
-   ```
-
-### Version Management
-
-Update version before publishing:
-
-```bash
-# Patch version (1.0.0 -> 1.0.1)
-npm version patch
-
-# Minor version (1.0.0 -> 1.1.0)
-npm version minor
-
-# Major version (1.0.0 -> 2.0.0)
-npm version major
+      <DraggableBox id="draggable-box" initialX={300} initialY={100} title="드래그해보세요" onDrag={handleDrag} />
+    </DiagramProvider>
+  );
+}
 ```
 
-### Package Manager Compatibility
+## 📋 API 참조
 
-This package supports all major package managers:
+### DiagramProvider
 
-- **npm**: `npm install sweetpd`
-- **pnpm**: `pnpm add sweetpd`
-- **Yarn Classic**: `yarn add sweetpd`
-- **Yarn Berry**: `yarn add sweetpd` (with .yarnrc.yml configuration)
+모든 다이어그램 컴포넌트를 감싸는 최상위 Provider입니다.
 
-## 📝 License
+```jsx
+<DiagramProvider>{/* 다이어그램 컴포넌트들 */}</DiagramProvider>
+```
 
-MIT © SweetPotato
+### 컴포넌트 Props
 
-## 🤝 Contributing
+#### Box
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+- `id`: `string` - 고유 식별자
+- `x`: `number` - X 좌표 (기본값: 0)
+- `y`: `number` - Y 좌표 (기본값: 0)
+- `width`: `number` - 박스 너비 (기본값: 120)
+- `height`: `number` - 박스 높이 (기본값: 60)
+- `text`: `string` - 표시할 텍스트
+- `className`: `string` - CSS 클래스
+- `onClick`: `function` - 클릭 이벤트 핸들러
 
-## 📞 Support
+#### DraggableBox
 
-If you have any questions or need help, please open an issue on GitHub.
+- `id`: `string` - 고유 식별자 (필수)
+- `initialX`: `number` - 초기 X 좌표 (기본값: 0)
+- `initialY`: `number` - 초기 Y 좌표 (기본값: 0)
+- `width`: `number` - 박스 너비 (기본값: 120)
+- `height`: `number` - 박스 높이 (기본값: 80)
+- `title`: `string` - 박스 제목
+- `color`: `string` - 색상 테마 ('blue', 'green', 'red', 등)
+- `onDrag`: `function` - 드래그 이벤트 핸들러
+
+#### Connector
+
+- `startPoint`: `{x: number, y: number}` - 시작점 좌표
+- `endPoint`: `{x: number, y: number}` - 끝점 좌표
+- `connectionType`: `string` - 연결 타입 ('straight', 'curved', 'orthogonal')
+- `strokeWidth`: `number` - 선 두께 (기본값: 2)
+- `showArrow`: `boolean` - 화살표 표시 (기본값: true)
+- `animated`: `boolean` - 애니메이션 효과 (기본값: false)
+
+#### Arrow
+
+- `startPoint`: `{x: number, y: number}` - 시작점 좌표
+- `endPoint`: `{x: number, y: number}` - 끝점 좌표
+- `arrowSize`: `number` - 화살표 크기 (기본값: 8)
+- `strokeWidth`: `number` - 선 두께 (기본값: 2)
+- `className`: `string` - CSS 클래스
+
+#### Triangle
+
+- `x`: `number` - X 좌표 (기본값: 0)
+- `y`: `number` - Y 좌표 (기본값: 0)
+- `size`: `number` - 삼각형 크기 (기본값: 40)
+- `direction`: `string` - 방향 ('up', 'down', 'left', 'right')
+- `className`: `string` - CSS 클래스
+
+#### Valve
+
+- `x`: `number` - X 좌표 (기본값: 0)
+- `y`: `number` - Y 좌표 (기본값: 0)
+- `size`: `number` - 밸브 크기 (기본값: 40)
+- `type`: `string` - 밸브 타입 ('ball', 'gate', 'butterfly')
+- `isOpen`: `boolean` - 열림/닫힘 상태 (기본값: false)
+- `status`: `string` - 상태 표시 텍스트
+
+#### ImageBox
+
+- `id`: `string` - 고유 식별자
+- `x`: `number` - X 좌표 (기본값: 0)
+- `y`: `number` - Y 좌표 (기본값: 0)
+- `width`: `number` - 박스 너비 (기본값: 100)
+- `height`: `number` - 박스 높이 (기본값: 80)
+- `text`: `string` - 표시할 텍스트
+- `icon`: `string` - 이미지 URL 또는 이모지
+- `iconType`: `string` - 아이콘 타입 ('image', 'emoji', 'svg')
+
+## 🎨 스타일링
+
+TailwindCSS 클래스를 사용하여 완전히 커스터마이징할 수 있습니다:
+
+```jsx
+<Box
+  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-purple-600 shadow-lg"
+  text="커스텀 스타일"
+/>
+```
+
+## 📖 예제
+
+더 많은 예제는 [Storybook 문서](https://sweetpotato-diagram.vercel.app)에서 확인하실 수 있습니다.
+
+## 🔧 개발 환경
+
+### 요구사항
+
+- Node.js >= 16.0.0
+- React >= 16.8.0
+- React DOM >= 16.8.0
+
+### 의존성
+
+- `zustand`: 상태 관리
+- `lucide-react`: 아이콘
+
+## 🤝 기여하기
+
+1. 이 저장소를 포크하세요
+2. 기능 브랜치를 생성하세요 (`git checkout -b feature/amazing-feature`)
+3. 변경사항을 커밋하세요 (`git commit -m 'Add some amazing feature'`)
+4. 브랜치에 푸시하세요 (`git push origin feature/amazing-feature`)
+5. Pull Request를 생성하세요
+
+## 📝 라이선스
+
+이 프로젝트는 MIT 라이선스 하에 있습니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
+
+## 🙋‍♂️ 지원
+
+- 이슈는 [GitHub Issues](https://github.com/KoreaMoney/sweetpotato-diagram/issues)에 등록해주세요
+- 문의사항은 이메일로 연락해주세요
 
 ---
 
-Made with ❤️ by SweetPotato
+Made with ❤️ by KimDowon
