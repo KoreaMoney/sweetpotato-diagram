@@ -174,9 +174,6 @@ const parseConnectorCode = (code) => {
   try {
     const connections = [];
 
-    // Connector 태그들을 찾기 위한 정규식
-    const connectorRegex = /<Connector[^>]*>(.*?)<\/Connector>|<Connector[^>]*\/>/gs;
-
     // 단일 태그 Connector들을 찾기
     const singleTagRegex = /<Connector([^>]*?)\/>/g;
 
@@ -226,7 +223,7 @@ const parseProps = (propsString) => {
           if (objMatch) {
             props[key] = { id: objMatch[1], position: objMatch[2] };
           }
-        } catch (e) {
+        } catch {
           console.warn(`${key} 파싱 실패:`, value);
         }
       } else if (key === "showArrow" || key === "animated") {
@@ -283,7 +280,6 @@ const ConnectorExamples = () => {
 
   // 예제 선택 핸들러 - useCallback으로 최적화
   const handleExampleSelect = useCallback((exampleKey) => {
-    console.log(`Selecting example: ${exampleKey}`);
     setSelectedExample(exampleKey);
     setCustomConnections(null); // 예제 변경 시 커스텀 연결 초기화
     setParseError("");
@@ -297,8 +293,6 @@ const ConnectorExamples = () => {
 
   // 코드 실행 핸들러 - 실제 JSX 파싱 및 적용
   const handleRunCode = useCallback((code) => {
-    console.log("코드 실행 중:", code);
-
     try {
       const parsedConnections = parseConnectorCode(code);
 
@@ -307,14 +301,10 @@ const ConnectorExamples = () => {
         return;
       }
 
-      console.log("파싱된 연결:", parsedConnections);
       setCustomConnections(parsedConnections);
       setParseError("");
 
-      // 성공 메시지
-      console.log(`✅ 성공적으로 ${parsedConnections.length}개의 연결을 적용했습니다!`);
     } catch (error) {
-      console.error("코드 실행 에러:", error);
       setParseError(`코드 파싱 에러: ${error.message}`);
     }
   }, []);
@@ -342,13 +332,6 @@ const ConnectorExamples = () => {
       setCurrentCode(currentTemplate.code);
     }
   }, [currentTemplate]);
-
-  // 디버깅용 로그
-  useEffect(() => {
-    console.log("Current selected example:", selectedExample);
-    console.log("Current template:", currentTemplate);
-    console.log("Active connections:", activeConnections);
-  }, [selectedExample, currentTemplate, activeConnections]);
 
   return (
     <DiagramProvider>
@@ -522,18 +505,6 @@ const ConnectorExamples = () => {
 
                 {/* 박스들 먼저 렌더링 */}
                 {currentTemplate.boxes?.map((box, index) => {
-                  console.log(`🎯 ${box.id} 박스 props:`, {
-                    id: box.id,
-                    initialX: box.x,
-                    initialY: box.y,
-                    width: box.width,
-                    height: box.height,
-                    title: box.title,
-                    color: box.color,
-                  });
-
-                  console.log(`🔍 ${box.id} 템플릿 원본 데이터:`, box);
-
                   return (
                     <DraggableBox
                       key={`box-${selectedExample}-${box.id}-${index}`}

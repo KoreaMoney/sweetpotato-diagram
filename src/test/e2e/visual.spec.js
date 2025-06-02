@@ -4,8 +4,8 @@ test.describe("sweet-diagram 시각적 테스트", () => {
   test("메인 페이지가 로드되어야 합니다", async ({ page }) => {
     await page.goto("/");
 
-    // 페이지 제목 확인
-    await expect(page).toHaveTitle(/sweet-diagram/);
+    // 페이지 제목 확인 (실제 제목에 맞게 수정)
+    await expect(page).toHaveTitle("Sweet-Diagram");
 
     // 메인 컨테이너가 존재하는지 확인
     await expect(page.locator("#root")).toBeVisible();
@@ -17,8 +17,8 @@ test.describe("sweet-diagram 시각적 테스트", () => {
   test("다이어그램 컴포넌트들이 렌더링되어야 합니다", async ({ page }) => {
     await page.goto("/");
 
-    // 메인 컨테이너가 렌더링되는지 확인
-    const mainContainer = page.locator("#root, .main-container, .diagram-container");
+    // 메인 컨테이너가 렌더링되는지 확인 (first()로 첫 번째 요소만 선택)
+    const mainContainer = page.locator("#root").first();
     await expect(mainContainer).toBeVisible();
 
     // 페이지가 완전히 로드될 때까지 대기
@@ -68,8 +68,8 @@ test.describe("sweet-diagram 시각적 테스트", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    // 메인 컨테이너 또는 다이어그램 영역 찾기
-    const interactiveArea = page.locator("#root, .diagram-container, .main-container");
+    // 메인 컨테이너 또는 다이어그램 영역 찾기 (first()로 첫 번째 요소만 선택)
+    const interactiveArea = page.locator("#root").first();
     await expect(interactiveArea).toBeVisible();
 
     // 마우스 상호작용
@@ -112,9 +112,6 @@ test.describe("sweet-diagram 시각적 테스트", () => {
         setTimeout(() => resolve(null), 5000);
       });
     });
-
-    console.log("First Contentful Paint:", fcpMetric);
-
     // 페이지 로드 시간이 5초 이내인지 확인
     if (fcpMetric) {
       expect(fcpMetric).toBeLessThan(5000);

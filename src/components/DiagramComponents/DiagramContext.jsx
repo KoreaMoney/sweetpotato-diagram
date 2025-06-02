@@ -18,7 +18,6 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
 
   // Box 등록 - 위치 정보 포함
   const registerBox = useCallback((id, boxInfo) => {
-    console.log(`🏪 DiagramContext - ${id} 박스 등록 시도:`, boxInfo);
     setBoxes((prev) => {
       const newBoxes = new Map(prev);
       const boxData = {
@@ -31,8 +30,6 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
         ...boxInfo,
       };
       newBoxes.set(id, boxData);
-      console.log(`✅ DiagramContext - ${id} 박스 등록 완료:`, boxData);
-      console.log(`📊 현재 등록된 박스들:`, Array.from(newBoxes.keys()));
       return newBoxes;
     });
   }, []);
@@ -69,7 +66,6 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
   const getBox = useCallback(
     (id) => {
       const box = boxes.get(id);
-      console.log(`🔍 DiagramContext - ${id} 박스 조회:`, box ? "찾음" : "없음", box);
       return box;
     },
     [boxes]

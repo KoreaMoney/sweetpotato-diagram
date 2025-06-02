@@ -17,7 +17,7 @@ const Box = ({
     const context = useDiagram();
     registerBox = context.registerBox;
     unregisterBox = context.unregisterBox;
-  } catch (error) {
+  } catch {
     // DiagramProvider가 없으면 context 기능을 사용하지 않음
     registerBox = null;
     unregisterBox = null;

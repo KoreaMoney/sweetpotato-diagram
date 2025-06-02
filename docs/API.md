@@ -18,6 +18,7 @@
 - [유틸리티 컴포넌트](#유틸리티-컴포넌트)
   - [CodeEditor 컴포넌트](#codeeditor-컴포넌트)
   - [DiagramContext](#diagramcontext)
+- [🧪 실용적인 테스트 예제](#🧪-실용적인-테스트-예제)
 - [고급 사용법](#고급-사용법)
 
 ---
@@ -641,6 +642,125 @@ function DiagramCanvas() {
 ```
 
 ---
+
+## 🧪 실용적인 테스트 예제
+
+다음은 여러 컴포넌트를 조합한 실제 사용 시나리오입니다:
+
+```jsx
+import React from "react";
+import { Box, Arrow, Connector, Triangle, Valve, ImageBox, DiagramProvider, DraggableBox } from "sweet-diagram";
+
+const ComprehensiveTest = () => {
+  return (
+    <div className="w-full h-screen">
+      <div className="w-full h-full">
+        <DiagramProvider>
+          {/* 고정된 시작 박스 */}
+          <Box
+            id="custom-demo-start"
+            x={200}
+            y={100}
+            width={120}
+            height={50}
+            text="시작점"
+            className="bg-cyan-600 text-white border-cyan-800 border-2 rounded-lg text-xs cursor-pointer"
+            onClick={() => {
+              console.log("시작점 클릭됨");
+            }}
+          />
+
+          {/* 드래그 가능한 종료 박스 */}
+          <DraggableBox
+            id="custom-demo-end"
+            x={700}
+            y={200}
+            width={120}
+            height={50}
+            text="끝점 (드래그 가능)"
+            className="bg-blue-600 text-white border-cyan-800 border-2 rounded-lg text-xs cursor-pointer"
+            onClick={() => {
+              console.log("끝점 클릭됨");
+            }}
+          />
+
+          {/* 동적 곡선 연결선 */}
+          <Connector
+            fromBox={{ id: "custom-demo-start", position: "right" }}
+            toBox={{ id: "custom-demo-end", position: "left" }}
+            connectionType="curved"
+            className="stroke-black hover:stroke-[#0066ff] transition-all duration-300"
+            showArrow={true}
+            strokeWidth={5}
+            arrowSize={10}
+            arrowColor="black"
+            arrowStrokeWidth={10}
+            arrowStrokeColor="black"
+          />
+
+          {/* 이모지 아이콘이 포함된 이미지 박스 */}
+          <ImageBox
+            id="img-test"
+            x={250}
+            y={300}
+            width={100}
+            height={60}
+            text="제어장치"
+            icon="⚙️"
+            iconType="emoji"
+            imageScale={1.2}
+            imagePadding={10}
+            onClick={() => {
+              console.log("제어장치 클릭됨");
+            }}
+          />
+        </DiagramProvider>
+      </div>
+    </div>
+  );
+};
+
+export default ComprehensiveTest;
+```
+
+### 🎯 이 예제에서 확인할 수 있는 기능들
+
+1. **컴포넌트 조합**
+
+   - `Box`: 고정된 요소 표현
+   - `DraggableBox`: 사용자 상호작용을 통한 동적 위치 변경
+   - `Connector`: 박스 간의 관계 시각화
+   - `ImageBox`: 이모지/아이콘을 포함한 시각적 요소
+
+2. **동적 연결**
+
+   - 드래그 시 연결선이 자동으로 따라 움직임
+   - 실시간 위치 업데이트 및 재계산
+
+3. **스타일링 통합**
+
+   - TailwindCSS 클래스를 통한 스타일링
+   - hover 효과 및 transition 애니메이션
+   - 일관된 디자인 시스템 적용
+
+4. **이벤트 처리**
+
+   - 각 컴포넌트별 개별 클릭 이벤트
+   - 콘솔을 통한 상호작용 확인
+
+5. **크기 조절 기능**
+   - ImageBox의 `imageScale`과 `imagePadding`을 통한 세밀한 이미지 제어
+   - 다양한 크기의 박스들을 조합한 레이아웃
+
+### 💡 활용 가이드
+
+이 예제를 기반으로 다음과 같은 실제 애플리케이션을 구축할 수 있습니다:
+
+- **시스템 아키텍처 다이어그램**: 각 컴포넌트가 마이크로서비스를 나타내는 경우
+- **워크플로우 설계**: 프로세스의 각 단계를 박스로, 흐름을 연결선으로 표현
+- **네트워크 토폴로지**: 네트워크 노드와 연결 관계 시각화
+- **조직도**: 부서와 직책 간의 관계 표현
+- **자동차 시스템 다이어그램**: 수소연료전지 시스템 구성 요소 간의 관계
 
 ## 고급 사용법
 

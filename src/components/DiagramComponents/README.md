@@ -34,13 +34,14 @@ import { Box } from "./DiagramComponents";
 
 ### 2. ImageBox - 이미지박스
 
-아이콘이나 이미지를 포함할 수 있는 박스 컴포넌트입니다.
+아이콘이나 이미지를 포함할 수 있는 박스 컴포넌트입니다. **🆕 NEW! 이미지 크기 조절 기능 추가!**
 
 ```jsx
 import { ImageBox } from "./DiagramComponents";
 
 const hydrogenIcon = `<svg>...</svg>`;
 
+// 기본 사용법
 <ImageBox
   x={50}
   y={150}
@@ -51,14 +52,79 @@ const hydrogenIcon = `<svg>...</svg>`;
   iconType="svg"
   backgroundColor="#E0F2FE"
   borderColor="#0284C7"
-/>;
+/>
+
+// 🆕 NEW! 이미지 크기 조절 기능
+<ImageBox
+  x={200}
+  y={150}
+  width={120}
+  height={100}
+  text="연료전지 스택"
+  icon="/path/to/fuel-cell.png"
+  iconType="image"
+  imageScale={0.8}          // 이미지를 80% 크기로
+  imagePadding={12}         // 12px 여백
+  imageObjectFit="cover"    // 이미지 피팅 방식
+/>
+
+// 🆕 절대 크기 지정
+<ImageBox
+  x={350}
+  y={150}
+  width={150}
+  height={120}
+  text="컨트롤러"
+  icon="/path/to/controller.png"
+  iconType="image"
+  imageWidth={60}           // 이미지 너비 60px
+  imageHeight={40}          // 이미지 높이 40px
+  imagePadding={16}         // 16px 여백
+/>
+
+// 🆕 이모지 크기 조절
+<ImageBox
+  x={50}
+  y={300}
+  width={80}
+  height={80}
+  text="배터리"
+  icon="🔋"
+  iconType="emoji"
+  imageScale={1.5}          // 이모지를 1.5배 크기로
+  imagePadding={10}
+/>
 ```
 
 **Props:**
 
+- `x, y`: 위치 좌표
+- `width, height`: 박스 크기
+- `text`: 표시할 텍스트
 - `icon`: SVG 문자열, 이미지 URL, 또는 이모지
 - `iconType`: 'svg', 'image', 'emoji'
-- 기타 Box와 동일한 props
+- `backgroundColor`: 배경색
+- `borderColor`: 테두리 색상
+- `className`: 추가 CSS 클래스
+- `onClick`: 클릭 이벤트 핸들러
+- **🆕 `imageWidth`**: 이미지 절대 너비 (픽셀) - null이면 자동 크기
+- **🆕 `imageHeight`**: 이미지 절대 높이 (픽셀) - null이면 자동 크기
+- **🆕 `imageScale`**: 이미지 크기 비율 (0.1 ~ 2.0, 기본값: 1.0)
+- **🆕 `imagePadding`**: 이미지 주변 여백 (픽셀, 기본값: 8)
+- **🆕 `imageObjectFit`**: 이미지 피팅 방식
+  - `"contain"`: 이미지 전체가 보이도록 비율 유지 (기본값)
+  - `"cover"`: 박스를 완전히 채우도록 이미지 크롭
+  - `"fill"`: 박스에 맞게 이미지 늘림
+  - `"scale-down"`: contain과 none 중 작은 크기
+  - `"none"`: 원본 크기 유지
+
+**🎯 사용 가이드:**
+
+1. **절대 크기 제어**: `imageWidth`, `imageHeight`로 정확한 픽셀 크기 지정
+2. **비율 조절**: `imageScale`로 박스 대비 이미지 크기 비율 조정
+3. **여백 조정**: `imagePadding`으로 이미지와 테두리 사이 여백 조절
+4. **피팅 방식**: `imageObjectFit`으로 이미지가 박스에 맞춰지는 방식 선택
+5. **반응형 호버**: 마우스 호버 시 이미지가 10% 확대되는 애니메이션 효과
 
 ### 3. Triangle - 삼각형
 

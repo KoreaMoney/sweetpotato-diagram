@@ -103,10 +103,7 @@ const Documentation = () => {
         {/* Sidebar - fixed height with internal scroll */}
         <div className="w-64 bg-white shadow-lg flex-shrink-0 flex flex-col h-full">
           <div className="p-6 border-b flex-shrink-0">
-            <h1 className="text-lg font-bold text-gray-800">
-              <img src={logo} alt="logo" className="w-6 h-6 inline-block mr-2" />
-              Documentation
-            </h1>
+            <h1 className="text-lg font-bold text-gray-800">🍠 Documentation</h1>
           </div>
           <nav className="p-4 overflow-y-auto flex-1">
             <ul className="space-y-2">

@@ -71,9 +71,11 @@ import { Box, DiagramProvider } from "sweet-diagram";
 
 function App() {
   return (
+  <div className="relative w-full h-full">
     <DiagramProvider>
       <Box x={100} y={100} width={120} height={60} text="Hello World!" />
     </DiagramProvider>
+  </div>
   );
 }`}
             </pre>

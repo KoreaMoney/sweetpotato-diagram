@@ -46,11 +46,6 @@ const ExamplesSection = () => {
             <Connector
               fromBox={{ id: "hydrogen-tank", position: "right" }}
               toBox={{ id: "compressor", position: "left" }}
-              boxes={[
-                { id: "hydrogen-tank", x: 20, y: 60, width: 70, height: 30 },
-                { id: "compressor", x: 150, y: 60, width: 70, height: 30 },
-                { id: "fuel-cell", x: 280, y: 60, width: 70, height: 30 },
-              ]}
               connectionType="straight"
               className="text-blue-600"
               showArrow={true}
@@ -59,11 +54,6 @@ const ExamplesSection = () => {
             <Connector
               fromBox={{ id: "compressor", position: "right" }}
               toBox={{ id: "fuel-cell", position: "left" }}
-              boxes={[
-                { id: "hydrogen-tank", x: 20, y: 60, width: 70, height: 30 },
-                { id: "compressor", x: 150, y: 60, width: 70, height: 30 },
-                { id: "fuel-cell", x: 280, y: 60, width: 70, height: 30 },
-              ]}
               connectionType="straight"
               className="text-emerald-600"
               showArrow={true}

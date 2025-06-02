@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useDiagram } from "./DiagramContext";
 
 const DraggableBox = ({
@@ -13,20 +13,6 @@ const DraggableBox = ({
   onDrag,
   ...props
 }) => {
-  console.log(`🚀 ${id} DraggableBox 생성 - 전달받은 props:`, {
-    id,
-    initialX: initialX,
-    initialY: initialY,
-    width,
-    height,
-    title,
-    color,
-    초기값변환: {
-      x: Number(initialX) || 0,
-      y: Number(initialY) || 0,
-    },
-  });
-
   // DiagramContext를 optional하게 사용
   let registerBox, unregisterBox, updateBoxPosition;
   try {
@@ -63,31 +49,16 @@ const DraggableBox = ({
   useEffect(() => {
     const newX = Number(initialX) || 0;
     const newY = Number(initialY) || 0;
-    console.log(`📍 ${id} 위치 설정:`, {
-      initialX,
-      initialY,
-      newX,
-      newY,
-      width,
-      height,
-      계산된위치: { x: newX, y: newY },
-    });
+
     setPosition({ x: newX, y: newY });
     lastPositionRef.current = { x: newX, y: newY };
-  }, [initialX, initialY, id]);
+  }, [initialX, initialY, id, width, height]);
 
   // 초기 박스 등록 (한 번만 실행)
   useEffect(() => {
     // DOM 요소가 완전히 렌더링된 후에 등록하도록 약간의 지연 추가
     const timer = setTimeout(() => {
       if (boxRef.current && registerBox && id && !isRegisteredRef.current) {
-        console.log(`📦 ${id} 박스 등록:`, {
-          position,
-          width,
-          height,
-          element: !!boxRef.current,
-        });
-
         const boxInfo = {
           x: position.x,
           y: position.y,
@@ -100,30 +71,17 @@ const DraggableBox = ({
         registerBox(id, boxInfo);
         isRegisteredRef.current = true;
         lastPositionRef.current = { x: position.x, y: position.y };
-
-        // 등록 직후 확인 로그
-        setTimeout(() => {
-          if (registerBox && id) {
-            // registerBox를 통해 등록된 상태를 간접적으로 확인
-            console.log(`✅ ${id} 박스 등록 완료 - Context 함수들:`, {
-              registerBox: !!registerBox,
-              unregisterBox: !!unregisterBox,
-              updateBoxPosition: !!updateBoxPosition,
-            });
-          }
-        }, 100);
       }
     }, 10); // 10ms 지연
 
     return () => {
       clearTimeout(timer);
       if (unregisterBox && id && isRegisteredRef.current) {
-        console.log(`🗑️ ${id} 박스 등록 해제`);
         unregisterBox(id);
         isRegisteredRef.current = false;
       }
     };
-  }, [id, registerBox, unregisterBox, position.x, position.y]);
+  }, [id, registerBox, unregisterBox, position.x, position.y, width, height, title, color, updateBoxPosition]);
 
   // 박스 속성 업데이트 (위치 제외)
   useEffect(() => {
@@ -139,7 +97,7 @@ const DraggableBox = ({
       };
       registerBox(id, boxInfo);
     }
-  }, [width, height, title, color]); // position 관련 의존성 완전 제거
+  }, [width, height, title, color, position.x, position.y, registerBox, id]); // position을 position.x, position.y로 분리
 
   // 위치 변경 시 Context 업데이트 (드래그가 끝났을 때만)
   useEffect(() => {
@@ -150,7 +108,7 @@ const DraggableBox = ({
         updateBoxPosition(id, { x: position.x, y: position.y });
       }
     }
-  }, [position.x, position.y, isDragging, id]); // updateBoxPosition 의존성 제거
+  }, [position.x, position.y, isDragging, id, updateBoxPosition]); // updateBoxPosition 의존성 추가
 
   const handleMouseDown = useCallback((e) => {
     e.preventDefault();
@@ -256,8 +214,6 @@ const DraggableBox = ({
     position: "absolute",
     ...transformStyle,
   };
-
-  console.log(`🎨 ${id} 렌더링 스타일:`, finalStyle);
 
   return (
     <div
