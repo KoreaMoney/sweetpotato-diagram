@@ -11,9 +11,6 @@ const Box = ({
   className = "bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-sm",
   onClick = null,
 }) => {
-  // 디버깅: props 확인
-  console.log("Box props:", { id, text, width, height, x, y, className });
-
   // DiagramContext를 optional하게 사용
   let registerBox, unregisterBox;
   try {
@@ -21,7 +18,6 @@ const Box = ({
     registerBox = context.registerBox;
     unregisterBox = context.unregisterBox;
   } catch (error) {
-    console.error("DiagramContext 사용 오류:", error);
     // DiagramProvider가 없으면 context 기능을 사용하지 않음
     registerBox = null;
     unregisterBox = null;
@@ -70,17 +66,20 @@ const Box = ({
 
   return (
     <div
-      className="absolute"
-      style={{ left: `${x}px`, top: `${y}px` }}
+      className="absolute z-10"
+      style={{
+        left: x,
+        top: y,
+        transform: "translate3d(0,0,0)", // GPU 가속 활용
+      }}
       data-box-id={id}
-      data-debug={`Box-${id || "unnamed"}-${x}-${y}-${width}-${height}`}
     >
       {/* 메인 박스 */}
       <div
         className={`flex items-center justify-center cursor-pointer select-none transition-all duration-200 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${className}`}
         style={{
-          width: `${width}px`,
-          height: `${height}px`,
+          width: width,
+          height: height,
         }}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
@@ -95,7 +94,7 @@ const Box = ({
       {Object.entries(connectionPoints).map(([position, point]) => (
         <div
           key={position}
-          className="absolute w-2 h-2 bg-[#0066ff] rounded-full opacity-0 hover:opacity-100 transition-all duration-200 cursor-crosshair hover:scale-150 hover:bg-[#0066ff]"
+          className="absolute w-2 h-2 bg-[#0066ff] rounded-full opacity-0 hover:opacity-100 transition-all duration-200 cursor-crosshair hover:scale-150 hover:bg-[#0066ff] z-20"
           style={{
             left: point.x - x - 4,
             top: point.y - y - 4,

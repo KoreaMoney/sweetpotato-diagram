@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useDiagram } from "./DiagramContext";
 
 const DraggableBox = ({
@@ -36,9 +36,13 @@ const DraggableBox = ({
   // 드래그 중 임시 위치 (DOM transform 사용)
   const [dragPosition, setDragPosition] = useState({ x: 0, y: 0 });
 
-  // 초기 박스 등록 (Context가 있을 때만, 컴포넌트 마운트 시)
+  // 등록된 여부를 추적하여 중복 등록 방지
+  const isRegisteredRef = useRef(false);
+  const lastPositionRef = useRef({ x: initialX, y: initialY });
+
+  // 초기 박스 등록 (한 번만 실행)
   useEffect(() => {
-    if (boxRef.current && registerBox && id) {
+    if (boxRef.current && registerBox && id && !isRegisteredRef.current) {
       const boxInfo = {
         x: position.x,
         y: position.y,
@@ -49,18 +53,21 @@ const DraggableBox = ({
         color,
       };
       registerBox(id, boxInfo);
+      isRegisteredRef.current = true;
+      lastPositionRef.current = { x: position.x, y: position.y };
     }
 
     return () => {
-      if (unregisterBox && id) {
+      if (unregisterBox && id && isRegisteredRef.current) {
         unregisterBox(id);
+        isRegisteredRef.current = false;
       }
     };
-  }, [id, registerBox, unregisterBox]);
+  }, [id]); // 오직 id 변경 시에만 재실행
 
-  // 박스 정보 업데이트 (크기나 기타 속성 변경 시)
+  // 박스 속성 업데이트 (위치 제외)
   useEffect(() => {
-    if (registerBox && id) {
+    if (registerBox && id && isRegisteredRef.current && boxRef.current) {
       const boxInfo = {
         x: position.x,
         y: position.y,
@@ -72,14 +79,18 @@ const DraggableBox = ({
       };
       registerBox(id, boxInfo);
     }
-  }, [width, height, title, color, registerBox, id, position.x, position.y]);
+  }, [width, height, title, color]); // position 관련 의존성 완전 제거
 
-  // 위치 변경 시 Context 업데이트 (드래그 중이 아닐 때만, Context가 있을 때만)
+  // 위치 변경 시 Context 업데이트 (드래그가 끝났을 때만)
   useEffect(() => {
-    if (!isDragging && updateBoxPosition && id) {
-      updateBoxPosition(id, { x: position.x, y: position.y });
+    if (!isDragging && updateBoxPosition && id && isRegisteredRef.current) {
+      // 실제로 위치가 변경된 경우에만 업데이트
+      if (lastPositionRef.current.x !== position.x || lastPositionRef.current.y !== position.y) {
+        lastPositionRef.current = { x: position.x, y: position.y };
+        updateBoxPosition(id, { x: position.x, y: position.y });
+      }
     }
-  }, [position, id, updateBoxPosition, isDragging]);
+  }, [position.x, position.y, isDragging, id]); // updateBoxPosition 의존성 제거
 
   const handleMouseDown = useCallback((e) => {
     e.preventDefault();
@@ -97,6 +108,8 @@ const DraggableBox = ({
       if (!isDragging) return;
 
       const container = boxRef.current.parentElement;
+      if (!container) return;
+
       const containerRect = container.getBoundingClientRect();
 
       const newX = e.clientX - containerRect.left - dragOffset.x;
@@ -114,14 +127,19 @@ const DraggableBox = ({
       const deltaY = clampedY - position.y;
       setDragPosition({ x: deltaX, y: deltaY });
 
-      // Context 실시간 업데이트 (연결선용)
-      updateBoxPosition(id, { x: clampedX, y: clampedY });
+      // Context 실시간 업데이트 (연결선용) - 드래그 중에만 직접 호출
+      if (updateBoxPosition && isRegisteredRef.current) {
+        // requestAnimationFrame으로 성능 최적화
+        requestAnimationFrame(() => {
+          updateBoxPosition(id, { x: clampedX, y: clampedY });
+        });
+      }
 
       if (onDrag) {
         onDrag({ x: clampedX, y: clampedY });
       }
     },
-    [isDragging, dragOffset, position, width, height, updateBoxPosition, id, onDrag]
+    [isDragging, dragOffset, position, width, height, id, onDrag, updateBoxPosition]
   );
 
   const handleMouseUp = useCallback(() => {

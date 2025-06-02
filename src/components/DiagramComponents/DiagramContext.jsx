@@ -39,9 +39,14 @@ export const DiagramProvider = ({ children }) => {
       const newBoxes = new Map(prev);
       const box = newBoxes.get(id);
       if (box) {
-        newBoxes.set(id, { ...box, ...newPosition });
+        // 위치가 실제로 변경된 경우에만 업데이트
+        if (box.x !== newPosition.x || box.y !== newPosition.y) {
+          newBoxes.set(id, { ...box, ...newPosition });
+          return newBoxes;
+        }
       }
-      return newBoxes;
+      // 변경사항이 없으면 기존 Map 반환 (리렌더링 방지)
+      return prev;
     });
   }, []);
 

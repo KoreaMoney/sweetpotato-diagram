@@ -585,7 +585,6 @@ import { ThermometerSun } from "lucide-react";
             />
 
             {/* 크기 비교 예제 */}
-            <div className="absolute left-400 top-48 text-xs font-semibold text-gray-700">크기 비교</div>
             <Valve
               x={420}
               y={80}

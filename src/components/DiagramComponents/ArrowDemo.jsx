@@ -53,126 +53,152 @@ const ArrowDemo = () => {
 
   return (
     <DiagramProvider>
-      <div className="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">🔺 화살표 기능 데모</h2>
-
-        {/* 컨트롤 패널 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {/* 화살표 방향 */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">방향</label>
-            <div className="space-y-1">
-              {directions.map((direction) => (
-                <label key={direction.value} className="flex items-center">
-                  <input
-                    type="radio"
-                    value={direction.value}
-                    checked={arrowDirection === direction.value}
-                    onChange={() => handleDirectionChange(direction.value)}
-                    className="mr-2"
-                  />
-                  <span className="text-sm">{direction.label}</span>
-                </label>
-              ))}
+      <div className="h-screen p-4 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
+        <div className="max-w-6xl mx-auto h-full flex flex-col">
+          <div className="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full">
+            {/* 헤더 */}
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-4 text-white flex-shrink-0">
+              <h2 className="text-2xl font-bold flex items-center gap-3">🔺 Arrow Demo</h2>
+              <p className="text-purple-100 mt-1">Real-time arrow styling and animation demo</p>
             </div>
-          </div>
 
-          {/* 화살표 색상 */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">색상</label>
-            <div className="space-y-1">
-              {colors.map((color) => (
-                <label key={color.value} className="flex items-center">
+            {/* 컨트롤 패널 */}
+            <div className="p-4 bg-gray-50 border-b flex-shrink-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* 화살표 방향 */}
+                <div className="bg-white p-3 rounded-lg shadow-sm">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Arrow Type</label>
+                  <div className="space-y-1">
+                    {directions.map((direction) => (
+                      <label key={direction.value} className="flex items-center">
+                        <input
+                          type="radio"
+                          value={direction.value}
+                          checked={arrowDirection === direction.value}
+                          onChange={() => handleDirectionChange(direction.value)}
+                          className="mr-2 text-blue-600"
+                        />
+                        <span className="text-sm text-gray-700">{direction.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 화살표 색상 */}
+                <div className="bg-white p-3 rounded-lg shadow-sm">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Arrow Color</label>
+                  <div className="space-y-1 max-h-24 overflow-y-auto">
+                    {colors.map((color) => (
+                      <label key={color.value} className="flex items-center">
+                        <input
+                          type="radio"
+                          value={color.value}
+                          checked={arrowColor === color.value}
+                          onChange={() => handleColorChange(color.value)}
+                          className="mr-2 text-blue-600"
+                        />
+                        <span className="text-sm text-gray-700">{color.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 화살표 모양 */}
+                <div className="bg-white p-3 rounded-lg shadow-sm">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Arrow Shape</label>
+                  <div className="space-y-1">
+                    {shapes.map((shape) => (
+                      <label key={shape.value} className="flex items-center">
+                        <input
+                          type="radio"
+                          value={shape.value}
+                          checked={arrowShape === shape.value}
+                          onChange={() => handleShapeChange(shape.value)}
+                          className="mr-2 text-blue-600"
+                        />
+                        <span className="text-sm text-gray-700">{shape.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 기타 설정 */}
+                <div className="bg-white p-3 rounded-lg shadow-sm">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Arrow Size</label>
                   <input
-                    type="radio"
-                    value={color.value}
-                    checked={arrowColor === color.value}
-                    onChange={() => handleColorChange(color.value)}
-                    className="mr-2"
+                    type="range"
+                    min="8"
+                    max="24"
+                    value={arrowSize}
+                    onChange={handleSizeChange}
+                    className="w-full mb-2"
                   />
-                  <span className="text-sm">{color.label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
+                  <div className="text-sm text-gray-600 mb-3">Size: {arrowSize}px</div>
 
-          {/* 화살표 모양 */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">모양</label>
-            <div className="space-y-1">
-              {shapes.map((shape) => (
-                <label key={shape.value} className="flex items-center">
-                  <input
-                    type="radio"
-                    value={shape.value}
-                    checked={arrowShape === shape.value}
-                    onChange={() => handleShapeChange(shape.value)}
-                    className="mr-2"
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Line Width</label>
+                  <select
+                    value={connectionType}
+                    onChange={(e) => handleConnectionTypeChange(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {connectionTypes.map((type) => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* 미리보기와 코드 영역 */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+              {/* 미리보기 영역 */}
+              <div className="flex-1 p-4">
+                <div className="relative w-full h-full bg-white border-2 border-gray-200 rounded-lg overflow-hidden">
+                  <h3 className="absolute top-4 left-4 text-lg font-semibold text-gray-700 z-20 bg-white px-3 py-1 rounded-lg shadow-sm">
+                    Live Preview
+                  </h3>
+
+                  <Connector
+                    startPoint={{ x: 100, y: 200 }}
+                    endPoint={{ x: 500, y: 250 }}
+                    connectionType={connectionType}
+                    arrowDirection={arrowDirection}
+                    arrowColor={arrowColor}
+                    arrowShape={arrowShape}
+                    arrowSize={arrowSize}
+                    strokeWidth={3}
+                    className="text-gray-600"
                   />
-                  <span className="text-sm">{shape.label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
 
-          {/* 기타 설정 */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">크기</label>
-            <input
-              type="range"
-              min="8"
-              max="24"
-              value={arrowSize}
-              onChange={handleSizeChange}
-              className="w-full mb-2"
-            />
-            <div className="text-sm text-gray-600">크기: {arrowSize}px</div>
+                  {/* 시작점과 끝점 표시 */}
+                  <div
+                    className="absolute w-4 h-4 bg-blue-500 rounded-full shadow-lg animate-pulse"
+                    style={{ left: 96, top: 196 }}
+                  ></div>
+                  <div
+                    className="absolute w-4 h-4 bg-red-500 rounded-full shadow-lg animate-pulse"
+                    style={{ left: 496, top: 246 }}
+                  ></div>
 
-            <label className="block text-sm font-medium text-gray-700 mb-2 mt-4">연결 타입</label>
-            <select
-              value={connectionType}
-              onChange={(e) => handleConnectionTypeChange(e.target.value)}
-              className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
-            >
-              {connectionTypes.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+                  <div className="absolute bottom-4 left-4 text-sm text-gray-600 bg-white px-3 py-1 rounded-lg shadow-sm">
+                    <span className="w-2 h-2 bg-blue-500 rounded-full inline-block mr-2"></span>
+                    Start
+                    <span className="w-2 h-2 bg-red-500 rounded-full inline-block ml-4 mr-2"></span>
+                    End
+                  </div>
+                </div>
+              </div>
 
-        {/* 미리보기 영역 */}
-        <div className="relative w-full h-80 bg-gray-50 border-2 border-gray-200 rounded-lg overflow-hidden">
-          <h3 className="absolute top-4 left-4 text-lg font-medium text-gray-700 z-20">실시간 미리보기</h3>
-
-          <Connector
-            startPoint={{ x: 100, y: 150 }}
-            endPoint={{ x: 400, y: 200 }}
-            connectionType={connectionType}
-            arrowDirection={arrowDirection}
-            arrowColor={arrowColor}
-            arrowShape={arrowShape}
-            arrowSize={arrowSize}
-            strokeWidth={3}
-            className="text-gray-600"
-          />
-
-          {/* 시작점과 끝점 표시 */}
-          <div className="absolute w-4 h-4 bg-blue-500 rounded-full" style={{ left: 96, top: 146 }}></div>
-          <div className="absolute w-4 h-4 bg-red-500 rounded-full" style={{ left: 396, top: 196 }}></div>
-
-          <div className="absolute bottom-4 left-4 text-sm text-gray-600">파란점: 시작점 | 빨간점: 끝점</div>
-        </div>
-
-        {/* 코드 예시 */}
-        <div className="mt-6 bg-gray-100 rounded-lg p-4">
-          <h4 className="text-lg font-medium text-gray-700 mb-2">현재 설정 코드:</h4>
-          <pre className="text-sm bg-gray-800 text-green-400 p-3 rounded overflow-x-auto">
-            {`<Connector
-  startPoint={{ x: 100, y: 150 }}
-  endPoint={{ x: 400, y: 200 }}
+              {/* 코드 예시 */}
+              <div className="p-4 bg-gray-50 border-t flex-shrink-0">
+                <h4 className="text-lg font-semibold text-gray-700 mb-2">Current JSX Code:</h4>
+                <div className="bg-gray-900 rounded-lg p-3 overflow-x-auto">
+                  <pre className="text-sm text-green-400">
+                    {`<Connector
+  startPoint={{ x: 100, y: 200 }}
+  endPoint={{ x: 500, y: 250 }}
   connectionType="${connectionType}"
   arrowDirection="${arrowDirection}"
   arrowColor="${arrowColor}"
@@ -180,7 +206,11 @@ const ArrowDemo = () => {
   arrowSize={${arrowSize}}
   strokeWidth={3}
 />`}
-          </pre>
+                  </pre>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </DiagramProvider>

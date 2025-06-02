@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { DiagramProvider } from "./DiagramComponents";
 import ConnectorSection from "./documentation/ConnectorSection";
 import OverviewSection from "./documentation/OverviewSection";
@@ -15,15 +15,15 @@ const Documentation = () => {
   const [activeSection, setActiveSection] = useState("overview");
 
   const sections = [
-    { id: "overview", title: "개요", icon: "📚" },
-    { id: "box", title: "Box", icon: "📦" },
-    { id: "connector", title: "Connector", icon: "🔗" },
-    { id: "triangle", title: "Triangle", icon: "🔺" },
-    { id: "valve", title: "Valve", icon: "🚰" },
-    { id: "imagebox", title: "ImageBox", icon: "🖼️" },
+    { id: "overview", title: "Getting Started", icon: "🚀" },
+    { id: "box", title: "Component API", icon: "🧩" },
+    { id: "connector", title: "Connectors", icon: "🔗" },
+    { id: "triangle", title: "Styling Guide", icon: "🎨" },
+    { id: "valve", title: "Advanced Usage", icon: "⚡" },
+    { id: "imagebox", title: "Complete Examples", icon: "💡" },
     { id: "arrow", title: "Arrow", icon: "➡️" },
     { id: "line", title: "Line", icon: "📏" },
-    { id: "examples", title: "예제", icon: "💡" },
+    { id: "examples", title: "Examples", icon: "💡" },
   ];
 
   const renderOverview = () => {
@@ -88,9 +88,9 @@ const Documentation = () => {
             <div className="bg-white p-6 rounded-lg shadow-lg">
               <h2 className="text-2xl font-bold mb-4">
                 {sections.find((s) => s.id === activeSection)?.icon}{" "}
-                {sections.find((s) => s.id === activeSection)?.title} 컴포넌트
+                {sections.find((s) => s.id === activeSection)?.title} Component
               </h2>
-              <p className="text-gray-600 mb-6">컴포넌트 설명</p>
+              <p className="text-gray-600 mb-6">Component description</p>
             </div>
           </div>
         );
@@ -101,7 +101,7 @@ const Documentation = () => {
     <DiagramProvider>
       <div className="min-h-screen bg-gray-100 pb-20">
         <div className="flex">
-          {/* 사이드바 - sticky로 고정 */}
+          {/* Sidebar - sticky positioning */}
           <div className="w-64 bg-white shadow-lg sticky top-0 h-screen">
             <div className="p-6 border-b">
               <h1 className="text-lg font-bold text-gray-800">
@@ -130,7 +130,7 @@ const Documentation = () => {
             </nav>
           </div>
 
-          {/* 메인 콘텐츠 */}
+          {/* Main Content */}
           <div className="flex-1">
             <div className="max-w-4xl mx-auto p-8 pb-32">{renderContent()}</div>
           </div>

@@ -8,102 +8,105 @@ const OverviewSection = ({ setActiveSection }) => {
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-8 rounded-lg">
         <h1 className="text-4xl font-bold mb-4">🔗 Diagram</h1>
-        <p className="text-xl">회로도 설계 시스템을 위한 재사용 가능한 다이어그램 컴포넌트 라이브러리</p>
+        <p className="text-xl">Reusable diagram component library for circuit design systems</p>
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-4">📋 라이브러리 소개</h2>
+        <h2 className="text-2xl font-bold mb-4">📋 Library Introduction</h2>
         <p className="text-gray-700 mb-4">
-          Diagram 라이브러리는 React 기반의 인터랙티브한 다이어그램 컴포넌트 모음입니다. 수소연료전지 시스템, 전기회로,
-          공정도 등 다양한 기술 다이어그램을 쉽고 빠르게 구성할 수 있도록 설계되었습니다.
+          The Diagram library is a collection of interactive diagram components based on React. It is designed to make
+          it easy and fast to create various technical diagrams such as hydrogen fuel cell systems, electrical circuits,
+          and process flow diagrams.
         </p>
         <p className="text-gray-700">
-          모든 컴포넌트는 TailwindCSS를 활용한 유연한 스타일링과 클릭 이벤트를 지원하여, 정적인 다이어그램뿐만 아니라
-          인터랙티브한 시스템 모니터링 대시보드까지 구현할 수 있습니다.
+          All components support flexible styling using TailwindCSS and click events, allowing you to implement not only
+          static diagrams but also interactive system monitoring dashboards.
         </p>
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-4">✨ 주요 특징</h2>
+        <h2 className="text-2xl font-bold mb-4">✨ Key Features</h2>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-            <h3 className="font-semibold text-blue-800 mb-2">🎨 유연한 스타일링</h3>
-            <p className="text-sm text-blue-700">TailwindCSS 클래스를 통한 자유로운 색상, 크기, 테두리 설정</p>
+            <h3 className="font-semibold text-blue-800 mb-2">🎨 Flexible Styling</h3>
+            <p className="text-sm text-blue-700">Free color, size, and border settings through TailwindCSS classes</p>
           </div>
           <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200">
-            <h3 className="font-semibold text-emerald-800 mb-2">🖱️ 인터랙티브</h3>
-            <p className="text-sm text-emerald-700">모든 컴포넌트에 클릭 이벤트 지원으로 동적 상호작용 구현</p>
+            <h3 className="font-semibold text-emerald-800 mb-2">🖱️ Interactive</h3>
+            <p className="text-sm text-emerald-700">All components support click events for dynamic interaction</p>
           </div>
           <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-            <h3 className="font-semibold text-purple-800 mb-2">🔗 스마트 연결</h3>
-            <p className="text-sm text-purple-700">박스 간 자동 연결점 계산 및 다양한 연결 타입 지원</p>
+            <h3 className="font-semibold text-purple-800 mb-2">🔗 Smart Connection</h3>
+            <p className="text-sm text-purple-700">
+              Automatic connection point calculation and various connection types
+            </p>
           </div>
           <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
-            <h3 className="font-semibold text-amber-800 mb-2">📱 반응형</h3>
-            <p className="text-sm text-amber-700">다양한 화면 크기에 대응하는 유연한 레이아웃 지원</p>
+            <h3 className="font-semibold text-amber-800 mb-2">📱 Responsive</h3>
+            <p className="text-sm text-amber-700">Flexible layout support for various screen sizes</p>
           </div>
         </div>
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-4">🧩 컴포넌트 목록</h2>
+        <h2 className="text-2xl font-bold mb-4">🧩 Component List</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow">
             <div className="text-2xl mb-2">📦</div>
             <h3 className="font-semibold mb-1">Box</h3>
-            <p className="text-sm text-gray-600">시스템 구성요소를 나타내는 기본 박스</p>
+            <p className="text-sm text-gray-600">Basic box representing system components</p>
           </div>
           <div className="border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow">
             <div className="text-2xl mb-2">🔗</div>
             <h3 className="font-semibold mb-1">Connector</h3>
-            <p className="text-sm text-gray-600">컴포넌트 간 연결선 (직선, 곡선, 커스텀)</p>
+            <p className="text-sm text-gray-600">Connection lines between components (straight, curved, custom)</p>
           </div>
           <div className="border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow">
             <div className="text-2xl mb-2">🔺</div>
             <h3 className="font-semibold mb-1">Triangle</h3>
-            <p className="text-sm text-gray-600">방향 표시용 삼각형</p>
+            <p className="text-sm text-gray-600">Triangle for direction indication</p>
           </div>
           <div className="border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow">
             <div className="text-2xl mb-2">🚰</div>
             <h3 className="font-semibold mb-1">Valve</h3>
-            <p className="text-sm text-gray-600">게이트/볼 밸브 (열림/닫힘 상태)</p>
+            <p className="text-sm text-gray-600">Gate/Ball valve (open/closed state)</p>
           </div>
           <div className="border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow">
             <div className="text-2xl mb-2">🖼️</div>
             <h3 className="font-semibold mb-1">ImageBox</h3>
-            <p className="text-sm text-gray-600">이미지를 포함하는 박스</p>
+            <p className="text-sm text-gray-600">Box containing images</p>
           </div>
           <div className="border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow">
             <div className="text-2xl mb-2">➡️</div>
             <h3 className="font-semibold mb-1">Arrow</h3>
-            <p className="text-sm text-gray-600">방향성 화살표 (단방향/양방향)</p>
+            <p className="text-sm text-gray-600">Directional arrow (unidirectional/bidirectional)</p>
           </div>
           <div className="border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow">
             <div className="text-2xl mb-2">📏</div>
             <h3 className="font-semibold mb-1">Line</h3>
-            <p className="text-sm text-gray-600">기본 직선 (연결선, 구분선, 보조선)</p>
+            <p className="text-sm text-gray-600">Basic straight line (connection, separator, auxiliary line)</p>
           </div>
         </div>
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-4">📦 설치 방법</h2>
+        <h2 className="text-2xl font-bold mb-4">📦 Installation</h2>
         <div className="bg-gray-900 text-green-400 p-4 rounded-lg mb-4">
-          <h3 className="text-white text-lg font-semibold mb-3">NPM 설치</h3>
+          <h3 className="text-white text-lg font-semibold mb-3">NPM Installation</h3>
           <pre className="text-sm">
-            {`# NPM으로 설치
-npm install sweetpd
+            {`# Install with NPM
+npm install sweet-diagram
 
-# 또는 Yarn으로 설치
-yarn add sweetpd
+# Or with Yarn
+yarn add sweet-diagram
 
-# 또는 Pnpm으로 설치
-pnpm add sweetpd`}
+# Or with Pnpm
+pnpm add sweet-diagram`}
           </pre>
         </div>
 
         <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
-          <h4 className="font-medium text-blue-800 mb-2">📋 필수 의존성</h4>
+          <h4 className="font-medium text-blue-800 mb-2">📋 Required Dependencies</h4>
           <ul className="text-sm text-blue-700 space-y-1">
             <li>
               • <strong>React:</strong> ^18.0.0
@@ -119,10 +122,10 @@ pnpm add sweetpd`}
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-4">🚀 빠른 시작</h2>
+        <h2 className="text-2xl font-bold mb-4">🚀 Quick Start</h2>
 
         <div className="bg-gray-900 text-green-400 p-4 rounded-lg mb-4">
-          <h3 className="text-white text-lg font-semibold mb-3">1. 컴포넌트 임포트</h3>
+          <h3 className="text-white text-lg font-semibold mb-3">1. Import Components</h3>
           <pre className="text-sm overflow-x-auto">
             {`import { 
   Box, 
@@ -132,12 +135,12 @@ pnpm add sweetpd`}
   ImageBox, 
   Arrow, 
   Line 
-} from 'sweetpd';`}
+} from 'sweet-diagram';`}
           </pre>
         </div>
 
         <div className="bg-gray-900 text-green-400 p-4 rounded-lg mb-4">
-          <h3 className="text-white text-lg font-semibold mb-3">2. 기본 사용 예제</h3>
+          <h3 className="text-white text-lg font-semibold mb-3">2. Basic Usage Example</h3>
           <pre className="text-sm overflow-x-auto">
             {`function MyDiagram() {
   const boxes = [
@@ -153,9 +156,9 @@ pnpm add sweetpd`}
         y={50}
         width={80}
         height={40}
-        text="수소탱크"
+        text="H2 Tank"
         className="bg-blue-500 text-white border-2 border-blue-700 rounded"
-        onClick={() => console.log('탱크 클릭')}
+        onClick={() => console.log('Tank clicked')}
       />
       
       <Box
@@ -164,9 +167,9 @@ pnpm add sweetpd`}
         y={50}
         width={80}
         height={40}
-        text="펌프"
+        text="Pump"
         className="bg-emerald-500 text-white border-2 border-emerald-700 rounded"
-        onClick={() => console.log('펌프 클릭')}
+        onClick={() => console.log('Pump clicked')}
       />
       
       <Connector
@@ -193,116 +196,117 @@ pnpm add sweetpd`}
         </div>
 
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">🎯 결과 미리보기</h3>
+          <h3 className="text-lg font-semibold mb-3">🎯 Preview Result</h3>
           <div className="relative w-full h-32 bg-gray-50 border border-gray-200 rounded-lg p-4">
             <Box
               id="quick-tank"
               x={50}
-              y={20}
+              y={50}
               width={80}
-              height={30}
-              text="수소탱크"
+              height={40}
+              text="H2 Tank"
               className="bg-blue-500 text-white border-2 border-blue-700 rounded text-xs"
-              onClick={() => addToast("빠른 시작 - 탱크 클릭! 🚀", "info")}
             />
 
             <Box
               id="quick-pump"
               x={200}
-              y={20}
+              y={50}
               width={80}
-              height={30}
-              text="펌프"
+              height={40}
+              text="Pump"
               className="bg-emerald-500 text-white border-2 border-emerald-700 rounded text-xs"
-              onClick={() => addToast("빠른 시작 - 펌프 클릭! ⚙️", "success")}
             />
 
             <Connector
               fromBox={{ id: "quick-tank", position: "right" }}
               toBox={{ id: "quick-pump", position: "left" }}
               boxes={[
-                { id: "quick-tank", x: 50, y: 20, width: 80, height: 30 },
-                { id: "quick-pump", x: 200, y: 20, width: 80, height: 30 },
+                { id: "quick-tank", x: 50, y: 50, width: 80, height: 40 },
+                { id: "quick-pump", x: 200, y: 50, width: 80, height: 40 },
               ]}
               connectionType="straight"
               className="text-blue-600"
               showArrow={true}
-              strokeWidth={2}
             />
 
-            <Valve
-              x={165}
-              y={27}
-              size={12}
-              type="gate"
-              isOpen={true}
-              className="text-gray-600"
-              onClick={() => addToast("빠른 시작 - 밸브 클릭! 🚰", "info")}
-            />
+            <Valve x={165} y={62} size={15} type="gate" isOpen={true} className="text-gray-600" />
+          </div>
+        </div>
+
+        <div className="bg-emerald-50 border-l-4 border-emerald-400 p-4">
+          <h4 className="font-medium text-emerald-800 mb-2">💡 Development Tips</h4>
+          <ul className="text-sm text-emerald-700 space-y-1">
+            <li>• Use TailwindCSS classes for styling components</li>
+            <li>• Component coordinates are based on absolute positioning</li>
+            <li>• Connector automatically calculates connection points</li>
+            <li>• All components support responsive design</li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold mb-4">🎨 Styling Guide</h2>
+        <div className="space-y-4">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="font-semibold mb-2">Basic Styling</h3>
+            <pre className="text-sm bg-gray-900 text-green-400 p-3 rounded overflow-x-auto">
+              {`<Box 
+  className="bg-blue-500 text-white border-2 border-blue-700 rounded-lg"
+  x={100} y={100} width={120} height={60}
+  text="Styled Box"
+/>`}
+            </pre>
+          </div>
+
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="font-semibold mb-2">Interactive Styles</h3>
+            <pre className="text-sm bg-gray-900 text-green-400 p-3 rounded overflow-x-auto">
+              {`<Box 
+  className="bg-blue-500 hover:bg-blue-600 cursor-pointer transition-colors"
+  onClick={() => alert('Clicked!')}
+  x={100} y={100} width={120} height={60}
+  text="Click Me"
+/>`}
+            </pre>
           </div>
         </div>
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-4">📚 학습 가이드</h2>
-        <div className="space-y-3">
-          <div className="flex items-center p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <span className="text-2xl mr-3">1️⃣</span>
-            <div>
-              <h3 className="font-semibold text-blue-800">Box 컴포넌트부터 시작</h3>
-              <p className="text-sm text-blue-700">기본 박스 생성과 스타일링 방법을 익혀보세요</p>
-            </div>
-          </div>
-
-          <div className="flex items-center p-3 bg-emerald-50 rounded-lg border border-emerald-200">
-            <span className="text-2xl mr-3">2️⃣</span>
-            <div>
-              <h3 className="font-semibold text-emerald-800">Connector로 연결하기</h3>
-              <p className="text-sm text-emerald-700">박스들을 다양한 방식으로 연결하는 방법을 학습하세요</p>
-            </div>
-          </div>
-
-          <div className="flex items-center p-3 bg-purple-50 rounded-lg border border-purple-200">
-            <span className="text-2xl mr-3">3️⃣</span>
-            <div>
-              <h3 className="font-semibold text-purple-800">특수 컴포넌트 활용</h3>
-              <p className="text-sm text-purple-700">Valve, Triangle, Arrow 등으로 전문적인 다이어그램 완성</p>
-            </div>
-          </div>
-
-          <div className="flex items-center p-3 bg-amber-50 rounded-lg border border-amber-200">
-            <span className="text-2xl mr-3">4️⃣</span>
-            <div>
-              <h3 className="font-semibold text-amber-800">실제 예제 구현</h3>
-              <p className="text-sm text-amber-700">수소연료전지 시스템 등 실용적인 다이어그램 제작</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-gradient-to-r from-emerald-50 to-blue-50 p-6 rounded-lg border border-emerald-200">
-        <h2 className="text-xl font-bold text-emerald-800 mb-3">🎯 다음 단계</h2>
-        <p className="text-emerald-700 mb-4">
-          왼쪽 메뉴에서 각 컴포넌트의 상세 문서를 확인하고, 라이브 예제를 통해 실제 동작을 체험해보세요!
-        </p>
-        <div className="flex flex-wrap gap-2">
+        <h2 className="text-2xl font-bold mb-4">🚀 Next Steps</h2>
+        <div className="grid md:grid-cols-2 gap-4">
           <button
-            onClick={() => setActiveSection("box")}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-[#0066ff] transition-colors text-sm"
+            onClick={() => setActiveSection && setActiveSection("box")}
+            className="bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-lg text-left transition-colors"
           >
-            📦 Box 시작하기
+            <h3 className="font-semibold mb-2">📦 Box Component</h3>
+            <p className="text-sm opacity-90">Learn about basic box component usage</p>
           </button>
           <button
-            onClick={() => setActiveSection("connector")}
-            className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors text-sm"
+            onClick={() => setActiveSection && setActiveSection("connector")}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white p-4 rounded-lg text-left transition-colors"
           >
-            🔗 Connector 알아보기
+            <h3 className="font-semibold mb-2">🔗 Connector Component</h3>
+            <p className="text-sm opacity-90">Learn about connection line components</p>
           </button>
           <button
-            onClick={() => setActiveSection("examples")}
-            className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm"
+            onClick={() => {
+              addToast("Feature coming soon! 🚀", "info");
+            }}
+            className="bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-lg text-left transition-colors"
           >
-            💡 예제 보기
+            <h3 className="font-semibold mb-2">💡 Advanced Examples</h3>
+            <p className="text-sm opacity-90">View complex diagram examples</p>
+          </button>
+          <button
+            onClick={() => {
+              addToast("Community support available! 💬", "success");
+            }}
+            className="bg-gray-500 hover:bg-gray-600 text-white p-4 rounded-lg text-left transition-colors"
+          >
+            <h3 className="font-semibold mb-2">❓ Support</h3>
+            <p className="text-sm opacity-90">Get help and community support</p>
           </button>
         </div>
       </div>
