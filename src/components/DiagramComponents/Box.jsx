@@ -26,7 +26,8 @@ const Box = ({
   // Box 정보를 Context에 등록/업데이트 (Context가 있을 때만)
   useEffect(() => {
     if (id && registerBox) {
-      registerBox(id, { x, y, width, height });
+      const boxInfo = { id, x, y, width, height };
+      registerBox(id, boxInfo);
     }
   }, [id, x, y, width, height, registerBox]);
 

@@ -27,12 +27,12 @@ function App() {
       <DiagramProvider>
         <Box
           id="box1"
-          x={50}
-          y={50}
-          width={100}
-          height={40}
-          text="Start"
-          className="bg-blue-500 text-white border-2 border-blue-700 rounded"
+          x={100}
+          y={200}
+          width={140}
+          height={90}
+          text="Start Box"
+          className="bg-[#0066ff] text-white border-blue-600 border-2 rounded-lg"
         />
 
         <Box

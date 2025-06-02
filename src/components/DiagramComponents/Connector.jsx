@@ -179,8 +179,6 @@ const Connector = ({
   orthogonalDirection = "auto", // 'horizontal-first', 'vertical-first', 'auto'
   stepOffset = 50, // orthogonal 연결에서 중간 지점 오프셋
 }) => {
-  const [isReady, setIsReady] = useState(false);
-
   // DiagramContext를 optional하게 사용
   let getBox = null;
   try {
@@ -188,35 +186,7 @@ const Connector = ({
     getBox = context.getBox;
   } catch (error) {
     // DiagramProvider가 없으면 박스 연결 기능을 사용하지 않음
-    console.log("error", error);
     getBox = null;
-  }
-
-  // 박스 연결이 필요한 경우 박스들이 준비될 때까지 기다림
-  useEffect(() => {
-    if (fromBox && toBox && getBox) {
-      const checkBoxes = () => {
-        const startBox = getBox(fromBox.id);
-        const endBox = getBox(toBox.id);
-
-        if (startBox && endBox) {
-          setIsReady(true);
-        } else {
-          // 박스가 아직 등록되지 않은 경우 다음 프레임에서 다시 확인
-          setTimeout(checkBoxes, 50); // 50ms로 증가하여 안정성 향상
-        }
-      };
-
-      checkBoxes();
-    } else {
-      // 박스 연결이 필요하지 않은 경우 즉시 준비
-      setIsReady(true);
-    }
-  }, [fromBox, toBox, getBox]);
-
-  // 박스들이 준비되지 않은 경우 렌더링하지 않음
-  if (!isReady) {
-    return null;
   }
 
   // arrowDirection에 따른 화살표 표시 설정
@@ -301,7 +271,9 @@ const Connector = ({
 
   // 박스 연결점 계산 함수
   const getBoxConnectionPoint = (boxInfo, position, offset = { x: 0, y: 0 }) => {
-    if (!boxInfo) return { x: 0, y: 0 };
+    if (!boxInfo || typeof boxInfo.x !== "number" || typeof boxInfo.y !== "number") {
+      return null;
+    }
 
     const { x, y, width, height } = boxInfo;
     let point = { x: 0, y: 0 };
@@ -327,8 +299,8 @@ const Connector = ({
     }
 
     return {
-      x: point.x + (offset.x || 0),
-      y: point.y + (offset.y || 0),
+      x: point.x + (offset?.x || 0),
+      y: point.y + (offset?.y || 0),
     };
   };
 
@@ -337,32 +309,20 @@ const Connector = ({
     let actualStartPoint = startPoint;
     let actualEndPoint = endPoint;
 
-    // 박스 연결 방식이 지정된 경우 (그리고 Context가 있을 때만)
+    // 박스 연결 방식이 지정된 경우
     if (fromBox && toBox && fromBox.id && toBox.id && getBox) {
       const startBox = getBox(fromBox.id);
       const endBox = getBox(toBox.id);
 
       if (startBox && endBox) {
-        actualStartPoint = getBoxConnectionPoint(startBox, fromBox.position, fromBox.offset);
-        actualEndPoint = getBoxConnectionPoint(endBox, toBox.position, toBox.offset);
-      } else {
-        // 이 시점에서는 박스들이 이미 확인되었으므로 기본값 사용
-        console.warn("Connector: Box not found!", {
-          fromBoxId: fromBox.id,
-          toBoxId: toBox.id,
-          startBoxFound: !!startBox,
-          endBoxFound: !!endBox,
-        });
+        const calculatedStart = getBoxConnectionPoint(startBox, fromBox.position, fromBox.offset);
+        const calculatedEnd = getBoxConnectionPoint(endBox, toBox.position, toBox.offset);
 
-        // 박스를 찾지 못한 경우 기본값 사용
-        actualStartPoint = startPoint || { x: 50, y: 50 };
-        actualEndPoint = endPoint || { x: 150, y: 150 };
+        if (calculatedStart && calculatedEnd) {
+          actualStartPoint = calculatedStart;
+          actualEndPoint = calculatedEnd;
+        }
       }
-    } else if (fromBox && toBox && !getBox) {
-      // DiagramProvider가 없는 경우 경고 메시지
-      console.warn("Connector: DiagramProvider is required for box-to-box connections. Using fallback coordinates.");
-      actualStartPoint = startPoint || { x: 50, y: 50 };
-      actualEndPoint = endPoint || { x: 150, y: 150 };
     }
 
     return { actualStartPoint, actualEndPoint };
@@ -370,15 +330,15 @@ const Connector = ({
 
   const { actualStartPoint, actualEndPoint } = calculateActualPoints();
 
-  // 안전한 좌표 값 확보
+  // 안전한 좌표 값 확보 - 기본값 사용
   const safeStartPoint = {
-    x: typeof actualStartPoint?.x === "number" && !isNaN(actualStartPoint.x) ? actualStartPoint.x : 0,
-    y: typeof actualStartPoint?.y === "number" && !isNaN(actualStartPoint.y) ? actualStartPoint.y : 0,
+    x: actualStartPoint?.x ?? 100,
+    y: actualStartPoint?.y ?? 100,
   };
 
   const safeEndPoint = {
-    x: typeof actualEndPoint?.x === "number" && !isNaN(actualEndPoint.x) ? actualEndPoint.x : 100,
-    y: typeof actualEndPoint?.y === "number" && !isNaN(actualEndPoint.y) ? actualEndPoint.y : 100,
+    x: actualEndPoint?.x ?? 300,
+    y: actualEndPoint?.y ?? 200,
   };
 
   const safeArrowSize = typeof arrowSize === "number" && !isNaN(arrowSize) ? arrowSize : 8;
@@ -596,7 +556,44 @@ const Connector = ({
     const { x: x1, y: y1 } = safeStartPoint;
     const { x: x2, y: y2 } = safeEndPoint;
 
-    // 마지막 세그먼트의 방향 계산
+    // 박스 연결시에는 연결점에서의 정확한 방향 계산
+    if (toBox && toBox.position && fromBox) {
+      const { position: toPos } = toBox;
+      let angle;
+
+      // 도착 박스의 연결점 위치에 따른 화살표 방향 설정
+      switch (toPos) {
+        case "left":
+          angle = 0; // 오른쪽에서 왼쪽으로
+          break;
+        case "right":
+          angle = Math.PI; // 왼쪽에서 오른쪽으로
+          break;
+        case "top":
+          angle = Math.PI / 2; // 아래에서 위로
+          break;
+        case "bottom":
+          angle = -Math.PI / 2; // 위에서 아래로
+          break;
+        default:
+          // 일반적인 방향 계산
+          angle = Math.atan2(y2 - y1, x2 - x1);
+      }
+
+      const arrowHead1 = {
+        x: x2 - safeArrowSize * Math.cos(angle - Math.PI / 6),
+        y: y2 - safeArrowSize * Math.sin(angle - Math.PI / 6),
+      };
+
+      const arrowHead2 = {
+        x: x2 - safeArrowSize * Math.cos(angle + Math.PI / 6),
+        y: y2 - safeArrowSize * Math.sin(angle + Math.PI / 6),
+      };
+
+      return { arrowHead1, arrowHead2 };
+    }
+
+    // 기존 로직 (일반 좌표 연결)
     let finalX1 = x1,
       finalY1 = y1,
       finalX2 = x2,
@@ -609,34 +606,11 @@ const Connector = ({
         finalY1 = lastBend.y;
       }
     } else if (finalConnectionType === "orthogonal") {
-      // 박스 연결시 도착 방향에 따른 화살표 조정
-      if (toBox && toBox.position) {
-        const { position: toPos } = toBox;
-        switch (toPos) {
-          case "left":
-            finalX1 = x2 + 10; // 왼쪽에서 들어오는 화살표
-            finalY1 = y2;
-            break;
-          case "right":
-            finalX1 = x2 - 10; // 오른쪽에서 들어오는 화살표
-            finalY1 = y2;
-            break;
-          case "top":
-            finalX1 = x2;
-            finalY1 = y2 + 10; // 위에서 들어오는 화살표
-            break;
-          case "bottom":
-            finalX1 = x2;
-            finalY1 = y2 - 10; // 아래에서 들어오는 화살표
-            break;
-        }
+      // orthogonal 연결에서는 마지막 세그먼트 방향 사용
+      if (Math.abs(x2 - x1) > Math.abs(y2 - y1)) {
+        finalY1 = y2; // 수평 마지막 세그먼트
       } else {
-        // 기존 로직
-        if (Math.abs(x2 - x1) > Math.abs(y2 - y1)) {
-          finalY1 = y2; // 수평 마지막 세그먼트
-        } else {
-          finalX1 = x2; // 수직 마지막 세그먼트
-        }
+        finalX1 = x2; // 수직 마지막 세그먼트
       }
     }
 
@@ -662,7 +636,44 @@ const Connector = ({
     const { x: x1, y: y1 } = safeStartPoint;
     const { x: x2, y: y2 } = safeEndPoint;
 
-    // 첫 번째 세그먼트의 방향 계산
+    // 박스 연결시에는 연결점에서의 정확한 방향 계산
+    if (fromBox && fromBox.position && toBox) {
+      const { position: fromPos } = fromBox;
+      let angle;
+
+      // 시작 박스의 연결점 위치에 따른 화살표 방향 설정
+      switch (fromPos) {
+        case "right":
+          angle = 0; // 오른쪽으로
+          break;
+        case "left":
+          angle = Math.PI; // 왼쪽으로
+          break;
+        case "bottom":
+          angle = Math.PI / 2; // 아래로
+          break;
+        case "top":
+          angle = -Math.PI / 2; // 위로
+          break;
+        default:
+          // 일반적인 방향 계산
+          angle = Math.atan2(y2 - y1, x2 - x1);
+      }
+
+      const startArrowHead1 = {
+        x: x1 + safeArrowSize * Math.cos(angle - Math.PI / 6),
+        y: y1 + safeArrowSize * Math.sin(angle - Math.PI / 6),
+      };
+
+      const startArrowHead2 = {
+        x: x1 + safeArrowSize * Math.cos(angle + Math.PI / 6),
+        y: y1 + safeArrowSize * Math.sin(angle + Math.PI / 6),
+      };
+
+      return { startArrowHead1, startArrowHead2 };
+    }
+
+    // 기존 로직 (일반 좌표 연결)
     let startX1 = x1,
       startY1 = y1,
       startX2 = x2,
@@ -675,34 +686,11 @@ const Connector = ({
         startY2 = firstBend.y;
       }
     } else if (finalConnectionType === "orthogonal") {
-      // 박스 연결시 시작 방향에 따른 화살표 조정
-      if (fromBox && fromBox.position) {
-        const { position: fromPos } = fromBox;
-        switch (fromPos) {
-          case "right":
-            startX2 = x1 + 10; // 오른쪽으로 나가는 화살표
-            startY2 = y1;
-            break;
-          case "left":
-            startX2 = x1 - 10; // 왼쪽으로 나가는 화살표
-            startY2 = y1;
-            break;
-          case "bottom":
-            startX2 = x1;
-            startY2 = y1 + 10; // 아래로 나가는 화살표
-            break;
-          case "top":
-            startX2 = x1;
-            startY2 = y1 - 10; // 위로 나가는 화살표
-            break;
-        }
+      // orthogonal 연결에서는 첫 번째 세그먼트 방향 사용
+      if (Math.abs(x2 - x1) > Math.abs(y2 - y1)) {
+        startY2 = y1; // 수평 첫 번째 세그먼트
       } else {
-        // 기존 로직
-        if (Math.abs(x2 - x1) > Math.abs(y2 - y1)) {
-          startY2 = y1; // 수평 첫 번째 세그먼트
-        } else {
-          startX2 = x1; // 수직 첫 번째 세그먼트
-        }
+        startX2 = x1; // 수직 첫 번째 세그먼트
       }
     }
 

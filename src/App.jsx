@@ -214,7 +214,7 @@ function App() {
       <DiagramProvider>
         <div className="h-screen flex flex-col bg-gray-50">
           {/* Header */}
-          <header className="bg-white shadow-sm border-b border-gray-200 flex-shrink-0">
+          <header className="bg-white shadow-lg border-b border-[#0066ff] flex-shrink-0">
             <div className="max-w-7xl mx-auto px-4">
               <div className="flex justify-between items-center h-16">
                 <div className="flex items-center">
