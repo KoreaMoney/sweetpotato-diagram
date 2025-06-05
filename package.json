@@ -34,7 +34,8 @@
       "import": "./dist/sweet-diagram.es.js",
       "require": "./dist/sweet-diagram.cjs.js"
     },
-    "./styles": "./dist/style.css"
+    "./styles": "./dist/sweet-diagram.css",
+    "./style.css": "./dist/sweet-diagram.css"
   },
   "publishConfig": {
     "access": "public",

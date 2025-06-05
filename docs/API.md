@@ -2,8 +2,65 @@
 
 다이어그램 컴포넌트 라이브러리의 상세 API 문서입니다.
 
+## 🎨 스타일링 권장사항
+
+이 컴포넌트 라이브러리는 **TailwindCSS**를 사용한 스타일링을 강력히 권장합니다.
+
+### TailwindCSS 설치
+
+```bash
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+### TailwindCSS 설정
+
+`tailwind.config.js` 파일을 다음과 같이 설정하세요:
+
+```js
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+```
+
+### CSS 파일에 TailwindCSS 추가
+
+메인 CSS 파일 (예: `src/index.css`)에 다음을 추가하세요:
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Sweet Diagram 스타일 import */
+@import "sweet-diagram/style.css";
+```
+
+### 스타일링 예시
+
+```jsx
+// TailwindCSS 클래스를 사용한 현대적 스타일링
+<Box
+  className="bg-blue-500 hover:bg-blue-600 text-white font-semibold
+             border-2 border-blue-700 rounded-lg shadow-lg
+             transition-all duration-300 hover:scale-105"
+/>
+
+<DraggableBox
+  className="bg-gradient-to-r from-purple-500 to-pink-500
+             text-white rounded-xl shadow-xl border-2 border-purple-700
+             hover:shadow-2xl transform transition-all duration-200"
+/>
+```
+
 ## 📋 목차
 
+- [🎨 스타일링 권장사항](#🎨-스타일링-권장사항)
 - [기본 컴포넌트](#기본-컴포넌트)
   - [Box 컴포넌트](#box-컴포넌트)
   - [DraggableBox 컴포넌트](#draggablebox-컴포넌트)
@@ -70,28 +127,66 @@
 
 #### 사용 예시
 
+**TailwindCSS를 사용한 현대적 스타일링 (권장):**
+
 ```jsx
-import { Box } from "@/components/DiagramComponents";
+import { Box } from "sweet-diagram";
 
 <Box
-  id="drogen-tank"
+  id="hydrogen-tank"
   x={100}
   y={50}
   width={120}
   height={60}
   text="수소탱크"
+  className="bg-blue-500 hover:bg-blue-600 text-white font-semibold
+             border-2 border-blue-700 rounded-lg shadow-lg
+             transition-all duration-300 hover:scale-105 cursor-pointer"
+  onClick={(event, boxInfo) => {
+    console.log("박스 클릭됨:", boxInfo);
+  }}
+  onMouseEnter={() => console.log("마우스 진입")}
+/>
+
+// 다양한 TailwindCSS 스타일 예시
+<Box
+  id="motor"
+  x={250}
+  y={50}
+  text="모터"
+  className="bg-gradient-to-r from-green-400 to-green-600 text-white
+             border-2 border-green-700 rounded-xl shadow-xl
+             hover:shadow-2xl transform transition-all duration-200"
+/>
+
+<Box
+  id="controller"
+  x={400}
+  y={50}
+  text="제어기"
+  className="bg-purple-500 hover:bg-purple-600 text-white
+             border border-purple-700 rounded-md shadow-md
+             hover:shadow-lg transition-colors duration-300"
+/>
+```
+
+**기존 방식 (색상 props 사용):**
+
+```jsx
+<Box
+  id="legacy-box"
+  x={100}
+  y={150}
+  width={120}
+  height={60}
+  text="기존 방식"
   backgroundColor="#3B82F6"
   textColor="#FFFFFF"
   borderColor="#1E40AF"
   borderWidth={2}
   borderRadius={8}
   fontSize={14}
-  onClick={(event, boxInfo) => {
-    console.log("박스 클릭됨:", boxInfo);
-  }}
-  onMouseEnter={() => console.log("마우스 진입")}
-  className="hover:shadow-lg transition-all duration-300"
-/>;
+/>
 ```
 
 ---
@@ -140,14 +235,20 @@ import { Box } from "@/components/DiagramComponents";
 
 #### 사용 예시
 
+**TailwindCSS를 사용한 현대적 스타일링 (권장):**
+
 ```jsx
-import { DraggableBox } from "@/components/DiagramComponents";
+import { DraggableBox } from "sweet-diagram";
 
 <DraggableBox
   id="draggable-component"
   initialX={100}
   initialY={100}
   text="드래그 가능한 박스"
+  className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold
+             border-2 border-blue-700 rounded-lg shadow-lg
+             hover:shadow-xl cursor-move transition-all duration-200
+             active:scale-95 select-none"
   isDraggable={true}
   snapToGrid={true}
   gridSize={20}
@@ -158,7 +259,28 @@ import { DraggableBox } from "@/components/DiagramComponents";
   }}
   onDragStart={(e, id) => console.log("드래그 시작:", id)}
   onDragEnd={(e, id, pos) => console.log("드래그 종료:", id, pos)}
-/>;
+/>
+
+// 다양한 테마의 드래그 박스들
+<DraggableBox
+  id="red-box"
+  initialX={200}
+  initialY={200}
+  text="빨간 박스"
+  className="bg-red-500 hover:bg-red-600 text-white
+             border-2 border-red-700 rounded-xl shadow-md
+             hover:shadow-lg transform transition-all duration-300"
+/>
+
+<DraggableBox
+  id="green-box"
+  initialX={300}
+  initialY={200}
+  text="초록 박스"
+  className="bg-emerald-500 hover:bg-emerald-600 text-white
+             border border-emerald-600 rounded-md shadow-sm
+             hover:shadow-md transition-colors duration-200"
+/>
 ```
 
 ---
@@ -189,8 +311,10 @@ import { DraggableBox } from "@/components/DiagramComponents";
 
 #### 사용 예시
 
+**TailwindCSS를 사용한 현대적 스타일링 (권장):**
+
 ```jsx
-import { ImageBox } from "@/components/DiagramComponents";
+import { ImageBox } from "sweet-diagram";
 
 <ImageBox
   id="compressor-image"
@@ -202,11 +326,54 @@ import { ImageBox } from "@/components/DiagramComponents";
   altText="수소 압축기"
   text="압축기"
   textPosition="bottom"
-  borderColor="#10B981"
-  borderWidth={2}
+  className="bg-white border-2 border-green-500 rounded-lg shadow-lg
+             hover:shadow-xl hover:border-green-600 transition-all duration-300
+             cursor-pointer transform hover:scale-105"
   objectFit="contain"
   onClick={(event, info) => console.log("이미지 박스 클릭", info)}
-/>;
+/>
+
+// 다양한 스타일 예시
+<ImageBox
+  id="sensor"
+  x={100}
+  y={250}
+  width={100}
+  height={80}
+  imageUrl="/images/sensor.svg"
+  text="센서"
+  textPosition="overlay"
+  className="bg-gradient-to-br from-blue-50 to-blue-100
+             border border-blue-300 rounded-xl shadow-md
+             hover:shadow-lg transition-shadow duration-200"
+/>
+
+<ImageBox
+  id="valve"
+  x={350}
+  y={250}
+  imageUrl="/images/valve.png"
+  text="밸브"
+  className="bg-gray-50 border-2 border-gray-300 rounded-lg
+             hover:bg-gray-100 hover:border-gray-400
+             transition-colors duration-300"
+/>
+```
+
+**기존 방식 (색상 props 사용):**
+
+```jsx
+<ImageBox
+  id="legacy-image"
+  x={200}
+  y={300}
+  imageUrl="/images/device.png"
+  text="기존 방식"
+  backgroundColor="#F3F4F6"
+  borderColor="#10B981"
+  borderWidth={2}
+  borderRadius={8}
+/>
 ```
 
 ---

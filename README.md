@@ -12,6 +12,20 @@ yarn add sweet-diagram
 pnpm add sweet-diagram
 ```
 
+### CSS Styles
+
+The package includes pre-built CSS styles. Import them in your main CSS file or application entry point:
+
+```css
+/* Option 1: Import CSS in your main CSS file */
+@import "sweet-diagram/style.css";
+```
+
+```jsx
+// Option 2: Import CSS in your JavaScript/React app
+import "sweet-diagram/style.css";
+```
+
 ## 🚀 Quick Start
 
 ### 1. Basic Usage
@@ -22,8 +36,7 @@ import { DiagramProvider, Box, Connector } from "sweet-diagram";
 
 function App() {
   return (
-    {/* Important: Container must have position: relative */}
-    <div style={{ position: "relative", width: "100%", height: "400px" }}>
+    <div>
       <DiagramProvider>
         <Box
           id="box1"
@@ -63,10 +76,8 @@ export default App;
 
 ### 2. With TailwindCSS
 
-If you're using TailwindCSS, make sure your container has proper positioning:
-
 ```jsx
-<div className="relative w-full h-96 bg-gray-50 border border-gray-200 rounded">
+<div className="w-full h-96 bg-gray-50 border border-gray-200 rounded">
   <DiagramProvider>{/* Your components here */}</DiagramProvider>
 </div>
 ```
@@ -82,66 +93,63 @@ import { Box, Arrow, Connector, Triangle, Valve, ImageBox, DiagramProvider, Drag
 const App = () => {
   return (
     <div className="w-full h-screen">
-      {/* Important: Set position: relative on the container */}
-      <div className="relative w-full h-full">
-        <DiagramProvider>
-          {/* Fixed Start Box */}
-          <Box
-            id="custom-demo-start"
-            x={200}
-            y={100}
-            width={120}
-            height={50}
-            text="시작점"
-            className="bg-cyan-600 text-white border-cyan-800 border-2 rounded-lg text-xs cursor-pointer"
-            onClick={() => {
-              console.log("Start box clicked");
-            }}
-          />
+      <DiagramProvider>
+        {/* Fixed Start Box */}
+        <Box
+          id="custom-demo-start"
+          x={200}
+          y={100}
+          width={120}
+          height={50}
+          text="시작점"
+          className="bg-cyan-600 text-white border-cyan-800 border-2 rounded-lg text-xs cursor-pointer"
+          onClick={() => {
+            console.log("Start box clicked");
+          }}
+        />
 
-          {/* Draggable End Box */}
-          <DraggableBox
-            id="custom-demo-end"
-            x={700}
-            y={200}
-            width={120}
-            height={50}
-            text="끝점 (드래그 가능)"
-            className="bg-blue-600 text-white border-cyan-800 border-2 rounded-lg text-xs cursor-pointer"
-            onClick={() => {
-              console.log("End box clicked");
-            }}
-          />
+        {/* Draggable End Box */}
+        <DraggableBox
+          id="custom-demo-end"
+          x={700}
+          y={200}
+          width={120}
+          height={50}
+          text="끝점 (드래그 가능)"
+          className="bg-blue-600 text-white border-cyan-800 border-2 rounded-lg text-xs cursor-pointer"
+          onClick={() => {
+            console.log("End box clicked");
+          }}
+        />
 
-          {/* Curved Connector */}
-          <Connector
-            fromBox={{ id: "custom-demo-start", position: "right" }}
-            toBox={{ id: "custom-demo-end", position: "left" }}
-            connectionType="curved"
-            className="stroke-black hover:stroke-[#0066ff] transition-all duration-300"
-            showArrow={true}
-            strokeWidth={5}
-            arrowSize={10}
-            arrowColor="black"
-            arrowStrokeWidth={10}
-            arrowStrokeColor="black"
-          />
+        {/* Curved Connector */}
+        <Connector
+          fromBox={{ id: "custom-demo-start", position: "right" }}
+          toBox={{ id: "custom-demo-end", position: "left" }}
+          connectionType="curved"
+          className="stroke-black hover:stroke-[#0066ff] transition-all duration-300"
+          showArrow={true}
+          strokeWidth={5}
+          arrowSize={10}
+          arrowColor="black"
+          arrowStrokeWidth={10}
+          arrowStrokeColor="black"
+        />
 
-          {/* ImageBox with Emoji */}
-          <ImageBox
-            id="img-test"
-            x={250}
-            y={300}
-            width={100}
-            height={60}
-            text="Image"
-            icon="⚙️"
-            iconType="emoji"
-            imageScale={1.2}
-            imagePadding={10}
-          />
-        </DiagramProvider>
-      </div>
+        {/* ImageBox with Emoji */}
+        <ImageBox
+          id="img-test"
+          x={250}
+          y={300}
+          width={100}
+          height={60}
+          text="Image"
+          icon="⚙️"
+          iconType="emoji"
+          imageScale={1.2}
+          imagePadding={10}
+        />
+      </DiagramProvider>
     </div>
   );
 };
@@ -162,18 +170,10 @@ This example demonstrates:
 
 ### Components not positioning correctly?
 
-1. **Container positioning**: Ensure your container has `position: relative`
-2. **Height**: Give your container a fixed height
+Components should work with standard div containers without special positioning requirements.
 
 ```jsx
 // ✅ Correct
-<div style={{ position: 'relative', width: '100%', height: '400px' }}>
-  <DiagramProvider>
-    <Box x={50} y={50} ... />
-  </DiagramProvider>
-</div>
-
-// ❌ Incorrect (missing height or position)
 <div>
   <DiagramProvider>
     <Box x={50} y={50} ... />
@@ -188,7 +188,7 @@ The components work without external CSS files. However, if you want to add glob
 ```css
 /* Add to your global CSS file */
 .sweet-diagram-container {
-  position: relative;
+  position: absolute;
   overflow: hidden;
 }
 

@@ -1,3 +1,6 @@
+// CSS 스타일을 import하여 라이브러리에 포함
+import "./index.css";
+
 // 메인 다이어그램 컴포넌트들을 export
 export {
   Connector,

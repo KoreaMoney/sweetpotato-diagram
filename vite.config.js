@@ -46,6 +46,10 @@ export default defineConfig(({ mode }) => {
             "react-dom": "ReactDOM",
             "react/jsx-runtime": "jsxRuntime",
           },
+          assetFileNames: (assetInfo) => {
+            if (assetInfo.name === "style.css") return "style.css";
+            return assetInfo.name;
+          },
         },
       },
       cssCodeSplit: false,
