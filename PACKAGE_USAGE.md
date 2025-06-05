@@ -8,6 +8,51 @@ npm install sweet-diagram
 yarn add sweet-diagram
 ```
 
+### TailwindCSS v4 설치 (필수)
+
+이 패키지는 TailwindCSS v4를 사용합니다:
+
+```bash
+npm install tailwindcss@latest @tailwindcss/postcss
+```
+
+PostCSS 설정 (`postcss.config.js`):
+
+```javascript
+export default {
+  plugins: ["@tailwindcss/postcss"],
+};
+```
+
+**또는** Vite 사용시 (`vite.config.js`):
+
+```javascript
+import tailwindcss from "@tailwindcss/vite";
+
+export default {
+  plugins: [tailwindcss()],
+};
+```
+
+CSS 파일에 Tailwind 임포트:
+
+```css
+@import "tailwindcss";
+
+/* 커스텀 테마 설정 (선택사항) */
+@theme {
+  --color-brand: #b4d455;
+  --font-display: "Inter", sans-serif;
+}
+```
+
+**주요 변경사항**:
+
+- ✅ 설정 파일(`tailwind.config.js`) 불필요
+- ✅ `content` 배열 자동 감지
+- ✅ 더 빠른 빌드 성능
+- ✅ CSS-first 설정 방식
+
 ## 기본 사용법
 
 ### 1. CSS 스타일 임포트
@@ -26,15 +71,35 @@ import { DiagramProvider, Box, Connector, Arrow, Line, Triangle, Valve, ImageBox
 function MyDiagram() {
   return (
     <DiagramProvider width={800} height={600}>
-      <Box id="box1" x={100} y={100} width={120} height={80}>
-        <div className="p-4 bg-blue-500 text-white rounded">박스 1</div>
-      </Box>
+      <Box
+        id="box1"
+        x={100}
+        y={100}
+        width={120}
+        height={80}
+        text="박스 1"
+        className="bg-blue-500 text-white border-blue-600 border-2 rounded-lg"
+      />
 
-      <Box id="box2" x={300} y={200} width={120} height={80}>
-        <div className="p-4 bg-green-500 text-white rounded">박스 2</div>
-      </Box>
+      <Box
+        id="box2"
+        x={300}
+        y={200}
+        width={120}
+        height={80}
+        text="박스 2"
+        className="bg-green-500 text-white border-green-600 border-2 rounded-lg"
+      />
 
-      <Connector from="box1" to="box2" fromPosition="right" toPosition="left" color="#333" animated={true} />
+      <Connector
+        fromBox={{ id: "box1", position: "right" }}
+        toBox={{ id: "box2", position: "left" }}
+        connectionType="straight"
+        arrowDirection="forward"
+        strokeWidth={2}
+        className="text-gray-600"
+        animated={true}
+      />
 
       <Triangle x={200} y={300} size={30} color="#ff6b6b" onClick={() => console.log("Triangle clicked")} />
 
@@ -54,9 +119,15 @@ import { DiagramProvider, DraggableBox } from "sweet-diagram";
 function DraggableDiagram() {
   return (
     <DiagramProvider>
-      <DraggableBox id="draggable1" x={100} y={100} width={100} height={60}>
-        <div className="p-2 bg-purple-500 text-white rounded cursor-move">드래그하세요</div>
-      </DraggableBox>
+      <DraggableBox
+        id="draggable1"
+        initialX={100}
+        initialY={100}
+        width={100}
+        height={60}
+        title="드래그하세요"
+        color="purple"
+      />
     </DiagramProvider>
   );
 }
@@ -103,17 +174,17 @@ function App() {
 ### Box
 
 - 기본 박스 컴포넌트
-- props: `id`, `x`, `y`, `width`, `height`, `children`, `className`, `style`, `onClick`
+- props: `id`, `x`, `y`, `width`, `height`, `text`, `className`, `onClick`
 
 ### DraggableBox
 
 - 드래그 가능한 박스
-- Box와 동일한 props + `draggable` (기본값: true)
+- props: `id`, `initialX`, `initialY`, `width`, `height`, `title`, `color`, `onDrag`
 
 ### Connector
 
-- 두 박스를 연결하는 선
-- props: `from`, `to`, `fromPosition`, `toPosition`, `color`, `strokeWidth`, `animated`, `bidirectional`
+- 두 박스를 연결하는 지능형 연결선
+- props: `fromBox`, `toBox`, `connectionType`, `arrowDirection`, `strokeWidth`, `className`, `animated`, `showArrow`, `arrowShape`, `arrowColor`, `bendPoints`
 
 ### Arrow
 

@@ -8,23 +8,47 @@ declare module "sweet-diagram" {
     y: number;
     width?: number;
     height?: number;
-    children?: ReactNode;
+    text?: string;
     className?: string;
     style?: React.CSSProperties;
-    draggable?: boolean;
-    onClick?: () => void;
+    onClick?: (event: any, data: any) => void;
+  }
+
+  // DraggableBox Props
+  interface DraggableBoxProps {
+    id: string;
+    initialX?: number;
+    initialY?: number;
+    width?: number;
+    height?: number;
+    title?: string;
+    color?: string;
+    children?: ReactNode;
+    onDrag?: (position: { x: number; y: number }) => void;
+    onDragStart?: () => void;
+    onDragEnd?: () => void;
   }
 
   // Connector Props
   interface ConnectorProps {
-    from: string;
-    to: string;
-    fromPosition?: "top" | "bottom" | "left" | "right";
-    toPosition?: "top" | "bottom" | "left" | "right";
-    color?: string;
+    fromBox?: { id: string; position: string; offset?: { x: number; y: number } };
+    toBox?: { id: string; position: string; offset?: { x: number; y: number } };
+    startPoint?: { x: number; y: number };
+    endPoint?: { x: number; y: number };
+    connectionType?: "straight" | "curved" | "orthogonal" | "stepped" | "custom" | "auto";
     strokeWidth?: number;
+    className?: string;
     animated?: boolean;
-    bidirectional?: boolean;
+    showArrow?: boolean;
+    showStartArrow?: boolean;
+    arrowDirection?: "forward" | "backward" | "both" | "none";
+    arrowSize?: number;
+    arrowColor?: string;
+    arrowShape?: "triangle" | "diamond" | "circle" | "square";
+    bendPoints?: Array<{ x: number; y: number }>;
+    orthogonalDirection?: "horizontal-first" | "vertical-first" | "auto";
+    stepOffset?: number;
+    cornerRadius?: number;
   }
 
   // Arrow Props
@@ -100,7 +124,7 @@ declare module "sweet-diagram" {
   export const Valve: ComponentType<ValveProps>;
   export const ImageBox: ComponentType<ImageBoxProps>;
   export const DiagramProvider: ComponentType<DiagramProviderProps>;
-  export const DraggableBox: ComponentType<BoxProps>;
+  export const DraggableBox: ComponentType<DraggableBoxProps>;
   export const ConnectorExamples: ComponentType<any>;
   export const ArrowDemo: ComponentType<any>;
   export const CodeEditor: ComponentType<any>;

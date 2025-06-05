@@ -12,18 +12,166 @@ yarn add sweet-diagram
 pnpm add sweet-diagram
 ```
 
+### TailwindCSS v4 설치 (필수)
+
+이 패키지는 TailwindCSS v4를 사용합니다:
+
+```bash
+npm install tailwindcss@latest @tailwindcss/postcss
+```
+
+PostCSS 설정 (`postcss.config.js`):
+
+```javascript
+export default {
+  plugins: ["@tailwindcss/postcss"],
+};
+```
+
+**또는** Vite 사용시 (`vite.config.js`):
+
+```javascript
+import tailwindcss from "@tailwindcss/vite";
+
+export default {
+  plugins: [tailwindcss()],
+};
+```
+
+CSS 파일에 Tailwind 임포트:
+
+```css
+@import "tailwindcss";
+```
+
+**참고**: v4는 `tailwind.config.js` 파일이 필요하지 않습니다! 자동으로 파일을 감지합니다.
+
 ### CSS Styles
 
 The package includes pre-built CSS styles. Import them in your main CSS file or application entry point:
 
-```css
-/* Option 1: Import CSS in your main CSS file */
-@import "sweet-diagram/style.css";
+```jsx
+// Import CSS in your JavaScript/React app (REQUIRED)
+import "sweet-diagram/dist/sweet-diagram.css";
 ```
 
+```css
+/* Option 2: Import CSS in your main CSS file */
+@import "sweet-diagram/dist/sweet-diagram.css";
+```
+
+## 🎯 NPM Package Usage
+
+### Quick Start with NPM Package
+
 ```jsx
-// Option 2: Import CSS in your JavaScript/React app
-import "sweet-diagram/style.css";
+import React from "react";
+import {
+  DiagramProvider,
+  Box,
+  Connector,
+  DraggableBox,
+  Triangle,
+  Valve,
+  Arrow,
+  Line,
+  ImageBox,
+  useDiagram,
+} from "sweet-diagram";
+
+// IMPORTANT: Don't forget to import CSS!
+import "sweet-diagram/dist/sweet-diagram.css";
+
+function MyDiagram() {
+  return (
+    <div className="w-full h-full">
+      <DiagramProvider width={800} height={600}>
+        <Box
+          id="box1"
+          x={100}
+          y={100}
+          width={120}
+          height={80}
+          text="시작점"
+          className="bg-blue-500 text-white border-blue-600 border-2 rounded-lg"
+          onClick={(event, data) => console.log("Box clicked:", data)}
+        />
+
+        <Box
+          id="box2"
+          x={300}
+          y={200}
+          width={120}
+          height={80}
+          text="끝점"
+          className="bg-green-500 text-white border-green-600 border-2 rounded-lg"
+        />
+
+        <Connector
+          fromBox={{ id: "box1", position: "right" }}
+          toBox={{ id: "box2", position: "left" }}
+          connectionType="straight"
+          arrowDirection="forward"
+          strokeWidth={3}
+          className="text-black"
+          animated={true}
+        />
+
+        <DraggableBox
+          id="draggable1"
+          initialX={500}
+          initialY={100}
+          width={100}
+          height={60}
+          title="드래그 가능"
+          color="purple"
+          onDrag={(position) => console.log("New position:", position)}
+        />
+
+        <Triangle x={200} y={300} size={30} color="#ff6b6b" onClick={() => console.log("Triangle clicked")} />
+
+        <Valve x={400} y={150} size={25} isOpen={true} onClick={() => console.log("Valve clicked")} />
+      </DiagramProvider>
+    </div>
+  );
+}
+
+export default MyDiagram;
+```
+
+### Using Hooks
+
+```jsx
+import { DiagramProvider, useDiagram, Box } from "sweet-diagram";
+
+function DiagramControls() {
+  const { boxes, addBox, removeBox, updateBox } = useDiagram();
+
+  const handleAddBox = () => {
+    const newId = `box-${Date.now()}`;
+    addBox(newId, {
+      x: Math.random() * 400,
+      y: Math.random() * 300,
+      width: 100,
+      height: 60,
+    });
+  };
+
+  return (
+    <div>
+      <button onClick={handleAddBox}>박스 추가</button>
+      <p>현재 박스 개수: {boxes.size}</p>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <DiagramProvider>
+      <DiagramControls />
+    </DiagramProvider>
+  );
+}
 ```
 
 ## 🚀 Quick Start
@@ -64,7 +212,7 @@ function App() {
           connectionType="curved"
           showArrow={true}
           strokeWidth={2}
-          className="text-blue-600"
+          className="text-blue-600 stroke-orange-500"
         />
       </DiagramProvider>
     </div>
@@ -237,7 +385,7 @@ Basic rectangular component for system elements.
   width={120}
   height={60}
   text="Component"
-  className="bg-blue-500 text-white"
+  className="bg-blue-500 text-white border-blue-600 border-2 rounded-lg"
   onClick={(event, data) => console.log("Clicked:", data)}
 />
 ```
@@ -274,8 +422,58 @@ Draggable version of Box component.
 />
 ```
 
+## 📚 API Documentation
+
+### Available Components
+
+| Component         | Description                                 | Key Props                                                       |
+| ----------------- | ------------------------------------------- | --------------------------------------------------------------- |
+| `DiagramProvider` | Context provider for all diagram components | `width`, `height`, `children`                                   |
+| `Box`             | Basic rectangular component                 | `id`, `x`, `y`, `width`, `height`, `children`, `onClick`        |
+| `DraggableBox`    | Draggable version of Box                    | Same as Box + `draggable`                                       |
+| `Connector`       | Connection lines between components         | `from`, `to`, `fromPosition`, `toPosition`, `color`, `animated` |
+| `Arrow`           | Arrow component                             | `from`, `to`, `color`, `strokeWidth`, `arrowSize`               |
+| `Line`            | Basic line component                        | `from`, `to`, `color`, `strokeWidth`                            |
+| `Triangle`        | Triangle shape component                    | `x`, `y`, `size`, `color`, `rotation`, `onClick`                |
+| `Valve`           | Valve component for diagrams                | `x`, `y`, `size`, `isOpen`, `onClick`                           |
+| `ImageBox`        | Box with image support                      | `id`, `x`, `y`, `width`, `height`, `src`, `alt`                 |
+
+### Hooks
+
+- `useDiagram()`: Returns diagram context with `boxes`, `connectors`, `addBox`, `removeBox`, `updateBox`
+
+### TypeScript Support
+
+Full TypeScript definitions are included:
+
+```typescript
+import { BoxProps, ConnectorProps, DiagramContext } from "sweet-diagram";
+
+const MyBox: React.FC<BoxProps> = ({ id, x, y, children }) => {
+  // Type-safe component implementation
+};
+```
+
+## 🔗 Links
+
+- **NPM Package**: <https://www.npmjs.com/package/sweet-diagram>
+- **Live Demo**: <https://sweetpotato-diagram.vercel.app>
+- **GitHub Repository**: <https://github.com/KoreaMoney/sweetpotato-diagram>
+- **Documentation**: See `PACKAGE_USAGE.md` for detailed usage examples
+
+## 📋 Requirements
+
+- React 16.8+ (Hooks required)
+- Optional: TailwindCSS for better styling
+
 ## 📄 License
 
 MIT License - see LICENSE file for details.
 
-## 🐛 Issues
+## 🐛 Issues & Support
+
+If you encounter any issues or have questions:
+
+1. Check the [documentation](https://sweetpotato-diagram.vercel.app)
+2. Look at example usage in `PACKAGE_USAGE.md`
+3. Open an issue on [GitHub](https://github.com/KoreaMoney/sweetpotato-diagram/issues)

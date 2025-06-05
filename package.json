@@ -27,7 +27,9 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "PACKAGE_USAGE.md",
+    "API_DOCUMENTATION.md"
   ],
   "exports": {
     ".": {
