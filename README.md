@@ -84,7 +84,7 @@ import "sweet-diagram/dist/sweet-diagram.css";
 
 function MyDiagram() {
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full absolute">
       <DiagramProvider width={800} height={600}>
         <Box
           id="box1"
@@ -184,7 +184,7 @@ import { DiagramProvider, Box, Connector } from "sweet-diagram";
 
 function App() {
   return (
-    <div>
+    <div className="w-full h-full absolute">
       <DiagramProvider>
         <Box
           id="box1"
@@ -225,7 +225,7 @@ export default App;
 ### 2. With TailwindCSS
 
 ```jsx
-<div className="w-full h-96 bg-gray-50 border border-gray-200 rounded">
+<div className="w-full h-full absolute bg-gray-50 border border-gray-200 rounded">
   <DiagramProvider>{/* Your components here */}</DiagramProvider>
 </div>
 ```
@@ -240,7 +240,7 @@ import { Box, Arrow, Connector, Triangle, Valve, ImageBox, DiagramProvider, Drag
 
 const App = () => {
   return (
-    <div className="w-full h-screen">
+    <div className="w-full h-full absolute">
       <DiagramProvider>
         {/* Fixed Start Box */}
         <Box

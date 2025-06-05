@@ -56,7 +56,11 @@ import { DiagramProvider, Box, Connector } from "sweet-diagram";
 import "sweet-diagram/dist/sweet-diagram.css"; // Required!
 
 function App() {
-  return <DiagramProvider>{/* Your diagram components */}</DiagramProvider>;
+  return (
+    <div className="w-full h-full absolute">
+      <DiagramProvider>{/* Your diagram components */}</DiagramProvider>
+    </div>
+  );
 }
 ```
 
@@ -77,9 +81,11 @@ Context provider that manages diagram state and provides positioning system.
 #### Example
 
 ```jsx
-<DiagramProvider width={1200} height={800}>
-  {/* Diagram components */}
-</DiagramProvider>
+<div className="w-full h-full absolute">
+  <DiagramProvider width={1200} height={800}>
+    {/* Diagram components */}
+  </DiagramProvider>
+</div>
 ```
 
 ---
@@ -431,13 +437,17 @@ The package includes pre-built CSS classes:
 Works seamlessly with TailwindCSS:
 
 ```jsx
-<Box
-  id="styled-box"
-  x={100}
-  y={100}
-  text="Styled Box"
-  className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-lg shadow-lg font-bold"
-/>
+<div className="w-full h-full absolute">
+  <DiagramProvider>
+    <Box
+      id="styled-box"
+      x={100}
+      y={100}
+      text="Styled Box"
+      className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-lg shadow-lg font-bold"
+    />
+  </DiagramProvider>
+</div>
 ```
 
 ### Custom Styling
@@ -466,17 +476,19 @@ function DynamicDiagram() {
   };
 
   return (
-    <DiagramProvider>
-      {connections.map((conn) => (
-        <Connector
-          key={conn.id}
-          fromBox={conn.fromBox}
-          toBox={conn.toBox}
-          connectionType="straight"
-          arrowDirection="forward"
-        />
-      ))}
-    </DiagramProvider>
+    <div className="w-full h-full absolute">
+      <DiagramProvider>
+        {connections.map((conn) => (
+          <Connector
+            key={conn.id}
+            fromBox={conn.fromBox}
+            toBox={conn.toBox}
+            connectionType="straight"
+            arrowDirection="forward"
+          />
+        ))}
+      </DiagramProvider>
+    </div>
   );
 }
 ```

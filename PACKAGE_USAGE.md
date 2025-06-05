@@ -70,41 +70,43 @@ import { DiagramProvider, Box, Connector, Arrow, Line, Triangle, Valve, ImageBox
 
 function MyDiagram() {
   return (
-    <DiagramProvider width={800} height={600}>
-      <Box
-        id="box1"
-        x={100}
-        y={100}
-        width={120}
-        height={80}
-        text="박스 1"
-        className="bg-blue-500 text-white border-blue-600 border-2 rounded-lg"
-      />
+    <div className="w-full h-full absolute">
+      <DiagramProvider width={800} height={600}>
+        <Box
+          id="box1"
+          x={100}
+          y={100}
+          width={120}
+          height={80}
+          text="박스 1"
+          className="bg-blue-500 text-white border-blue-600 border-2 rounded-lg"
+        />
 
-      <Box
-        id="box2"
-        x={300}
-        y={200}
-        width={120}
-        height={80}
-        text="박스 2"
-        className="bg-green-500 text-white border-green-600 border-2 rounded-lg"
-      />
+        <Box
+          id="box2"
+          x={300}
+          y={200}
+          width={120}
+          height={80}
+          text="박스 2"
+          className="bg-green-500 text-white border-green-600 border-2 rounded-lg"
+        />
 
-      <Connector
-        fromBox={{ id: "box1", position: "right" }}
-        toBox={{ id: "box2", position: "left" }}
-        connectionType="straight"
-        arrowDirection="forward"
-        strokeWidth={2}
-        className="text-gray-600"
-        animated={true}
-      />
+        <Connector
+          fromBox={{ id: "box1", position: "right" }}
+          toBox={{ id: "box2", position: "left" }}
+          connectionType="straight"
+          arrowDirection="forward"
+          strokeWidth={2}
+          className="text-gray-600"
+          animated={true}
+        />
 
-      <Triangle x={200} y={300} size={30} color="#ff6b6b" onClick={() => console.log("Triangle clicked")} />
+        <Triangle x={200} y={300} size={30} color="#ff6b6b" onClick={() => console.log("Triangle clicked")} />
 
-      <Valve x={400} y={150} size={25} isOpen={true} onClick={() => console.log("Valve clicked")} />
-    </DiagramProvider>
+        <Valve x={400} y={150} size={25} isOpen={true} onClick={() => console.log("Valve clicked")} />
+      </DiagramProvider>
+    </div>
   );
 }
 
@@ -118,17 +120,19 @@ import { DiagramProvider, DraggableBox } from "sweet-diagram";
 
 function DraggableDiagram() {
   return (
-    <DiagramProvider>
-      <DraggableBox
-        id="draggable1"
-        initialX={100}
-        initialY={100}
-        width={100}
-        height={60}
-        title="드래그하세요"
-        color="purple"
-      />
-    </DiagramProvider>
+    <div className="w-full h-full absolute">
+      <DiagramProvider>
+        <DraggableBox
+          id="draggable1"
+          initialX={100}
+          initialY={100}
+          width={100}
+          height={60}
+          title="드래그하세요"
+          color="purple"
+        />
+      </DiagramProvider>
+    </div>
   );
 }
 ```
@@ -161,10 +165,12 @@ function DiagramControls() {
 
 function App() {
   return (
-    <DiagramProvider>
-      <DiagramControls />
-      {/* 다른 다이어그램 컴포넌트들 */}
-    </DiagramProvider>
+    <div className="w-full h-full absolute">
+      <DiagramProvider>
+        <DiagramControls />
+        {/* 다른 다이어그램 컴포넌트들 */}
+      </DiagramProvider>
+    </div>
   );
 }
 ```
