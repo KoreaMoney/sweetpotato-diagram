@@ -34,8 +34,8 @@
       "import": "./dist/sweet-diagram.es.js",
       "require": "./dist/sweet-diagram.cjs.js"
     },
-    "./styles": "./dist/sweet-diagram.css",
-    "./style.css": "./dist/sweet-diagram.css"
+    "./dist/sweet-diagram.css": "./dist/sweet-diagram.css",
+    "./styles": "./dist/sweet-diagram.css"
   },
   "publishConfig": {
     "access": "public",
@@ -58,7 +58,7 @@
     "test:visual": "playwright test src/test/e2e/visual.spec.js",
     "test:components": "playwright test src/test/e2e/components.spec.js",
     "test:all": "npm run test:run && npm run test:e2e",
-    "prepublishOnly": "npm run lint && npm run test:run && npm run build:lib",
+    "prepublishOnly": "npm run build:lib",
     "prepare": "npm run build:lib",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",

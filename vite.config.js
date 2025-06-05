@@ -47,7 +47,7 @@ export default defineConfig(({ mode }) => {
             "react/jsx-runtime": "jsxRuntime",
           },
           assetFileNames: (assetInfo) => {
-            if (assetInfo.name === "style.css") return "style.css";
+            if (assetInfo.name === "style.css") return "sweet-diagram.css";
             return assetInfo.name;
           },
         },
