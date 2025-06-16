@@ -88,25 +88,27 @@ export default {
 
 #### Props
 
-| 속성              | 타입       | 기본값      | 필수 | 설명                             |
-| ----------------- | ---------- | ----------- | ---- | -------------------------------- |
-| `id`              | `string`   | `""`        | ❌   | 박스 식별자 (Connector에서 사용) |
-| `x`               | `number`   | `0`         | ❌   | X 좌표 위치                      |
-| `y`               | `number`   | `0`         | ❌   | Y 좌표 위치                      |
-| `width`           | `number`   | `120`       | ❌   | 박스의 너비                      |
-| `height`          | `number`   | `60`        | ❌   | 박스의 높이                      |
-| `text`            | `string`   | `""`        | ❌   | 박스 내부에 표시할 텍스트        |
-| `backgroundColor` | `string`   | `"#3B82F6"` | ❌   | 박스 배경색 (HEX 코드)           |
-| `textColor`       | `string`   | `"#FFFFFF"` | ❌   | 텍스트 색상 (HEX 코드)           |
-| `borderColor`     | `string`   | `"#1E40AF"` | ❌   | 테두리 색상 (HEX 코드)           |
-| `borderWidth`     | `number`   | `2`         | ❌   | 테두리 두께 (픽셀)               |
-| `borderRadius`    | `number`   | `8`         | ❌   | 모서리 둥글기 (픽셀)             |
-| `fontSize`        | `number`   | `14`        | ❌   | 폰트 크기 (픽셀)                 |
-| `className`       | `string`   | `""`        | ❌   | 추가 CSS 클래스                  |
-| `onClick`         | `function` | `null`      | ❌   | 클릭 이벤트 핸들러               |
-| `onDoubleClick`   | `function` | `null`      | ❌   | 더블클릭 이벤트 핸들러           |
-| `onMouseEnter`    | `function` | `null`      | ❌   | 마우스 진입 이벤트 핸들러        |
-| `onMouseLeave`    | `function` | `null`      | ❌   | 마우스 떠남 이벤트 핸들러        |
+| 속성                | 타입       | 기본값         | 필수 | 설명                                        |
+| ------------------- | ---------- | -------------- | ---- | ------------------------------------------- |
+| `id`                | `string`   | `""`           | ❌   | 박스 식별자 (Connector에서 사용)            |
+| `x`                 | `number`   | `0`            | ❌   | X 좌표 위치                                 |
+| `y`                 | `number`   | `0`            | ❌   | Y 좌표 위치                                 |
+| `width`             | `number`   | `120`          | ❌   | 박스의 너비                                 |
+| `height`            | `number`   | `60`           | ❌   | 박스의 높이                                 |
+| `text`              | `string`   | `""`           | ❌   | 박스 내부에 표시할 텍스트                   |
+| `textDirection`     | `string`   | `"horizontal"` | ❌   | 텍스트 방향 ("horizontal" \| "vertical") 🆕 |
+| `verticalDirection` | `string`   | `"lr"`         | ❌   | 세로 텍스트 진행 방향 ("lr" \| "rl") 🆕     |
+| `backgroundColor`   | `string`   | `"#3B82F6"`    | ❌   | 박스 배경색 (HEX 코드)                      |
+| `textColor`         | `string`   | `"#FFFFFF"`    | ❌   | 텍스트 색상 (HEX 코드)                      |
+| `borderColor`       | `string`   | `"#1E40AF"`    | ❌   | 테두리 색상 (HEX 코드)                      |
+| `borderWidth`       | `number`   | `2`            | ❌   | 테두리 두께 (픽셀)                          |
+| `borderRadius`      | `number`   | `8`            | ❌   | 모서리 둥글기 (픽셀)                        |
+| `fontSize`          | `number`   | `14`           | ❌   | 폰트 크기 (픽셀)                            |
+| `className`         | `string`   | `""`           | ❌   | 추가 CSS 클래스                             |
+| `onClick`           | `function` | `null`         | ❌   | 클릭 이벤트 핸들러                          |
+| `onDoubleClick`     | `function` | `null`         | ❌   | 더블클릭 이벤트 핸들러                      |
+| `onMouseEnter`      | `function` | `null`         | ❌   | 마우스 진입 이벤트 핸들러                   |
+| `onMouseLeave`      | `function` | `null`         | ❌   | 마우스 떠남 이벤트 핸들러                   |
 
 #### 이벤트
 
@@ -167,6 +169,42 @@ import { Box } from "sweet-diagram";
   className="bg-purple-500 hover:bg-purple-600 text-white
              border border-purple-700 rounded-md shadow-md
              hover:shadow-lg transition-colors duration-300"
+/>
+
+// 🆕 세로 텍스트 Box 예시 (LR 방향)
+<Box
+  id="vertical-lr"
+  x={500}
+  y={50}
+  width={60}
+  height={100}
+  text="세로텍스트컴포넌트"
+  textDirection="vertical"
+  verticalDirection="lr"
+  className="bg-rose-500 hover:bg-rose-600 text-white font-medium
+             border-2 border-rose-700 rounded-lg shadow-lg
+             hover:shadow-xl transition-all duration-300"
+  onClick={(event, boxInfo) => {
+    console.log("세로 텍스트 (LR) 박스 클릭됨:", boxInfo);
+  }}
+/>
+
+// 🆕 세로 텍스트 Box 예시 (RL 방향)
+<Box
+  id="vertical-rl"
+  x={600}
+  y={50}
+  width={60}
+  height={100}
+  text="시스템관리도구"
+  textDirection="vertical"
+  verticalDirection="rl"
+  className="bg-orange-500 hover:bg-orange-600 text-white font-medium
+             border-2 border-orange-700 rounded-lg shadow-lg
+             hover:shadow-xl transition-all duration-300"
+  onClick={(event, boxInfo) => {
+    console.log("세로 텍스트 (RL) 박스 클릭됨:", boxInfo);
+  }}
 />
 ```
 

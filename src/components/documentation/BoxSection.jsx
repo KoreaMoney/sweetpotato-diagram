@@ -13,7 +13,8 @@ const BoxSection = () => {
         <div className="bg-gray-900 text-green-400 p-4 rounded-lg mb-6">
           <h3 className="text-white text-lg font-semibold mb-3">기본 사용법</h3>
           <pre className="text-sm overflow-x-auto">
-            {`<Box
+            {`// 기본 가로 텍스트 Box
+<Box
   id="component1"
   x={50}
   y={50}
@@ -22,13 +23,26 @@ const BoxSection = () => {
   text="컴포넌트"
   className="bg-[#0066ff] text-white border-blue-700 border-2 rounded-lg"
   onClick={() => console.log('클릭됨')}
+/>
+
+// 🆕 세로 텍스트 Box
+<Box
+  id="component2"
+  x={200}
+  y={50}
+  width={60}
+  height={80}
+  text="세로컴포넌트"
+  textDirection="vertical"
+  className="bg-emerald-600 text-white border-emerald-700 border-2 rounded-lg"
+  onClick={() => console.log('세로 텍스트 클릭됨')}
 />`}
           </pre>
         </div>
 
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3">라이브 예제</h3>
-          <div className="relative w-full h-48 border border-gray-200 rounded bg-gray-50 p-4">
+          <div className="relative w-full h-64 border border-gray-200 rounded bg-gray-50 p-4 overflow-x-auto">
             <Box
               id="demo-box1"
               x={50}
@@ -69,6 +83,114 @@ const BoxSection = () => {
               className="bg-purple-600 text-white border-purple-800 border-2 rounded-lg text-xs"
               onClick={() => addToast("제어시스템 클릭! 🎛️", "info")}
             />
+
+            {/* 🆕 세로 텍스트 예제 */}
+            <Box
+              id="demo-box5"
+              x={300}
+              y={100}
+              width={60}
+              height={80}
+              text="세로텍스트"
+              textDirection="vertical"
+              verticalDirection="lr"
+              className="bg-rose-500 text-white border-rose-700 border-2 rounded-lg text-xs"
+              onClick={() => addToast("세로 텍스트 (LR) 클릭! 📝", "success")}
+            />
+            <Box
+              id="demo-box6"
+              x={400}
+              y={100}
+              width={50}
+              height={100}
+              text="배터리모니터링"
+              textDirection="vertical"
+              verticalDirection="lr"
+              className="bg-indigo-500 text-white border-indigo-700 border-2 rounded-lg text-xs"
+              onClick={() => addToast("배터리 모니터링 (LR) 클릭! 🔋", "info")}
+            />
+
+            {/* 🆕 세로 텍스트 RL 방향 예제 */}
+            <Box
+              id="demo-box7"
+              x={480}
+              y={100}
+              width={50}
+              height={100}
+              text="시스템관리도구"
+              textDirection="vertical"
+              verticalDirection="rl"
+              className="bg-orange-500 text-white border-orange-700 border-2 rounded-lg text-xs"
+              onClick={() => addToast("시스템 관리 (RL) 클릭! ⚙️", "warning")}
+            />
+          </div>
+        </div>
+
+        {/* 🆕 세로 텍스트 기능 설명 추가 */}
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg mb-6 border border-green-200">
+          <h3 className="text-xl font-bold text-green-800 mb-4">🆕 세로 텍스트 기능</h3>
+          <p className="text-green-700 mb-4">
+            <code className="bg-white px-2 py-1 rounded">textDirection="vertical"</code> 속성을 사용하여 텍스트를 세로로
+            표시할 수 있습니다. 추가로 <code className="bg-white px-2 py-1 rounded">verticalDirection</code>
+            으로 텍스트 진행 방향을 설정할 수 있습니다.
+          </p>
+
+          <div className="mb-4">
+            <h4 className="font-semibold text-green-800 mb-2">텍스트 진행 방향</h4>
+            <ul className="text-sm text-green-700 space-y-1">
+              <li>
+                • <code className="bg-white px-1 rounded">verticalDirection="lr"</code> (기본값): 왼쪽에서 오른쪽으로
+                진행 (한국어/중국어 방식)
+              </li>
+              <li>
+                • <code className="bg-white px-1 rounded">verticalDirection="rl"</code>: 오른쪽에서 왼쪽으로 진행
+                (일본어 방식)
+              </li>
+            </ul>
+          </div>
+
+          <div className="bg-gray-900 text-green-400 p-4 rounded-lg">
+            <h4 className="text-white text-md font-semibold mb-3">세로 텍스트 사용 예제</h4>
+            <pre className="text-sm overflow-x-auto">
+              {`// 세로 텍스트 Box (왼쪽→오른쪽 진행)
+<Box
+  id="vertical-lr"
+  x={300}
+  y={100}
+  width={60}
+  height={80}
+  text="세로텍스트"
+  textDirection="vertical"
+  verticalDirection="lr"  // 🆕 진행 방향 설정
+  className="bg-rose-500 text-white border-rose-700 border-2 rounded-lg text-xs"
+/>
+
+// 세로 텍스트 Box (오른쪽→왼쪽 진행)
+<Box
+  id="vertical-rl"
+  x={400}
+  y={100}
+  width={60}
+  height={80}
+  text="시스템관리"
+  textDirection="vertical"
+  verticalDirection="rl"  // 오른쪽에서 왼쪽으로
+  className="bg-orange-500 text-white border-orange-700 border-2 rounded-lg text-xs"
+/>
+
+// 긴 텍스트 예제 (자동 줄바꿈)
+<Box
+  id="long-text"
+  x={500}
+  y={100}
+  width={50}
+  height={100}
+  text="배터리모니터링시스템"
+  textDirection="vertical"
+  verticalDirection="lr"
+  className="bg-indigo-500 text-white border-indigo-700 border-2 rounded-lg text-xs"
+/>`}
+            </pre>
           </div>
         </div>
 
@@ -121,6 +243,48 @@ const BoxSection = () => {
   text="제어시스템"
   className="bg-purple-600 text-white border-purple-800 border-2 rounded-lg text-xs"
   onClick={() => addToast("제어시스템 클릭! 🎛️", "info")}
+/>
+
+// 🆕 세로 텍스트 Box (LR 방향)
+<Box
+  id="demo-box5"
+  x={300}
+  y={100}
+  width={60}
+  height={80}
+  text="세로텍스트"
+  textDirection="vertical"
+  verticalDirection="lr"
+  className="bg-rose-500 text-white border-rose-700 border-2 rounded-lg text-xs"
+  onClick={() => addToast("세로 텍스트 (LR) 클릭! 📝", "success")}
+/>
+
+// 긴 텍스트 세로 표시 (LR 방향)
+<Box
+  id="demo-box6"
+  x={400}
+  y={100}
+  width={50}
+  height={100}
+  text="배터리모니터링"
+  textDirection="vertical"
+  verticalDirection="lr"
+  className="bg-indigo-500 text-white border-indigo-700 border-2 rounded-lg text-xs"
+  onClick={() => addToast("배터리 모니터링 (LR) 클릭! 🔋", "info")}
+/>
+
+// 🆕 세로 텍스트 Box (RL 방향)
+<Box
+  id="demo-box7"
+  x={480}
+  y={100}
+  width={50}
+  height={100}
+  text="시스템관리도구"
+  textDirection="vertical"
+  verticalDirection="rl"
+  className="bg-orange-500 text-white border-orange-700 border-2 rounded-lg text-xs"
+  onClick={() => addToast("시스템 관리 (RL) 클릭! ⚙️", "warning")}
 />`}
           </pre>
         </div>
@@ -211,6 +375,32 @@ const BoxSection = () => {
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-600">박스 내부 텍스트</td>
                 </tr>
+                <tr className="hover:bg-gray-50 bg-green-50">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-2 py-1 rounded">textDirection</code>
+                    <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">🆕 NEW</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">string</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">"horizontal"</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">텍스트 방향 ("horizontal" | "vertical")</td>
+                </tr>
+                <tr className="hover:bg-gray-50 bg-green-50">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-2 py-1 rounded">verticalDirection</code>
+                    <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">🆕 NEW</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">string</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">"lr"</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">세로 텍스트 진행 방향 ("lr" | "rl")</td>
+                </tr>
                 <tr className="hover:bg-gray-50">
                   <td className="py-3 px-4">
                     <code className="text-sm bg-gray-100 px-2 py-1 rounded">className</code>
@@ -254,6 +444,17 @@ const BoxSection = () => {
             </li>
             <li>
               • <strong>연결:</strong> Connector 컴포넌트와 함께 사용하여 박스들을 연결할 수 있습니다
+            </li>
+            <li>
+              • <strong>🆕 세로 텍스트:</strong> <code>textDirection="vertical"</code>로 좁은 공간에서 텍스트를 세로로
+              표시
+            </li>
+            <li>
+              • <strong>🆕 진행 방향:</strong> <code>verticalDirection="lr"</code> (한국어) 또는 <code>"rl"</code>{" "}
+              (일본어) 선택 가능
+            </li>
+            <li>
+              • <strong>텍스트 길이:</strong> 세로 모드에서는 박스 높이를 충분히 설정하여 텍스트가 잘리지 않도록 주의
             </li>
           </ul>
         </div>

@@ -378,6 +378,7 @@ Wrapper component that provides context for all diagram components.
 Basic rectangular component for system elements.
 
 ```jsx
+// 기본 가로 텍스트 Box
 <Box
   id="unique-id"
   x={100}
@@ -387,6 +388,34 @@ Basic rectangular component for system elements.
   text="Component"
   className="bg-blue-500 text-white border-blue-600 border-2 rounded-lg"
   onClick={(event, data) => console.log("Clicked:", data)}
+/>
+
+// 🆕 세로 텍스트 Box (LR 방향)
+<Box
+  id="vertical-lr"
+  x={250}
+  y={50}
+  width={60}
+  height={100}
+  text="세로텍스트"
+  textDirection="vertical"
+  verticalDirection="lr"
+  className="bg-emerald-500 text-white border-emerald-600 border-2 rounded-lg"
+  onClick={(event, data) => console.log("세로 텍스트 (LR) 클릭:", data)}
+/>
+
+// 🆕 세로 텍스트 Box (RL 방향)
+<Box
+  id="vertical-rl"
+  x={330}
+  y={50}
+  width={60}
+  height={100}
+  text="시스템관리"
+  textDirection="vertical"
+  verticalDirection="rl"
+  className="bg-orange-500 text-white border-orange-600 border-2 rounded-lg"
+  onClick={(event, data) => console.log("세로 텍스트 (RL) 클릭:", data)}
 />
 ```
 

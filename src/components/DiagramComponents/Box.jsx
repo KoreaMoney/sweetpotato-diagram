@@ -8,6 +8,8 @@ const Box = ({
   height = 60,
   x = 0,
   y = 0,
+  textDirection = "horizontal", // "horizontal" | "vertical"
+  verticalDirection = "lr", // "lr" | "rl" - 세로 텍스트 진행 방향 (lr: 왼쪽→오른쪽, rl: 오른쪽→왼쪽)
   className = "bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-sm",
   onClick = null,
 }) => {
@@ -52,6 +54,20 @@ const Box = ({
     }
   };
 
+  // 텍스트 방향에 따른 스타일 결정
+  const getTextStyle = () => {
+    if (textDirection === "vertical") {
+      return {
+        writingMode: `vertical-${verticalDirection}`, // vertical-lr 또는 vertical-rl
+        textOrientation: "mixed",
+        textAlign: "center",
+      };
+    }
+    return {
+      textAlign: "center",
+    };
+  };
+
   // 연결점 위치 계산
   const getConnectionPoints = () => {
     return {
@@ -84,7 +100,9 @@ const Box = ({
     >
       {/* 메인 박스 내용 */}
       <div className="flex items-center justify-center w-full h-full cursor-pointer select-none transition-all duration-200 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-        <span className="font-medium text-center px-2 leading-tight">{text}</span>
+        <span className="font-medium px-2 leading-tight" style={getTextStyle()}>
+          {text}
+        </span>
       </div>
 
       {/* 연결점들 */}
