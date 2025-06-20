@@ -12,15 +12,15 @@ yarn add sweet-diagram
 pnpm add sweet-diagram
 ```
 
-### TailwindCSS v4 설치 (필수)
+### TailwindCSS v4 Installation (Required)
 
-이 패키지는 TailwindCSS v4를 사용합니다:
+This package uses TailwindCSS v4:
 
 ```bash
 npm install tailwindcss@latest @tailwindcss/postcss
 ```
 
-PostCSS 설정 (`postcss.config.js`):
+PostCSS configuration (`postcss.config.js`):
 
 ```javascript
 export default {
@@ -28,7 +28,7 @@ export default {
 };
 ```
 
-**또는** Vite 사용시 (`vite.config.js`):
+**Or** when using Vite (`vite.config.js`):
 
 ```javascript
 import tailwindcss from "@tailwindcss/vite";
@@ -38,13 +38,13 @@ export default {
 };
 ```
 
-CSS 파일에 Tailwind 임포트:
+Import Tailwind in your CSS file:
 
 ```css
 @import "tailwindcss";
 ```
 
-**참고**: v4는 `tailwind.config.js` 파일이 필요하지 않습니다! 자동으로 파일을 감지합니다.
+**Note**: v4 doesn't require a `tailwind.config.js` file! It automatically detects files.
 
 ### CSS Styles
 
@@ -92,7 +92,7 @@ function MyDiagram() {
           y={100}
           width={120}
           height={80}
-          text="시작점"
+          text="Start Point"
           className="bg-blue-500 text-white border-blue-600 border-2 rounded-lg"
           onClick={(event, data) => console.log("Box clicked:", data)}
         />
@@ -103,7 +103,7 @@ function MyDiagram() {
           y={200}
           width={120}
           height={80}
-          text="끝점"
+          text="End Point"
           className="bg-green-500 text-white border-green-600 border-2 rounded-lg"
         />
 
@@ -123,7 +123,7 @@ function MyDiagram() {
           initialY={100}
           width={100}
           height={60}
-          title="드래그 가능"
+          title="Draggable"
           color="purple"
           onDrag={(position) => console.log("New position:", position)}
         />
@@ -159,8 +159,8 @@ function DiagramControls() {
 
   return (
     <div>
-      <button onClick={handleAddBox}>박스 추가</button>
-      <p>현재 박스 개수: {boxes.size}</p>
+      <button onClick={handleAddBox}>Add Box</button>
+      <p>Current box count: {boxes.size}</p>
     </div>
   );
 }

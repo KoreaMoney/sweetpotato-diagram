@@ -9,23 +9,23 @@ const Box = ({
   x = 0,
   y = 0,
   textDirection = "horizontal", // "horizontal" | "vertical"
-  verticalDirection = "lr", // "lr" | "rl" - 세로 텍스트 진행 방향 (lr: 왼쪽→오른쪽, rl: 오른쪽→왼쪽)
+  verticalDirection = "lr", // "lr" | "rl" - Vertical text direction (lr: left→right, rl: right→left)
   className = "bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-sm",
   onClick = null,
 }) => {
-  // DiagramContext를 optional하게 사용
+  // Use DiagramContext optionally
   let registerBox, unregisterBox;
   try {
     const context = useDiagram();
     registerBox = context.registerBox;
     unregisterBox = context.unregisterBox;
   } catch {
-    // DiagramProvider가 없으면 context 기능을 사용하지 않음
+    // Don't use context functionality if DiagramProvider is not available
     registerBox = null;
     unregisterBox = null;
   }
 
-  // Box 정보를 Context에 등록/업데이트 (Context가 있을 때만)
+  // Register/update Box information in Context (only when Context is available)
   useEffect(() => {
     if (id && registerBox) {
       const boxInfo = { id, x, y, width, height };
@@ -33,7 +33,7 @@ const Box = ({
     }
   }, [id, x, y, width, height, registerBox]);
 
-  // 컴포넌트 언마운트 시 등록 해제 (Context가 있을 때만)
+  // Unregister when component unmounts (only when Context is available)
   useEffect(() => {
     return () => {
       if (id && unregisterBox) {
@@ -54,11 +54,11 @@ const Box = ({
     }
   };
 
-  // 텍스트 방향에 따른 스타일 결정
+  // Determine style based on text direction
   const getTextStyle = () => {
     if (textDirection === "vertical") {
       return {
-        writingMode: `vertical-${verticalDirection}`, // vertical-lr 또는 vertical-rl
+        writingMode: `vertical-${verticalDirection}`, // vertical-lr or vertical-rl
         textOrientation: "mixed",
         textAlign: "center",
       };
@@ -68,14 +68,13 @@ const Box = ({
     };
   };
 
-  // 연결점 위치 계산
+  // Calculate connection point positions
   const getConnectionPoints = () => {
     return {
       top: { x: x + width / 2, y: y },
       right: { x: x + width, y: y + height / 2 },
       bottom: { x: x + width / 2, y: y + height },
       left: { x: x, y: y + height / 2 },
-      center: { x: x + width / 2, y: y + height / 2 },
     };
   };
 
@@ -85,11 +84,11 @@ const Box = ({
     <div
       className={`absolute z-10 ${className}`}
       style={{
-        left: `${x}px`, // 명시적으로 px 단위 추가
-        top: `${y}px`, // 명시적으로 px 단위 추가
+        left: `${x}px`, // Explicitly add px unit
+        top: `${y}px`, // Explicitly add px unit
         width: `${width}px`,
         height: `${height}px`,
-        transform: "translate3d(0,0,0)", // GPU 가속 활용
+        transform: "translate3d(0,0,0)", // Utilize GPU acceleration
       }}
       data-box-id={id}
       onClick={handleClick}
@@ -98,14 +97,14 @@ const Box = ({
       role="button"
       aria-label={`Box component: ${text} ${id ? `(ID: ${id})` : ""}`}
     >
-      {/* 메인 박스 내용 */}
+      {/* Main box content */}
       <div className="flex items-center justify-center w-full h-full cursor-pointer select-none transition-all duration-200 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
         <span className="font-medium px-2 leading-tight" style={getTextStyle()}>
           {text}
         </span>
       </div>
 
-      {/* 연결점들 */}
+      {/* Connection points */}
       {Object.entries(connectionPoints).map(([position, point]) => (
         <div
           key={position}
@@ -118,7 +117,7 @@ const Box = ({
           data-box-id={id}
           data-x={point.x}
           data-y={point.y}
-          title={`${id ? `${id} - ` : ""}${position} 연결점`}
+          title={`${id ? `${id} - ` : ""}${position} connection point`}
         />
       ))}
     </div>

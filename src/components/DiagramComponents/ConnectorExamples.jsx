@@ -23,7 +23,14 @@ import {
   CurvedExample,
   OrthogonalExample,
   MultiConnectionExample,
+  FreePointExample,
   CustomExample,
+  ElectricAnimationExample,
+  WaterAnimationExample,
+  WindAnimationExample,
+  GasAnimationExample,
+  DataAnimationExample,
+  AnimationComparisonExample,
 } from "./examples/ExampleComponents";
 
 // 컴포넌트 매핑
@@ -32,6 +39,13 @@ const EXAMPLE_COMPONENTS = {
   curved: CurvedExample,
   orthogonal: OrthogonalExample,
   multiConnection: MultiConnectionExample,
+  freePoint: FreePointExample,
+  electricAnimation: ElectricAnimationExample,
+  waterAnimation: WaterAnimationExample,
+  windAnimation: WindAnimationExample,
+  gasAnimation: GasAnimationExample,
+  dataAnimation: DataAnimationExample,
+  animationComparison: AnimationComparisonExample,
 };
 
 const ConnectorExamplesContent = () => {

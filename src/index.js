@@ -21,5 +21,8 @@ export {
 // Documentation 컴포넌트도 export
 export { default as Documentation } from "./components/Documentation";
 
+// MouseTracker 컴포넌트 export
+export { default as MouseTracker } from "./components/MouseTracker";
+
 // 메인 App 컴포넌트를 SweetDiagram으로 export
 export { default as SweetDiagram } from "./App";

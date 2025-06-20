@@ -8,6 +8,7 @@ import ValveSection from "./documentation/ValveSection";
 import ImageBoxSection from "./documentation/ImageBoxSection";
 import ArrowSection from "./documentation/ArrowSection";
 import LineSection from "./documentation/LineSection";
+import MouseTrackerSection from "./documentation/MouseTrackerSection";
 import ExamplesSection from "./documentation/ExamplesSection";
 
 const Documentation = () => {
@@ -22,6 +23,7 @@ const Documentation = () => {
     { id: "imagebox", title: "Image Box", icon: "💡" },
     { id: "arrow", title: "Arrow", icon: "➡️" },
     { id: "line", title: "Line", icon: "📏" },
+    { id: "mousetracker", title: "Mouse Tracker", icon: "🖱️" },
     { id: "examples", title: "Examples", icon: "💡" },
   ];
 
@@ -57,6 +59,10 @@ const Documentation = () => {
     return <LineSection />;
   };
 
+  const renderMouseTracker = () => {
+    return <MouseTrackerSection />;
+  };
+
   const renderExamples = () => {
     return <ExamplesSection />;
   };
@@ -79,6 +85,8 @@ const Documentation = () => {
         return renderArrow();
       case "line":
         return renderLine();
+      case "mousetracker":
+        return renderMouseTracker();
       case "examples":
         return renderExamples();
       default:

@@ -12,3 +12,6 @@ export { default as ArrowDemo } from "./ArrowDemo";
 export { default as DraggableBox } from "./DraggableBox";
 export { default as CodeEditor } from "./CodeEditor";
 export { DiagramProvider, useDiagram } from "./DiagramContext";
+
+// 애니메이션 예제 컴포넌트
+export { default as AnimationExamples } from "./examples/AnimationExamples";

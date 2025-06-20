@@ -1,74 +1,124 @@
 /**
- * Connector 컴포넌트
+ * Connector component
  *
- * 두 점 또는 박스 간의 연결선을 그리는 컴포넌트입니다.
- * 다양한 연결 스타일과 화살표, 애니메이션을 지원합니다.
+ * A component that draws connection lines between two points or boxes.
+ * Supports various connection styles, arrows, and animations.
  *
- * @param {Object} props - 컴포넌트 props
+ * @param {Object} props - Component props
  *
- * === 기본 좌표 연결 방식 ===
- * @param {Object} startPoint - 시작점 좌표 { x: number, y: number }
- * @param {Object} endPoint - 끝점 좌표 { x: number, y: number }
+ * === Basic coordinate connection method ===
+ * @param {Object} startPoint - Start point coordinates { x: number, y: number }
+ * @param {Object} endPoint - End point coordinates { x: number, y: number }
  *
- * === 박스 연결 방식 (자동 감지) ===
- * @param {Object} fromBox - 시작 박스 정보 { id: string, position: string, offset: { x: number, y: number } }
+ * === Box connection method (auto-detection) ===
+ * @param {Object} fromBox - Source box information { id: string, position: string, offset: { x: number, y: number } }
  *   - position: "top" | "right" | "bottom" | "left" | "center"
- * @param {Object} toBox - 도착 박스 정보 { id: string, position: string, offset: { x: number, y: number } }
- * ⚠️ 주의: boxes prop이 제거되었습니다! 이제 DiagramContext를 통해 자동으로 Box 정보를 가져옵니다.
+ * @param {Object} toBox - Destination box information { id: string, position: string, offset: { x: number, y: number } }
+ * ⚠️ Note: The boxes prop has been removed! Box information is now automatically retrieved through DiagramContext.
  *
- * === 연결 스타일 ===
- * @param {string} connectionType - 연결 타입
- *   - "straight": 직선 연결 (기본값)
- *   - "curved": 곡선 연결 (베지어 곡선)
- *   - "orthogonal": 직각 연결 (ㄱ자 모양)
- *   - "stepped": 계단식 연결
- *   - "custom": 사용자 정의 경로 (bendPoints 사용)
- *   - "auto": 박스 위치에 따라 자동 선택
+ * === Free point connection method ===
+ * @param {Object} fromCustomPoint - Start point free coordinates { x: number, y: number } (free point not specific to a box position)
+ * @param {Object} toCustomPoint - End point free coordinates { x: number, y: number } (free point not specific to a box position)
+ * @param {Object} fromBoxCustom - Free position of start box { id: string, customPoint: { x: number, y: number } }
+ *   - customPoint: Relative position within the box (0~1 range, 0.5 is center)
+ * @param {Object} toBoxCustom - Free position of destination box { id: string, customPoint: { x: number, y: number } }
  *
- * === 스타일링 ===
- * @param {number} strokeWidth - 선 두께 (기본값: 2)
- * @param {string} className - CSS 클래스 (기본값: "text-gray-500 hover:text-gray-600 transition-colors duration-200")
- * @param {boolean} animated - 애니메이션 효과 (기본값: false)
+ * === Connection styles ===
+ * @param {string} connectionType - Connection type
+ *   - "straight": Straight line connection (default)
+ *   - "curved": Curved connection (Bezier curve)
+ *   - "orthogonal": Right-angle connection (L-shaped)
+ *   - "stepped": Stepped connection
+ *   - "custom": Custom path (uses bendPoints)
+ *   - "auto": Automatically selected based on box positions
  *
- * === 화살표/삼각형 ===
- * @param {boolean} showArrow - 끝점 화살표 표시 (기본값: true)
- * @param {boolean} showStartArrow - 시작점 화살표 표시 (기본값: false)
- * @param {number} arrowSize - 화살표 크기 (기본값: 8)
- * @param {string} arrowDirection - 화살표 방향 "forward" | "backward" | "both" | "none" (기본값: "forward")
- * @param {string} arrowColor - 화살표 색상 (기본값: "current" - 부모 요소 색상 상속)
- * @param {string} arrowShape - 화살표 모양 "triangle" | "diamond" | "circle" | "square" (기본값: "triangle")
+ * === Styling ===
+ * @param {number} strokeWidth - Line thickness (default: 2)
+ * @param {string} className - CSS class (default: "text-gray-500 hover:text-gray-600 transition-colors duration-200")
+ * @param {boolean} animated - Animation effect (default: false)
+ * @param {string} animationType - Animation type "electric" | "water" | "wind" | "gas" | "data" | "dash" (default: "dash")
+ * @param {number} animationSpeed - Animation speed (default: 2 seconds)
  *
- * === 고급 설정 ===
- * @param {Array} bendPoints - 중간 꺾임점들 [{ x: number, y: number }] (connectionType: "custom"일 때 사용)
- * @param {number} cornerRadius - 모서리 둥글기 (기본값: 0)
- * @param {string} orthogonalDirection - 직교 연결 방향 "horizontal-first" | "vertical-first" | "auto"
- * @param {number} stepOffset - 직교 연결에서 중간 지점 오프셋 (기본값: 50)
+ * === Arrows/Triangles ===
+ * @param {boolean} showArrow - Show end point arrow (default: true)
+ * @param {boolean} showStartArrow - Show start point arrow (default: false)
+ * @param {number} arrowSize - Arrow size (default: 8)
+ * @param {string} arrowDirection - Arrow direction "forward" | "backward" | "both" | "none" (default: "forward")
+ * @param {string} arrowColor - Arrow color (default: "current" - inherits parent element color)
+ * @param {string} arrowShape - Arrow shape "triangle" | "diamond" | "circle" | "square" (default: "triangle")
  *
- * === 사용 예시 ===
+ * === Advanced settings ===
+ * @param {Array} bendPoints - Intermediate bend points [{ x: number, y: number }] (used when connectionType: "custom")
+ * @param {number} cornerRadius - Corner rounding (default: 0)
+ * @param {string} orthogonalDirection - Orthogonal connection direction "horizontal-first" | "vertical-first" | "auto"
+ * @param {number} stepOffset - Intermediate point offset for orthogonal connections (default: 50)
  *
- * // 1. 기본 직선 연결
+ * === Usage examples ===
+ *
+ * // 1. Basic straight connection
  * <Connector
  *   startPoint={{ x: 100, y: 100 }}
  *   endPoint={{ x: 200, y: 200 }}
  * />
  *
- * // 2. 곡선 연결 with 애니메이션
+ * // 2. Electric flow animation
  * <Connector
  *   startPoint={{ x: 100, y: 100 }}
  *   endPoint={{ x: 300, y: 150 }}
- *   connectionType="curved"
  *   animated={true}
- *   strokeWidth={3}
+ *   animationType="electric"
+ *   animationSpeed={1.5}
+ *   className="text-blue-500"
  * />
  *
- * // 3. 박스 간 연결 (자동 Box 감지!)
+ * // 3. Water flow animation
+ * <Connector
+ *   fromBox={{ id: "tank1", position: "right" }}
+ *   toBox={{ id: "tank2", position: "left" }}
+ *   animated={true}
+ *   animationType="water"
+ *   connectionType="curved"
+ *   className="text-blue-600"
+ * />
+ *
+ * // 4. Wind flow animation
+ * <Connector
+ *   startPoint={{ x: 100, y: 100 }}
+ *   endPoint={{ x: 400, y: 200 }}
+ *   animated={true}
+ *   animationType="wind"
+ *   animationSpeed={0.8}
+ *   className="text-gray-400"
+ * />
+ *
+ * // 5. Gas flow animation
+ * <Connector
+ *   fromBox={{ id: "source", position: "bottom" }}
+ *   toBox={{ id: "dest", position: "top" }}
+ *   animated={true}
+ *   animationType="gas"
+ *   connectionType="orthogonal"
+ *   className="text-yellow-500"
+ * />
+ *
+ * // 6. Data transmission animation
+ * <Connector
+ *   startPoint={{ x: 50, y: 50 }}
+ *   endPoint={{ x: 350, y: 250 }}
+ *   animated={true}
+ *   animationType="data"
+ *   animationSpeed={1}
+ *   className="text-green-500"
+ * />
+ *
+ * // 7. Box-to-box connection (automatic Box detection!)
  * <Connector
  *   fromBox={{ id: "box1", position: "right" }}
  *   toBox={{ id: "box2", position: "left" }}
  *   connectionType="auto"
  * />
  *
- * // 4. 직교 연결 (ㄱ자 모양)
+ * // 8. Orthogonal connection (L-shaped)
  * <Connector
  *   fromBox={{ id: "box1", position: "bottom" }}
  *   toBox={{ id: "box2", position: "top" }}
@@ -77,7 +127,7 @@
  *   stepOffset={80}
  * />
  *
- * // 5. 사용자 정의 경로 (중간점 지정)
+ * // 9. Custom path (specifying intermediate points)
  * <Connector
  *   startPoint={{ x: 100, y: 100 }}
  *   endPoint={{ x: 400, y: 300 }}
@@ -89,7 +139,7 @@
  *   ]}
  * />
  *
- * // 6. 양방향 화살표 with 커스텀 색상 및 크기
+ * // 10. Bidirectional arrows with custom color and size
  * <Connector
  *   startPoint={{ x: 100, y: 100 }}
  *   endPoint={{ x: 300, y: 200 }}
@@ -100,7 +150,7 @@
  *   className="text-blue-500"
  * />
  *
- * // 7. 박스 연결 with 오프셋
+ * // 11. Box connection with offset
  * <Connector
  *   fromBox={{
  *     id: "box1",
@@ -114,7 +164,7 @@
  *   }}
  * />
  *
- * // 8. 다양한 화살표 모양과 색상
+ * // 12. Various arrow shapes and colors
  * <Connector
  *   startPoint={{ x: 100, y: 100 }}
  *   endPoint={{ x: 300, y: 200 }}
@@ -124,7 +174,7 @@
  *   arrowSize={15}
  * />
  *
- * // 9. 원형 화살표
+ * // 13. Circle arrows
  * <Connector
  *   fromBox={{ id: "box1", position: "bottom" }}
  *   toBox={{ id: "box2", position: "top" }}
@@ -133,7 +183,7 @@
  *   arrowSize={10}
  * />
  *
- * // 10. 사각형 화살표 (단방향)
+ * // 14. Square arrows (unidirectional)
  * <Connector
  *   startPoint={{ x: 50, y: 50 }}
  *   endPoint={{ x: 250, y: 150 }}
@@ -143,15 +193,25 @@
  *   connectionType="curved"
  * />
  *
- * === 주요 변경사항 ===
- * - boxes prop이 제거되었습니다!
- * - DiagramContext를 통해 Box 정보를 자동으로 가져옵니다
- * - Box 컴포넌트가 이동하면 자동으로 Connector도 업데이트됩니다
- * - DiagramProvider로 감싸진 영역에서만 사용 가능합니다
- * - 새로운 삼각형/화살표 커스터마이징 옵션 추가:
- *   - arrowDirection: 화살표 방향 제어
- *   - arrowColor: 화살표 색상 제어
- *   - arrowShape: 화살표 모양 제어 (triangle, diamond, circle, square)
+ * // 15. Free point connection (absolute coordinates)
+ * <Connector
+ *   fromCustomPoint={{ x: 120, y: 80 }}
+ *   toCustomPoint={{ x: 350, y: 220 }}
+ *   connectionType="curved"
+ * />
+ *
+ * // 16. Box custom point connection (relative coordinates)
+ * <Connector
+ *   fromBoxCustom={{
+ *     id: "box1",
+ *     customPoint: { x: 0.8, y: 0.3 } // 80% right, 30% down from top-left
+ *   }}
+ *   toBoxCustom={{
+ *     id: "box2",
+ *     customPoint: { x: 0.2, y: 0.7 } // 20% right, 70% down from top-left
+ *   }}
+ *   connectionType="straight"
+ * />
  */
 
 import React from "react";
@@ -166,10 +226,18 @@ const Connector = ({
   fromBox = null, // { id: "box1", position: "right", offset: { x: 0, y: 0 } }
   toBox = null, // { id: "box2", position: "left", offset: { x: 0, y: 0 } }
 
+  // 자유 포인트 연결 방식
+  fromCustomPoint = null, // { x: number, y: number } - 절대 좌표
+  toCustomPoint = null, // { x: number, y: number } - 절대 좌표
+  fromBoxCustom = null, // { id: string, customPoint: { x: 0~1, y: 0~1 } } - 박스 내 상대 위치
+  toBoxCustom = null, // { id: string, customPoint: { x: 0~1, y: 0~1 } } - 박스 내 상대 위치
+
   connectionType = "straight", // 'straight', 'curved', 'orthogonal', 'stepped', 'custom'
   strokeWidth = 2,
   animated = false,
-  className = "stroke-[#0066ff] hover:stroke-black transition-all duration-300",
+  animationType = "dash",
+  animationSpeed = 2,
+  className = "",
   arrowSize = 8,
   arrowDirection = "forward", // 'forward', 'backward', 'both', 'none'
   arrowColor = "current", // 'current', 'red', 'blue', etc.
@@ -307,13 +375,78 @@ const Connector = ({
     };
   };
 
+  // 박스 내부의 자유 위치를 계산하는 함수 (상대 좌표 0~1을 절대 좌표로 변환)
+  const getBoxCustomPoint = (boxCustomInfo) => {
+    if (!getBox) return null;
+
+    const box = getBox(boxCustomInfo.id);
+    if (!box) return null;
+
+    const { x: boxX, y: boxY, width, height } = box;
+    const { customPoint } = boxCustomInfo;
+
+    // customPoint.x, customPoint.y는 0~1 범위의 상대 좌표
+    // 범위를 벗어나는 값은 0~1로 제한
+    const normalizedX = Math.max(0, Math.min(1, customPoint.x));
+    const normalizedY = Math.max(0, Math.min(1, customPoint.y));
+
+    const connectionX = boxX + width * normalizedX;
+    const connectionY = boxY + height * normalizedY;
+
+    return {
+      x: connectionX,
+      y: connectionY,
+    };
+  };
+
   // 실제 시작점과 끝점 계산
   const calculateActualPoints = () => {
     let actualStartPoint = startPoint;
     let actualEndPoint = endPoint;
 
-    // 박스 연결 방식이 지정된 경우
-    if (fromBox && toBox && fromBox.id && toBox.id && getBox) {
+    // 1. 자유 포인트 연결 (절대 좌표) - 최우선
+    if (fromCustomPoint && toCustomPoint) {
+      actualStartPoint = fromCustomPoint;
+      actualEndPoint = toCustomPoint;
+    }
+    // 2. 박스 자유 위치 연결 (상대 좌표)
+    else if (fromBoxCustom && toBoxCustom && getBox) {
+      const calculatedStart = getBoxCustomPoint(fromBoxCustom);
+      const calculatedEnd = getBoxCustomPoint(toBoxCustom);
+
+      if (calculatedStart && calculatedEnd) {
+        actualStartPoint = calculatedStart;
+        actualEndPoint = calculatedEnd;
+      }
+    }
+    // 3. 혼합 연결 (기존 박스 + 자유 포인트)
+    else if ((fromBox || fromBoxCustom) && (toBox || toBoxCustom || fromCustomPoint || toCustomPoint)) {
+      // 시작점 계산
+      if (fromBoxCustom && getBox) {
+        actualStartPoint = getBoxCustomPoint(fromBoxCustom);
+      } else if (fromBox && fromBox.id && getBox) {
+        const startBox = getBox(fromBox.id);
+        if (startBox) {
+          actualStartPoint = getBoxConnectionPoint(startBox, fromBox.position, fromBox.offset);
+        }
+      } else if (fromCustomPoint) {
+        actualStartPoint = fromCustomPoint;
+      }
+
+      // 끝점 계산
+      if (toBoxCustom && getBox) {
+        actualEndPoint = getBoxCustomPoint(toBoxCustom);
+      } else if (toBox && toBox.id && getBox) {
+        const endBox = getBox(toBox.id);
+        if (endBox) {
+          actualEndPoint = getBoxConnectionPoint(endBox, toBox.position, toBox.offset);
+        }
+      } else if (toCustomPoint) {
+        actualEndPoint = toCustomPoint;
+      }
+    }
+    // 4. 기존 박스 연결 방식
+    else if (fromBox && toBox && fromBox.id && toBox.id && getBox) {
       const startBox = getBox(fromBox.id);
       const endBox = getBox(toBox.id);
 
@@ -754,6 +887,490 @@ const Connector = ({
   const maxX = Math.max(...allPoints.map((p) => p.x)) + safeArrowSize;
   const maxY = Math.max(...allPoints.map((p) => p.y)) + safeArrowSize;
 
+  // 애니메이션 스타일 생성
+  const getAnimationStyles = () => {
+    if (!animated) return "";
+
+    const speed = animationSpeed || 2;
+
+    // 디버깅: 애니메이션이 활성화되었는지 콘솔에 로그
+    console.log(`Animation enabled: ${animated}, Type: ${animationType}, Speed: ${speed}`);
+
+    switch (animationType) {
+      case "electric":
+        return `
+          .electric-path {
+            stroke-dasharray: 8, 4, 2, 4;
+            animation: electricFlow ${speed * 0.9}s linear infinite, electricGlow ${
+          speed * 2
+        }s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.7));
+            stroke-linecap: round;
+          }
+          @keyframes electricFlow {
+            0% { 
+              stroke-dashoffset: 0; 
+              opacity: 0.8;
+            }
+            25% { 
+              opacity: 1;
+            }
+            50% { 
+              opacity: 0.9;
+            }
+            75% { 
+              opacity: 1;
+            }
+            100% { 
+              stroke-dashoffset: -14; 
+              opacity: 0.8;
+            }
+          }
+          @keyframes electricGlow {
+            0% { 
+              filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.7));
+            }
+            100% { 
+              filter: drop-shadow(0 0 12px rgba(59, 130, 246, 1)) drop-shadow(0 0 20px rgba(96, 165, 250, 0.6));
+            }
+          }
+          .electric-particles {
+            animation: electricSpark ${speed * 0.6}s ease-in-out infinite;
+          }
+          @keyframes electricSpark {
+            0% { 
+              opacity: 0; 
+              r: 1; 
+              fill: #3b82f6;
+            }
+            25% { 
+              opacity: 0.8; 
+              r: 2; 
+              fill: #60a5fa;
+            }
+            50% { 
+              opacity: 1; 
+              r: 2.5; 
+              fill: #93c5fd;
+            }
+            75% { 
+              opacity: 0.6; 
+              r: 1.8; 
+              fill: #60a5fa;
+            }
+            100% { 
+              opacity: 0; 
+              r: 1; 
+              fill: #3b82f6;
+            }
+          }
+        `;
+
+      case "water":
+        return `
+          .water-path {
+            stroke-dasharray: 12, 6, 4, 6;
+            animation: waterFlow ${speed * 1.1}s ease-in-out infinite, waterWave ${speed * 2}s ease-in-out infinite;
+            filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.6));
+            stroke-linecap: round;
+          }
+          @keyframes waterFlow {
+            0% { 
+              stroke-dashoffset: 0; 
+              opacity: 0.7;
+            }
+            25% { 
+              opacity: 0.9;
+            }
+            50% { 
+              opacity: 1;
+            }
+            75% { 
+              opacity: 0.8;
+            }
+            100% { 
+              stroke-dashoffset: -16; 
+              opacity: 0.7;
+            }
+          }
+          @keyframes waterWave {
+            0% { 
+              filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.6));
+            }
+            50% { 
+              filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.8)) drop-shadow(0 0 14px rgba(14, 165, 233, 0.5));
+            }
+            100% { 
+              filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.6));
+            }
+          }
+          .water-drops {
+            animation: waterDroplet ${speed * 0.8}s ease-in-out infinite;
+          }
+          @keyframes waterDroplet {
+            0% { 
+              opacity: 0; 
+              r: 1.2; 
+              fill: #3b82f6;
+            }
+            25% { 
+              opacity: 0.6; 
+              r: 2; 
+              fill: #0ea5e9;
+            }
+            50% { 
+              opacity: 0.9; 
+              r: 2.5; 
+              fill: #06b6d4;
+            }
+            75% { 
+              opacity: 0.5; 
+              r: 1.8; 
+              fill: #0891b2;
+            }
+            100% { 
+              opacity: 0; 
+              r: 1.2; 
+              fill: #3b82f6;
+            }
+          }
+        `;
+
+      case "wind":
+        return `
+          .wind-path {
+            stroke-dasharray: 6, 10, 4, 8;
+            animation: windFlow ${speed * 0.8}s ease-in-out infinite, windGust ${speed * 2.2}s ease-in-out infinite;
+            filter: drop-shadow(0 0 3px rgba(156, 163, 175, 0.5));
+            stroke-linecap: round;
+          }
+          @keyframes windFlow {
+            0% { 
+              stroke-dashoffset: 0; 
+              opacity: 0.5;
+            }
+            20% { 
+              opacity: 0.7;
+            }
+            40% { 
+              opacity: 0.4;
+            }
+            60% { 
+              opacity: 0.8;
+            }
+            80% { 
+              opacity: 0.6;
+            }
+            100% { 
+              stroke-dashoffset: -18; 
+              opacity: 0.5;
+            }
+          }
+          @keyframes windGust {
+            0% { 
+              filter: drop-shadow(0 0 3px rgba(156, 163, 175, 0.5));
+            }
+            50% { 
+              filter: drop-shadow(0 0 6px rgba(156, 163, 175, 0.7)) drop-shadow(0 0 12px rgba(107, 114, 128, 0.4));
+            }
+            100% { 
+              filter: drop-shadow(0 0 3px rgba(156, 163, 175, 0.5));
+            }
+          }
+          .wind-particles {
+            animation: windParticle ${speed * 1}s ease-in-out infinite;
+          }
+          @keyframes windParticle {
+            0% { 
+              opacity: 0; 
+              r: 0.8;
+              fill: #9ca3af;
+            }
+            25% { 
+              opacity: 0.4; 
+              r: 1.5;
+              fill: #6b7280;
+            }
+            50% { 
+              opacity: 0.6; 
+              r: 1.8;
+              fill: #4b5563;
+            }
+            75% { 
+              opacity: 0.3; 
+              r: 1.2;
+              fill: #374151;
+            }
+            100% { 
+              opacity: 0; 
+              r: 0.8;
+              fill: #9ca3af;
+            }
+          }
+        `;
+
+      case "gas":
+        return `
+          .gas-path {
+            stroke-dasharray: 6, 8, 4, 6;
+            animation: gasFlow ${speed * 1.2}s ease-in-out infinite, gasDiffusion ${speed * 2.5}s ease-in-out infinite;
+            filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.6));
+            stroke-linecap: round;
+          }
+          @keyframes gasFlow {
+            0% { 
+              stroke-dashoffset: 0; 
+              opacity: 0.6;
+            }
+            20% { 
+              opacity: 0.8;
+            }
+            40% { 
+              opacity: 0.5;
+            }
+            60% { 
+              opacity: 0.9;
+            }
+            80% { 
+              opacity: 0.7;
+            }
+            100% { 
+              stroke-dashoffset: -14; 
+              opacity: 0.6;
+            }
+          }
+          @keyframes gasDiffusion {
+            0% { 
+              filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.6));
+            }
+            50% { 
+              filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.8)) drop-shadow(0 0 15px rgba(245, 158, 11, 0.5));
+            }
+            100% { 
+              filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.6));
+            }
+          }
+          .gas-bubbles {
+            animation: gasBubble ${speed * 0.7}s ease-in-out infinite;
+          }
+          @keyframes gasBubble {
+            0% { 
+              opacity: 0; 
+              r: 0.8;
+              fill: #fbbf24;
+            }
+            20% { 
+              opacity: 0.4; 
+              r: 1.5;
+              fill: #f59e0b;
+            }
+            40% { 
+              opacity: 0.7; 
+              r: 2.2;
+              fill: #d97706;
+            }
+            60% { 
+              opacity: 0.8; 
+              r: 2.5;
+              fill: #b45309;
+            }
+            80% { 
+              opacity: 0.5; 
+              r: 1.8;
+              fill: #92400e;
+            }
+            100% { 
+              opacity: 0; 
+              r: 0.8;
+              fill: #fbbf24;
+            }
+          }
+        `;
+
+      case "data":
+        return `
+          .data-path {
+            stroke-dasharray: 4, 3, 2, 3;
+            animation: dataTransfer ${speed * 0.9}s linear infinite, dataGlow ${speed * 2}s ease-in-out infinite;
+            filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.7));
+            stroke-linecap: round;
+          }
+          @keyframes dataTransfer {
+            0% { 
+              stroke-dashoffset: 0; 
+              opacity: 0.8;
+            }
+            25% { 
+              opacity: 1;
+            }
+            50% { 
+              opacity: 0.9;
+            }
+            75% { 
+              opacity: 1;
+            }
+            100% { 
+              stroke-dashoffset: -12; 
+              opacity: 0.8;
+            }
+          }
+          @keyframes dataGlow {
+            0% { 
+              filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.7));
+            }
+            50% { 
+              filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.9)) drop-shadow(0 0 18px rgba(16, 185, 129, 0.6));
+            }
+            100% { 
+              filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.7));
+            }
+          }
+          .data-packets {
+            animation: dataPacket ${speed * 0.6}s linear infinite;
+          }
+          @keyframes dataPacket {
+            0% { 
+              opacity: 0; 
+              r: 1;
+              fill: #22c55e;
+            }
+            20% { 
+              opacity: 0.7; 
+              r: 1.5;
+              fill: #10b981;
+            }
+            40% { 
+              opacity: 1; 
+              r: 2;
+              fill: #059669;
+            }
+            60% { 
+              opacity: 0.8; 
+              r: 1.8;
+              fill: #047857;
+            }
+            80% { 
+              opacity: 0.4; 
+              r: 1.2;
+              fill: #065f46;
+            }
+            100% { 
+              opacity: 0; 
+              r: 1;
+              fill: #22c55e;
+            }
+          }
+        `;
+
+      default: // "dash"
+        return `
+          .dash-path {
+            stroke-dasharray: 8, 4;
+            animation: dashFlow ${speed}s linear infinite;
+            stroke-linecap: round;
+            opacity: 0.8;
+          }
+          @keyframes dashFlow {
+            0% { 
+              stroke-dashoffset: 0; 
+            }
+            100% { 
+              stroke-dashoffset: -12; 
+            }
+          }
+        `;
+    }
+  };
+
+  // 애니메이션 파티클 생성
+  const renderAnimationParticles = () => {
+    if (!animated) return null;
+
+    const pathLength = Math.sqrt(
+      Math.pow(safeEndPoint.x - safeStartPoint.x, 2) + Math.pow(safeEndPoint.y - safeStartPoint.y, 2)
+    );
+
+    const particleCount = Math.min(Math.floor(pathLength / 50), 8);
+    const particles = [];
+
+    for (let i = 0; i < particleCount; i++) {
+      const progress = (i + 1) / (particleCount + 1);
+      const x = safeStartPoint.x + (safeEndPoint.x - safeStartPoint.x) * progress;
+      const y = safeStartPoint.y + (safeEndPoint.y - safeStartPoint.y) * progress;
+
+      switch (animationType) {
+        case "electric":
+          particles.push(
+            <circle
+              key={`electric-${i}`}
+              cx={x - minX}
+              cy={y - minY}
+              r="1.5"
+              className="electric-particles fill-current"
+              style={{ animationDelay: `${i * 0.2}s` }}
+            />
+          );
+          break;
+
+        case "water":
+          particles.push(
+            <circle
+              key={`water-${i}`}
+              cx={x - minX}
+              cy={y - minY}
+              r="2"
+              className="water-drops fill-current opacity-60"
+              style={{ animationDelay: `${i * 0.3}s` }}
+            />
+          );
+          break;
+
+        case "wind":
+          particles.push(
+            <ellipse
+              key={`wind-${i}`}
+              cx={x - minX}
+              cy={y - minY}
+              rx="3"
+              ry="1"
+              className="wind-particles fill-current opacity-40"
+              style={{ animationDelay: `${i * 0.25}s` }}
+            />
+          );
+          break;
+
+        case "gas":
+          particles.push(
+            <circle
+              key={`gas-${i}`}
+              cx={x - minX}
+              cy={y - minY}
+              r="1"
+              className="gas-bubbles fill-current opacity-50"
+              style={{ animationDelay: `${i * 0.4}s` }}
+            />
+          );
+          break;
+
+        case "data":
+          particles.push(
+            <rect
+              key={`data-${i}`}
+              x={x - minX - 1.5}
+              y={y - minY - 1}
+              width="3"
+              height="2"
+              className="data-packets fill-current"
+              style={{ animationDelay: `${i * 0.1}s` }}
+            />
+          );
+          break;
+      }
+    }
+
+    return particles;
+  };
+
   return (
     <svg
       className={`absolute pointer-events-none z-10 ${className}`}
@@ -767,19 +1384,7 @@ const Connector = ({
       {/* 애니메이션 정의 */}
       {animated && (
         <defs>
-          <style>
-            {`
-              .animated-path {
-                stroke-dasharray: 10;
-                animation: dash 2s linear infinite;
-              }
-              @keyframes dash {
-                to {
-                  stroke-dashoffset: -20;
-                }
-              }
-            `}
-          </style>
+          <style>{getAnimationStyles()}</style>
         </defs>
       )}
 
@@ -788,11 +1393,14 @@ const Connector = ({
         d={getPathWithRadius()}
         strokeWidth={safeStrokeWidth}
         fill="none"
-        className={`stroke-current ${animated ? "animated-path" : ""}`}
+        className={`stroke-current ${animated ? `${animationType}-path` : ""}`}
         transform={`translate(${-minX}, ${-minY})`}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+
+      {/* 애니메이션 파티클 */}
+      {renderAnimationParticles()}
 
       {/* 화살표 */}
       {shouldShowEndArrow && arrowHead1 && arrowHead2 && (

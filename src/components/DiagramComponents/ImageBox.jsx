@@ -139,7 +139,6 @@ const ImageBox = ({
       right: { x: x + width, y: y + height / 2 },
       bottom: { x: x + width / 2, y: y + height },
       left: { x: x, y: y + height / 2 },
-      center: { x: x + width / 2, y: y + height / 2 },
     };
   };
 

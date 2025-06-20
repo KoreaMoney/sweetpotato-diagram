@@ -12,7 +12,7 @@ const DiagramPreview = ({ ExampleComponent, isAnimated, isCustomMode, currentTem
   return (
     <div className="flex-1 bg-gray-100 relative overflow-hidden">
       {/* 헤더 정보 */}
-      <div className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-4 z-40 max-w-md">
+      <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-4 z-40 max-w-md">
         <div className="flex items-center gap-3 mb-2">
           <span className="text-2xl">{isCustomMode ? "🚀" : currentTemplate.icon}</span>
           <div>

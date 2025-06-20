@@ -1,157 +1,157 @@
-# sweet-diagram npm 배포 가이드
+# sweet-diagram npm Deployment Guide
 
-이 가이드는 sweet-diagram 패키지를 npm에 배포하는 방법을 설명합니다.
+This guide explains how to deploy the sweet-diagram package to npm.
 
-## 🚀 배포 준비사항
+## 🚀 Pre-deployment Requirements
 
-### 1. npm 계정 생성
+### 1. Create npm Account
 
-- [npmjs.com](https://www.npmjs.com/)에서 계정을 생성하세요
-- 이메일 인증을 완료하세요
+- Create an account at [npmjs.com](https://www.npmjs.com/)
+- Complete email verification
 
-### 2. npm 로그인
+### 2. npm Login
 
-터미널에서 npm에 로그인하세요:
+Log in to npm via terminal:
 
 ```bash
 npm login
 ```
 
-### 3. 패키지명 확인
+### 3. Check Package Name Availability
 
-npm에서 패키지명이 사용 가능한지 확인하세요:
+Verify that the package name is available on npm:
 
 ```bash
 npm search sweet-diagram
 ```
 
-## 📦 배포 과정
+## 📦 Deployment Process
 
-### 1단계: 빌드 테스트
+### Step 1: Build Testing
 
 ```bash
-# 라이브러리 빌드
+# Build library
 npm run build:lib
 
-# 패키지 구성 확인
+# Verify package configuration
 npm pack --dry-run
 ```
 
-### 2단계: 테스트 실행
+### Step 2: Run Tests
 
 ```bash
-# 린트 검사
+# Lint check
 npm run lint
 
-# 단위 테스트
+# Unit tests
 npm run test:run
 
-# E2E 테스트 (선택사항)
+# E2E tests (optional)
 npm run test:e2e
 ```
 
-### 3단계: 버전 업데이트
+### Step 3: Version Update
 
 ```bash
-# 패치 버전 (0.1.0 -> 0.1.1)
+# Patch version (0.1.0 -> 0.1.1)
 npm run version:patch
 
-# 마이너 버전 (0.1.0 -> 0.2.0)
+# Minor version (0.1.0 -> 0.2.0)
 npm run version:minor
 
-# 메이저 버전 (0.1.0 -> 1.0.0)
+# Major version (0.1.0 -> 1.0.0)
 npm run version:major
 ```
 
-### 4단계: npm 배포
+### Step 4: npm Deployment
 
 ```bash
-# 배포 실행
+# Execute deployment
 npm run publish:npm
 
-# 또는 직접 명령어
+# Or direct command
 npm publish
 ```
 
-## 🔧 자동화된 배포 스크립트
+## 🔧 Automated Deployment Scripts
 
-### 원클릭 배포 (패치 버전)
+### One-click Deployment (Patch Version)
 
 ```bash
-# 테스트 → 빌드 → 버전업 → 배포
+# Test → Build → Version Up → Deploy
 npm run version:patch && npm run publish:npm
 ```
 
-### 수동 단계별 배포
+### Manual Step-by-step Deployment
 
 ```bash
-# 1. 모든 테스트 실행
+# 1. Run all tests
 npm run test:all
 
-# 2. 라이브러리 빌드
+# 2. Build library
 npm run build:lib
 
-# 3. 버전 업데이트
+# 3. Update version
 npm version patch
 
-# 4. 배포
+# 4. Publish
 npm publish
 ```
 
-## 📋 배포 전 체크리스트
+## 📋 Pre-deployment Checklist
 
-- [ ] 모든 테스트가 통과하는지 확인
-- [ ] README.md가 최신 정보로 업데이트되었는지 확인
-- [ ] package.json의 버전이 올바른지 확인
-- [ ] LICENSE 파일이 존재하는지 확인
-- [ ] .npmignore에 불필요한 파일들이 제외되어 있는지 확인
-- [ ] 빌드된 dist 폴더가 존재하는지 확인
+- [ ] Verify all tests pass
+- [ ] Ensure README.md is updated with latest information
+- [ ] Verify package.json version is correct
+- [ ] Confirm LICENSE file exists
+- [ ] Check .npmignore excludes unnecessary files
+- [ ] Verify built dist folder exists
 
-## 🚨 주의사항
+## 🚨 Important Notes
 
-### 1. 패키지명 충돌
+### 1. Package Name Conflicts
 
-- npm에서 패키지명이 이미 사용 중인 경우 다른 이름을 사용해야 합니다
-- 현재 패키지명: `sweet-diagram`
+- If the package name is already in use on npm, you must use a different name
+- Current package name: `sweet-diagram`
 
-### 2. 버전 관리
+### 2. Version Management
 
-- npm은 동일한 버전을 두 번 배포할 수 없습니다
-- 배포 전 반드시 버전을 업데이트하세요
+- npm does not allow publishing the same version twice
+- Always update the version before deployment
 
-### 3. 파일 크기
+### 3. File Size
 
-- 현재 패키지 크기: 1.3 MB (압축)
-- 큰 파일이 포함되어 있지 않은지 확인하세요
+- Current package size: 1.3 MB (compressed)
+- Verify no large files are included
 
-## 🔄 업데이트 배포
+## 🔄 Update Deployment
 
-기존 패키지를 업데이트할 때:
+When updating an existing package:
 
 ```bash
-# 1. 변경사항 커밋
+# 1. Commit changes
 git add .
-git commit -m "feat: 새로운 기능 추가"
+git commit -m "feat: add new features"
 
-# 2. 버전 업데이트
-npm version patch  # 또는 minor, major
+# 2. Update version
+npm version patch  # or minor, major
 
-# 3. 배포
+# 3. Deploy
 npm publish
 
-# 4. Git에 태그 푸시
+# 4. Push tags to Git
 git push origin main --tags
 ```
 
-## 📊 배포 후 확인
+## 📊 Post-deployment Verification
 
-### 1. npm 웹사이트에서 확인
+### 1. Verify on npm Website
 
-[https://www.npmjs.com/package/sweet-diagram](https://www.npmjs.com/package/sweet-diagram)에서 패키지가 정상적으로 배포되었는지 확인하세요.
+Check that the package was deployed successfully at [https://www.npmjs.com/package/sweet-diagram](https://www.npmjs.com/package/sweet-diagram).
 
-### 2. 설치 테스트
+### 2. Installation Test
 
-새로운 프로젝트에서 설치 테스트:
+Test installation in a new project:
 
 ```bash
 mkdir test-sweet-diagram
@@ -160,57 +160,121 @@ npm init -y
 npm install sweet-diagram
 ```
 
-### 3. 사용 테스트
+### 3. Usage Test
 
 ```jsx
 // test.js
 import { SweetDiagram } from "sweet-diagram";
-console.log("sweet-diagram 설치 성공!");
+console.log("sweet-diagram installation successful!");
 ```
 
-## 📈 배포 통계
+## 📈 Deployment Statistics
 
-배포 후 npm 통계를 확인할 수 있습니다:
+After deployment, you can check npm statistics:
 
-- 다운로드 수
-- 의존성 정보
-- 버전 히스토리
+- Download count
+- Dependency information
+- Version history
 
-## 🛠 문제 해결
+## 🛠 Troubleshooting
 
-### 권한 오류
+### Permission Error
 
 ```bash
 npm ERR! code E403
 npm ERR! 403 Forbidden
 ```
 
-→ npm 로그인 상태를 확인하고 재로그인하세요
+→ Check npm login status and re-login if necessary
 
-### 패키지명 충돌
+### Package Name Conflict
 
 ```bash
 npm ERR! code E409
 npm ERR! 409 Conflict
 ```
 
-→ package.json의 name을 다른 이름으로 변경하세요
+→ Change the name in package.json to a different name
 
-### 네트워크 오류
+### Network Error
 
 ```bash
 npm ERR! network
 ```
 
-→ 인터넷 연결을 확인하고 npm registry 상태를 확인하세요
+→ Check internet connection and npm registry status
 
-## 📞 지원
+### Authentication Error
 
-배포 과정에서 문제가 발생하면:
+```bash
+npm ERR! code ENEEDAUTH
+```
 
-1. [npm 공식 문서](https://docs.npmjs.com/) 확인
-2. GitHub Issues에 문의
-3. npm 지원팀에 문의
+→ Run `npm login` and authenticate again
+
+## 🔐 Security Considerations
+
+### 1. Two-Factor Authentication
+
+Enable 2FA on your npm account for security:
+
+```bash
+npm profile enable-2fa auth-and-writes
+```
+
+### 2. Access Tokens
+
+Use access tokens for CI/CD:
+
+```bash
+npm token create --read-only
+```
+
+### 3. Package Verification
+
+Always verify the package contents before publishing:
+
+```bash
+npm pack
+tar -tf *.tgz
+```
+
+## 📚 Additional Resources
+
+- [npm Publishing Guide](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry)
+- [Semantic Versioning](https://semver.org/)
+- [npm CLI Documentation](https://docs.npmjs.com/cli/)
+
+## 🎯 Release Strategy
+
+### Development Releases
+
+Use pre-release versions for development:
+
+```bash
+npm version prerelease --preid=beta
+npm publish --tag beta
+```
+
+### Stable Releases
+
+Follow semantic versioning for stable releases:
+
+- **Patch**: Bug fixes, backward compatible
+- **Minor**: New features, backward compatible
+- **Major**: Breaking changes
+
+### Release Notes
+
+Always include release notes in your commits:
+
+```bash
+git commit -m "feat: add new connector types
+
+- Added curved connector support
+- Improved arrow positioning
+- Fixed animation performance"
+```
 
 ---
 

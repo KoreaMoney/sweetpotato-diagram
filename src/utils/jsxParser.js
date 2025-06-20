@@ -1,9 +1,9 @@
 /**
- * JSX 문자열에서 속성 값을 추출하는 유틸리티 함수
- * @param {string} componentStr - 컴포넌트 JSX 문자열
- * @param {string} propName - 추출할 속성 이름
- * @param {any} defaultValue - 기본값
- * @returns {any} 파싱된 속성 값
+ * Utility function to extract property values from JSX strings
+ * @param {string} componentStr - Component JSX string
+ * @param {string} propName - Property name to extract
+ * @param {any} defaultValue - Default value
+ * @returns {any} Parsed property value
  */
 export const extractProp = (componentStr, propName, defaultValue) => {
   const regex = new RegExp(`${propName}=\\{([^}]+)\\}|${propName}="([^"]+)"`);
@@ -13,47 +13,47 @@ export const extractProp = (componentStr, propName, defaultValue) => {
 
   const value = match[1] || match[2];
 
-  // Boolean 값 처리
+  // Handle boolean values
   if (value === "true") return true;
   if (value === "false") return false;
 
-  // 문자열 값 처리
+  // Handle string values
   if (value.startsWith('"') && value.endsWith('"')) {
     return value.slice(1, -1);
   }
 
-  // 배열 값 처리
+  // Handle array values
   if (value.startsWith("[") && value.endsWith("]")) {
     return parseArrayValue(value, defaultValue);
   }
 
-  // 객체 값 처리
+  // Handle object values
   if (value.startsWith("{") && value.endsWith("}")) {
     return parseObjectValue(value, defaultValue);
   }
 
-  // 숫자 값 처리
+  // Handle numeric values
   if (!isNaN(value)) return Number(value);
 
-  // 기본 문자열 처리
+  // Handle basic string processing
   return value.replace(/"/g, "");
 };
 
 /**
- * 배열 문자열을 파싱하는 함수
- * @param {string} value - 배열 문자열
- * @param {any} defaultValue - 기본값
- * @returns {any} 파싱된 배열 또는 기본값
+ * Function to parse array strings
+ * @param {string} value - Array string
+ * @param {any} defaultValue - Default value
+ * @returns {any} Parsed array or default value
  */
 const parseArrayValue = (value, defaultValue) => {
   try {
     const arrayStr = value.replace(/\s+/g, " ").trim();
-    // JSON 형태로 변환 시도
+    // Attempt JSON format conversion
     const result = JSON.parse(arrayStr.replace(/(\w+):/g, '"$1":'));
     return Array.isArray(result) ? result : defaultValue;
   } catch {
     try {
-      // eval을 사용한 파싱 시도 (보안상 주의)
+      // Attempt parsing using eval (security caution)
       const arrayStr = value.replace(/\s+/g, " ").trim();
       const result = eval(`(${arrayStr})`);
       return Array.isArray(result) ? result : defaultValue;
@@ -65,19 +65,19 @@ const parseArrayValue = (value, defaultValue) => {
 };
 
 /**
- * 객체 문자열을 파싱하는 함수
- * @param {string} value - 객체 문자열
- * @param {any} defaultValue - 기본값
- * @returns {any} 파싱된 객체 또는 기본값
+ * Function to parse object strings
+ * @param {string} value - Object string
+ * @param {any} defaultValue - Default value
+ * @returns {any} Parsed object or default value
  */
 const parseObjectValue = (value, defaultValue) => {
   try {
-    // JSON 형태로 변환 시도
+    // Attempt JSON format conversion
     const objectStr = value.replace(/(\w+):/g, '"$1":').replace(/'/g, '"');
     return JSON.parse(objectStr);
   } catch {
     try {
-      // eval을 사용한 파싱 시도 (보안상 주의)
+      // Attempt parsing using eval (security caution)
       return eval(`(${value})`);
     } catch (error) {
       console.warn(`Failed to parse object ${value}:`, error);
@@ -87,9 +87,9 @@ const parseObjectValue = (value, defaultValue) => {
 };
 
 /**
- * JSX 문자열에서 Box 컴포넌트들을 파싱하는 함수
- * @param {string} jsxCode - JSX 코드 문자열
- * @returns {Array} 파싱된 Box 컴포넌트 배열
+ * Function to parse Box components from JSX strings
+ * @param {string} jsxCode - JSX code string
+ * @returns {Array} Array of parsed Box components
  */
 export const parseBoxComponents = (jsxCode) => {
   const boxMatches = jsxCode.match(/<Box[^>]*>/g) || [];
@@ -113,10 +113,10 @@ export const parseBoxComponents = (jsxCode) => {
 };
 
 /**
- * JSX 문자열에서 Connector 컴포넌트들을 파싱하는 함수
- * @param {string} jsxCode - JSX 코드 문자열
- * @param {Array} boxes - 박스 컴포넌트 배열
- * @returns {Array} 파싱된 Connector 컴포넌트 배열
+ * Function to parse Connector components from JSX strings
+ * @param {string} jsxCode - JSX code string
+ * @param {Array} boxes - Array of box components
+ * @returns {Array} Array of parsed Connector components
  */
 export const parseConnectorComponents = (jsxCode, boxes) => {
   const connectorMatches = jsxCode.match(/<Connector[^>]*>/g) || [];
@@ -130,7 +130,7 @@ export const parseConnectorComponents = (jsxCode, boxes) => {
       endPoint: extractProp(connectorStr, "endPoint", null),
       fromBox: extractProp(connectorStr, "fromBox", null),
       toBox: extractProp(connectorStr, "toBox", null),
-      // boxes 배열이 비어있으면 파싱된 모든 박스를 사용
+      // Use all parsed boxes if boxes array is empty
       boxes: Array.isArray(extractedBoxes) && extractedBoxes.length > 0 ? extractedBoxes : boxes,
       connectionType: extractProp(connectorStr, "connectionType", "straight"),
       bendPoints: extractProp(connectorStr, "bendPoints", []),
@@ -151,9 +151,9 @@ export const parseConnectorComponents = (jsxCode, boxes) => {
 };
 
 /**
- * JSX 코드를 파싱하여 컴포넌트들을 반환하는 메인 함수
- * @param {string} jsxCode - JSX 코드 문자열
- * @returns {Object} { boxes, connectors } 파싱된 컴포넌트들
+ * Main function to parse JSX code and return components
+ * @param {string} jsxCode - JSX code string
+ * @returns {Object} { boxes, connectors } Parsed components
  */
 export const parseJSXComponents = (jsxCode) => {
   try {
@@ -164,7 +164,7 @@ export const parseJSXComponents = (jsxCode) => {
   } catch (error) {
     console.error("JSX parsing error:", error);
 
-    // 파싱 에러시 기본값 반환
+    // Return default values on parsing error
     return {
       boxes: [
         {
@@ -173,7 +173,7 @@ export const parseJSXComponents = (jsxCode) => {
           y: 50,
           width: 80,
           height: 30,
-          text: "시작",
+          text: "Start",
           className: "bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-sm",
         },
         {
@@ -182,7 +182,7 @@ export const parseJSXComponents = (jsxCode) => {
           y: 100,
           width: 80,
           height: 30,
-          text: "끝",
+          text: "End",
           className: "bg-emerald-600 text-white border-emerald-800 border-2 rounded-lg text-sm",
         },
       ],

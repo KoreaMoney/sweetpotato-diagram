@@ -33,12 +33,18 @@ declare module "sweet-diagram" {
   interface ConnectorProps {
     fromBox?: { id: string; position: string; offset?: { x: number; y: number } };
     toBox?: { id: string; position: string; offset?: { x: number; y: number } };
+    fromCustomPoint?: { x: number; y: number };
+    toCustomPoint?: { x: number; y: number };
+    fromBoxCustom?: { id: string; customPoint: { x: number; y: number } };
+    toBoxCustom?: { id: string; customPoint: { x: number; y: number } };
     startPoint?: { x: number; y: number };
     endPoint?: { x: number; y: number };
     connectionType?: "straight" | "curved" | "orthogonal" | "stepped" | "custom" | "auto";
     strokeWidth?: number;
     className?: string;
     animated?: boolean;
+    animationType?: "electric" | "water" | "wind" | "gas" | "data" | "dash";
+    animationSpeed?: number;
     showArrow?: boolean;
     showStartArrow?: boolean;
     arrowDirection?: "forward" | "backward" | "both" | "none";
@@ -106,6 +112,23 @@ declare module "sweet-diagram" {
     height?: number;
   }
 
+  // MouseTracker Props
+  interface MouseTrackerProps {
+    position?: "top-left" | "top-right" | "bottom-left" | "bottom-right" | "top-center" | "bottom-center";
+    theme?: "dark" | "light" | "minimal";
+    showDetails?: boolean;
+    showToggle?: boolean;
+    initialVisible?: boolean;
+    customStyles?: {
+      container?: React.CSSProperties;
+      button?: React.CSSProperties;
+      closeButton?: React.CSSProperties;
+    };
+    onPositionChange?: (position: { x: number; y: number }) => void;
+    className?: string;
+    children?: ReactNode;
+  }
+
   // Hook return type
   interface DiagramContext {
     boxes: Map<string, any>;
@@ -129,6 +152,8 @@ declare module "sweet-diagram" {
   export const ArrowDemo: ComponentType<any>;
   export const CodeEditor: ComponentType<any>;
   export const Documentation: ComponentType<any>;
+  export const MouseTracker: ComponentType<MouseTrackerProps>;
+  export const AnimationExamples: ComponentType<any>;
   export const SweetDiagram: ComponentType<any>;
 
   // Hook export

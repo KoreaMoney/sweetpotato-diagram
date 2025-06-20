@@ -1,278 +1,280 @@
-# sweet-diagram 테스트 가이드
+# sweet-diagram Testing Guide
 
-## 개요
+## Overview
 
-이 문서는 sweet-diagram 라이브러리의 테스트 환경과 배포 전 테스트 절차에 대해 설명합니다.
+This document describes the testing environment and pre-deployment testing procedures for the sweet-diagram library.
 
-## 테스트 환경 설정
+## Test Environment Setup
 
-### 사용된 도구
+### Tools Used
 
-- **Vitest**: 빠르고 현대적인 테스트 프레임워크
-- **@testing-library/react**: React 컴포넌트 테스트
-- **@testing-library/jest-dom**: DOM 매처 확장
-- **jsdom**: 브라우저 환경 시뮬레이션
-- **Playwright**: E2E 테스트 및 시각적 테스트
+- **Vitest**: Fast and modern testing framework
+- **@testing-library/react**: React component testing
+- **@testing-library/jest-dom**: DOM matcher extensions
+- **jsdom**: Browser environment simulation
+- **Playwright**: E2E testing and visual testing
 
-### 설정 파일
+### Configuration Files
 
-- `vite.config.js`: Vitest 설정 포함
-- `src/test/setup.js`: 테스트 환경 초기화
-- `playwright.config.js`: E2E 테스트 설정
+- `vite.config.js`: Includes Vitest configuration
+- `src/test/setup.js`: Test environment initialization
+- `playwright.config.js`: E2E test configuration
 
-## 실제 화면에서 확인하기
+## Visual Verification on Actual Screen
 
-### 1. 브라우저에서 직접 확인
+### 1. Direct Browser Verification
 
-개발 서버 실행 후 브라우저에서 직접 확인:
+Check directly in browser after starting development server:
 
 ```bash
-# 개발 서버 실행
+# Start development server
 npm run dev
 
-# 브라우저에서 접속
+# Access in browser
 http://localhost:5173
 ```
 
-### 2. 컴포넌트 쇼케이스 페이지
+### 2. Component Showcase Page
 
-모든 컴포넌트를 한 번에 확인할 수 있는 전용 페이지:
+Dedicated page to view all components at once:
 
 ```
 http://localhost:5173/showcase
 ```
 
-이 페이지에서 확인할 수 있는 내용:
+What you can verify on this page:
 
-- 모든 3D 컴포넌트들의 시각적 렌더링
-- 마우스 상호작용 (회전, 확대/축소, 이동)
-- WebGL 렌더링 품질
-- 반응형 레이아웃
-- 컴포넌트별 개별 테스트
+- Visual rendering of all 3D components
+- Mouse interactions (rotation, zoom, pan)
+- WebGL rendering quality
+- Responsive layout
+- Individual component tests
 
-### 3. E2E 시각적 테스트
+### 3. E2E Visual Testing
 
 ```bash
-# Playwright 브라우저 설치 (최초 1회)
+# Install Playwright browsers (first time only)
 npx playwright install
 
-# 전체 E2E 테스트 실행
+# Run all E2E tests
 npm run test:e2e
 
-# 브라우저 창을 보면서 테스트 (headed 모드)
+# Run tests with browser window visible (headed mode)
 npm run test:e2e:headed
 
-# 특정 테스트만 실행
-npm run test:visual        # 시각적 테스트
-npm run test:components    # 컴포넌트 테스트
+# Run specific tests only
+npm run test:visual        # Visual tests
+npm run test:components    # Component tests
 
-# 테스트 UI 모드 (인터랙티브)
+# Test UI mode (interactive)
 npm run test:e2e:ui
 ```
 
-### 4. 자동 스크린샷 생성
+### 4. Automatic Screenshot Generation
 
-E2E 테스트 실행 시 자동으로 생성되는 스크린샷들:
+Screenshots automatically generated during E2E test execution:
 
-- `test-results/main-page.png`: 메인 페이지
-- `test-results/desktop-view.png`: 데스크톱 뷰
-- `test-results/tablet-view.png`: 태블릿 뷰
-- `test-results/mobile-view.png`: 모바일 뷰
-- `test-results/canvas-render.png`: Canvas 렌더링
-- `test-results/box-component.png`: Box 컴포넌트
-- `test-results/arrow-component.png`: Arrow 컴포넌트
-- 기타 컴포넌트별 스크린샷
+- `test-results/main-page.png`: Main page
+- `test-results/desktop-view.png`: Desktop view
+- `test-results/tablet-view.png`: Tablet view
+- `test-results/mobile-view.png`: Mobile view
+- `test-results/canvas-render.png`: Canvas rendering
+- `test-results/box-component.png`: Box component
+- `test-results/arrow-component.png`: Arrow component
+- Other component-specific screenshots
 
-## 테스트 스크립트
+## Test Scripts
 
-### 기본 테스트 명령어
+### Basic Test Commands
 
 ```bash
-# 모든 테스트 실행
+# Run all tests
 npm test
 
-# 테스트 한 번 실행 (CI용)
+# Run tests once (for CI)
 npm run test:run
 
-# 테스트 감시 모드
+# Test watch mode
 npm run test:watch
 
-# 테스트 UI 모드
+# Test UI mode
 npm run test:ui
 
-# 코드 커버리지 포함 테스트
+# Test with code coverage
 npm run test:coverage
 ```
 
-### E2E 테스트 명령어
+### E2E Test Commands
 
 ```bash
-# 전체 E2E 테스트
+# All E2E tests
 npm run test:e2e
 
-# 브라우저 창 표시 모드
+# Browser window display mode
 npm run test:e2e:headed
 
-# E2E 테스트 UI 모드
+# E2E test UI mode
 npm run test:e2e:ui
 
-# 특정 시각적 테스트만
+# Visual tests only
 npm run test:visual
 
-# 컴포넌트 테스트만
+# Component tests only
 npm run test:components
 
-# 모든 테스트 (단위 + E2E)
+# All tests (unit + E2E)
 npm run test:all
 ```
 
-### 배포 전 테스트
+### Pre-deployment Testing
 
 ```bash
-# 전체 배포 전 검증 (lint + test + build)
+# Complete pre-deployment validation (lint + test + build)
 npm run prepublishOnly
 ```
 
-## 테스트 구조
+## Test Structure
 
-### 1. 단위 테스트 (`src/test/`)
+### 1. Unit Tests (`src/test/`)
 
-- `exports.test.js`: 컴포넌트 Export 테스트
-- `SweetDiagram.test.jsx`: 메인 컴포넌트 테스트
-- `DiagramComponents.test.jsx`: 다이어그램 컴포넌트 테스트
-- `build.test.js`: 빌드 파일 검증
+- `exports.test.js`: Component export tests
+- `SweetDiagram.test.jsx`: Main component tests
+- `DiagramComponents.test.jsx`: Diagram component tests
+- `build.test.js`: Build file validation
 
-### 2. E2E 테스트 (`src/test/e2e/`)
+### 2. E2E Tests (`src/test/e2e/`)
 
-- `visual.spec.js`: 시각적 테스트
-- `components.spec.js`: 컴포넌트별 상세 테스트
+- `visual.spec.js`: Visual tests
+- `components.spec.js`: Detailed component tests
 
-### 3. 시각적 확인 (`src/test/`)
+### 3. Visual Verification (`src/test/`)
 
-- `ComponentShowcase.jsx`: 컴포넌트 쇼케이스 페이지
+- `ComponentShowcase.jsx`: Component showcase page
 
-## 시각적 테스트 체크리스트
+## Visual Testing Checklist
 
-### 웹 브라우저에서 확인해야 할 항목:
+### Items to verify in web browser:
 
-1. **페이지 로딩**
+1. **Page Loading**
 
-   - ✅ 페이지가 빠르게 로드되는가?
-   - ✅ 로딩 중 에러가 발생하지 않는가?
+   - ✅ Does the page load quickly?
+   - ✅ Are there no errors during loading?
 
-2. **3D 렌더링**
+2. **3D Rendering**
 
-   - ✅ Canvas 요소가 정상적으로 표시되는가?
-   - ✅ WebGL 컨텍스트가 초기화되는가?
-   - ✅ 3D 컴포넌트들이 올바르게 렌더링되는가?
+   - ✅ Is the Canvas element displayed properly?
+   - ✅ Is the WebGL context initialized?
+   - ✅ Are 3D components rendered correctly?
 
-3. **마우스 상호작용**
+3. **Mouse Interactions**
 
-   - ✅ 마우스 드래그로 회전이 가능한가?
-   - ✅ 마우스 휠로 확대/축소가 가능한가?
-   - ✅ 우클릭 드래그로 이동이 가능한가?
+   - ✅ Can you rotate with mouse drag?
+   - ✅ Can you zoom with mouse wheel?
+   - ✅ Can you pan with right-click drag?
 
-4. **반응형 디자인**
+4. **Responsive Design**
 
-   - ✅ 다양한 화면 크기에서 정상 작동하는가?
-   - ✅ 모바일에서도 터치 제스처가 작동하는가?
+   - ✅ Does it work properly on various screen sizes?
+   - ✅ Do touch gestures work on mobile?
 
-5. **네비게이션**
+5. **Navigation**
 
-   - ✅ 페이지 간 이동이 정상적으로 작동하는가?
-   - ✅ 뒤로 가기/앞으로 가기가 작동하는가?
+   - ✅ Does page navigation work properly?
+   - ✅ Do back/forward buttons work?
 
-6. **성능**
-   - ✅ 프레임률이 부드러운가? (60fps)
-   - ✅ 메모리 누수가 없는가?
+6. **Performance**
+   - ✅ Is the frame rate smooth? (60fps)
+   - ✅ Are there no memory leaks?
 
-## 테스트 커버리지
+## Test Coverage
 
-현재 테스트 커버리지:
+Current test coverage:
 
-- **전체**: 18%
-- **주요 export 파일**: 100%
-- **컴포넌트 정의**: 100%
+- **Overall**: 18%
+- **Main export files**: 100%
+- **Component definitions**: 100%
 
-### 커버리지 제외 항목
+### Coverage Exclusions
 
 - `node_modules/`
 - `dist/`
-- `src/test/`
-- 설정 파일들
+- `coverage/`
+- `test-results/`
+- `playwright-report/`
+- `public/`
 
-## 배포 전 체크리스트
+## Manual Testing Steps
 
-1. **Lint 검사**: `npm run lint`
+### 1. Development Server Test
 
-   - 코드 스타일 검증
-   - React 훅 규칙 검증
-   - 사용하지 않는 변수 검사
+```bash
+npm run dev
+```
 
-2. **단위 테스트**: `npm run test:run`
+Visit `http://localhost:5173` and verify:
 
-   - 모든 컴포넌트 export 검증
-   - 기본 렌더링 테스트
-   - 빌드 파일 검증
+- Page loads without errors
+- All components render correctly
+- Mouse interactions work smoothly
 
-3. **시각적 확인**: 브라우저에서 `http://localhost:5173/showcase`
+### 2. Build Test
 
-   - 모든 컴포넌트 시각적 확인
-   - 마우스 상호작용 테스트
-   - 다양한 화면 크기에서 테스트
+```bash
+npm run build:lib
+```
 
-4. **E2E 테스트** (선택사항): `npm run test:e2e`
+Verify:
 
-   - 자동화된 브라우저 테스트
-   - 스크린샷 비교
-   - 성능 메트릭 확인
+- Build completes without errors
+- Dist folder is created
+- Bundle size is reasonable
 
-5. **라이브러리 빌드**: `npm run build:lib`
-   - ES 모듈 빌드
-   - CommonJS 빌드
-   - 번들 크기 확인
+### 3. Package Test
 
-## 문제 해결
+```bash
+npm pack --dry-run
+```
 
-### 일반적인 문제들
+Verify:
 
-1. **Canvas 관련 에러**
+- Package includes all necessary files
+- No unnecessary files are included
+- Package size is appropriate
 
-   - Three.js 컴포넌트는 Canvas 래퍼 내에서 테스트
-   - WebGL 컨텍스트 모킹 필요시 setup.js에서 처리
+## Continuous Integration
 
-2. **Router 경고**
+Tests are automatically run on:
 
-   - SweetDiagram 테스트시 "No routes matched" 경고는 정상
-   - 실제 기능에는 영향 없음
+- Pull requests
+- Main branch pushes
+- Release deployments
 
-3. **ESLint 경고**
+CI includes:
 
-   - Fast refresh 관련 경고는 개발 환경에서만 발생
-   - 라이브러리 빌드에는 영향 없음
+- Linting checks
+- Unit tests
+- E2E tests
+- Build verification
 
-4. **E2E 테스트 실패**
-   - `npx playwright install`로 브라우저 설치 필요
-   - 개발 서버가 실행 중인지 확인
+## Troubleshooting
 
-## 추가 테스트 작성 가이드
+### Common Issues
 
-새로운 컴포넌트 추가시:
+1. **Test Timeouts**
 
-1. `src/test/` 디렉토리에 테스트 파일 생성
-2. 기본 렌더링 테스트 작성
-3. Props 검증 테스트 추가
-4. `exports.test.js`에 새 컴포넌트 추가
-5. `ComponentShowcase.jsx`에 시각적 예제 추가
+   - Increase timeout in playwright.config.js
+   - Check for infinite loops in components
 
-### 테스트 파일 명명 규칙
+2. **Visual Regression**
 
-- `*.test.js` 또는 `*.test.jsx`
-- 컴포넌트명과 동일한 파일명 사용
-- 기능별 그룹핑 권장
+   - Update baseline screenshots if intentional
+   - Review component changes
 
-## 성능 최적화
+3. **Flaky Tests**
 
-- 테스트는 병렬로 실행됨
-- 각 테스트 후 DOM 자동 정리
-- 모킹된 브라우저 API 사용으로 빠른 실행
+   - Add proper wait conditions
+   - Use stable selectors
+
+4. **Memory Issues**
+   - Check for memory leaks in components
+   - Properly clean up event listeners
