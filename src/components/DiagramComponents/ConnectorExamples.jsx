@@ -79,20 +79,22 @@ const ConnectorExamplesContent = () => {
   return (
     <div className="flex flex-col h-screen bg-white overflow-hidden">
       {/* 상단 헤더 */}
-      <ExampleHeader
-        supportsAnimation={supportsAnimation}
-        isAnimated={isAnimated}
-        isCodeEditorVisible={isCodeEditorVisible}
-        onAnimationToggle={handleAnimationToggle}
-        onCodeEditorToggle={handleCodeEditorToggle}
-      />
+      <div className="flex-shrink-0">
+        <ExampleHeader
+          supportsAnimation={supportsAnimation}
+          isAnimated={isAnimated}
+          isCodeEditorVisible={isCodeEditorVisible}
+          onAnimationToggle={handleAnimationToggle}
+          onCodeEditorToggle={handleCodeEditorToggle}
+        />
+      </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden min-h-0">
         {/* 좌측 사이드바 */}
         <ExampleSidebar selectedExample={selectedExample} onExampleSelect={handleExampleSelect} />
 
         {/* 메인 컨텐츠 영역 */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden min-h-0">
           {/* 다이어그램 미리보기 */}
           <DiagramPreview
             ExampleComponent={ExampleComponent}
@@ -119,7 +121,9 @@ const ConnectorExamplesContent = () => {
       </div>
 
       {/* 하단 상태 바 */}
-      <StatusBar isCustomMode={isCustomMode} currentTemplate={currentTemplate} />
+      <div className="flex-shrink-0">
+        <StatusBar isCustomMode={isCustomMode} currentTemplate={currentTemplate} />
+      </div>
     </div>
   );
 };

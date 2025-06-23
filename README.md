@@ -48,17 +48,7 @@ Import Tailwind in your CSS file:
 
 ### CSS Styles
 
-The package includes pre-built CSS styles. Import them in your main CSS file or application entry point:
-
-```jsx
-// Import CSS in your JavaScript/React app (REQUIRED)
-import "sweet-diagram/dist/sweet-diagram.css";
-```
-
-```css
-/* Option 2: Import CSS in your main CSS file */
-@import "sweet-diagram/dist/sweet-diagram.css";
-```
+The package uses TailwindCSS for styling. Make sure you have TailwindCSS v4 installed and configured properly.
 
 ## 🎯 NPM Package Usage
 
@@ -79,8 +69,7 @@ import {
   useDiagram,
 } from "sweet-diagram";
 
-// IMPORTANT: Don't forget to import CSS!
-import "sweet-diagram/dist/sweet-diagram.css";
+// Sweet Diagram 컴포넌트들
 
 function MyDiagram() {
   return (
@@ -471,17 +460,19 @@ Draggable version of Box component.
 
 - `useDiagram()`: Returns diagram context with `boxes`, `connectors`, `addBox`, `removeBox`, `updateBox`
 
-### TypeScript Support
+### TypeScript Support (도입 예정)
 
-Full TypeScript definitions are included:
+현재 JavaScript로 개발되었으며, TypeScript 지원은 향후 버전에서 제공될 예정입니다.
 
-```typescript
-import { BoxProps, ConnectorProps, DiagramContext } from "sweet-diagram";
+```javascript
+// 현재: JavaScript 사용
+import { Box, Connector, DiagramProvider } from "sweet-diagram";
 
-const MyBox: React.FC<BoxProps> = ({ id, x, y, children }) => {
-  // Type-safe component implementation
-};
+// 향후 예정: TypeScript 지원
+// import { BoxProps, ConnectorProps, DiagramContext } from "sweet-diagram";
 ```
+
+**로드맵**: v1.0.0에서 완전한 TypeScript 타입 정의 제공 예정
 
 ## 🔗 Links
 

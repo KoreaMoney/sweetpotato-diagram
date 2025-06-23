@@ -1,16 +1,29 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDiagram } from "./DiagramContext";
 import baseImage from "@/assets/logo.png";
 
 const ImageBox = ({
   id = "",
   text = "",
+  textPosition = "bottom", // 🆕 텍스트 위치: top, bottom, left, right
+  textClassName = "text-xs text-gray-700 font-medium", // 🆕 텍스트 스타일링
+  textSpacing = 6, // 🆕 텍스트와 박스 사이의 간격 (px) - 기본값 증가
+  textMaxWidth = null, // 🆕 텍스트 최대 너비 (px), null이면 박스 너비를 따름
+  textAlign = "center", // 🆕 텍스트 정렬: left, center, right
   icon = baseImage,
   iconType = "image", // 기본값을 image로 변경
   width = 100,
   height = 80,
-  x = 0,
-  y = 0,
+  x: initialX = 0, // prop 이름 변경
+  y: initialY = 0, // prop 이름 변경
+  // 🆕 드래그 기능 관련 props
+  draggable = false, // 드래그 가능 여부
+  onDrag = null, // 드래그 시 콜백 함수
+  onDragEnd = null, // 드래그 완료 시 콜백 함수
+  // 🆕 애니메이션 효과 관련 props
+  sparkle = false, // 반짝이는 효과 여부
+  sparkleColor = "#FFD700", // 반짝이는 효과 색상
+  sparkleIntensity = "medium", // 반짝이는 강도: low, medium, high
   // 🆕 이미지 크기 조절 관련 props
   imageWidth = null, // 이미지 절대 너비 (px)
   imageHeight = null, // 이미지 절대 높이 (px)
@@ -20,6 +33,16 @@ const ImageBox = ({
   className = "bg-gray-100 text-gray-700 border-gray-300 border-2 rounded-lg text-xs hover:shadow-lg hover:scale-105 transition-all duration-200",
   onClick = null,
 }) => {
+  // 🆕 드래그 상태 관리
+  const [position, setPosition] = useState({ x: initialX, y: initialY });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const boxRef = useRef(null);
+
+  // 현재 위치 (드래그 중이면 position, 아니면 초기값)
+  const currentX = position.x;
+  const currentY = position.y;
+
   // DiagramContext를 optional하게 사용
   let registerBox, unregisterBox;
   try {
@@ -36,9 +59,9 @@ const ImageBox = ({
   // ImageBox 정보를 Context에 등록/업데이트 (Context가 있을 때만)
   useEffect(() => {
     if (id && registerBox) {
-      registerBox(id, { x, y, width, height });
+      registerBox(id, { x: currentX, y: currentY, width, height });
     }
-  }, [id, x, y, width, height, registerBox]);
+  }, [id, currentX, currentY, width, height, registerBox]);
 
   // 컴포넌트 언마운트 시 등록 해제 (Context가 있을 때만)
   useEffect(() => {
@@ -49,9 +72,59 @@ const ImageBox = ({
     };
   }, [id, unregisterBox]);
 
+  // 🆕 드래그 이벤트 핸들러들
+  const handleMouseDown = (event) => {
+    if (!draggable) return;
+
+    event.preventDefault();
+    setIsDragging(true);
+    setDragStart({
+      x: event.clientX - currentX,
+      y: event.clientY - currentY,
+    });
+  };
+
+  const handleMouseMove = (event) => {
+    if (!isDragging || !draggable) return;
+
+    event.preventDefault();
+    const newPosition = {
+      x: event.clientX - dragStart.x,
+      y: event.clientY - dragStart.y,
+    };
+
+    setPosition(newPosition);
+
+    if (onDrag) {
+      onDrag(newPosition, { id, width, height });
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (!isDragging || !draggable) return;
+
+    setIsDragging(false);
+
+    if (onDragEnd) {
+      onDragEnd(position, { id, width, height });
+    }
+  };
+
+  // 전역 마우스 이벤트 리스너 등록
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      return () => {
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+      };
+    }
+  }, [isDragging, dragStart, currentX, currentY, onDrag, onDragEnd]);
+
   const handleClick = (event) => {
-    if (onClick) {
-      onClick(event, { id, x, y, width, height });
+    if (onClick && !isDragging) {
+      onClick(event, { id, x: currentX, y: currentY, width, height });
     }
   };
 
@@ -59,6 +132,29 @@ const ImageBox = ({
     if (event.key === "Enter" || event.key === " ") {
       handleClick(event);
     }
+  };
+
+  // 🆕 반짝이는 애니메이션 CSS 클래스 생성
+  const getSparkleClasses = () => {
+    if (!sparkle) return "";
+
+    const intensityClasses = {
+      low: "animate-pulse",
+      medium: "animate-bounce",
+      high: "animate-ping",
+    };
+
+    return `${intensityClasses[sparkleIntensity] || intensityClasses.medium}`;
+  };
+
+  // 🆕 반짝이는 효과 스타일
+  const getSparkleStyles = () => {
+    if (!sparkle) return {};
+
+    return {
+      filter: `drop-shadow(0 0 8px ${sparkleColor}) drop-shadow(0 0 16px ${sparkleColor}40)`,
+      boxShadow: `0 0 20px ${sparkleColor}60, inset 0 0 20px ${sparkleColor}20`,
+    };
   };
 
   // 🆕 이미지 크기 계산 함수
@@ -88,11 +184,94 @@ const ImageBox = ({
     };
   };
 
+  // 🆕 개선된 텍스트 위치 및 스타일 계산 함수
+  const getTextPositionStyles = () => {
+    const spacing = textSpacing;
+    const maxWidth = textMaxWidth || Math.max(width, 120); // 최소 120px 보장
+
+    const baseClasses = `absolute ${textClassName} break-words leading-tight pointer-events-none select-none`;
+
+    const alignmentClasses = {
+      left: "text-left",
+      center: "text-center",
+      right: "text-right",
+    };
+
+    switch (textPosition) {
+      case "top":
+        return {
+          className: `${baseClasses} ${alignmentClasses[textAlign]}`,
+          style: {
+            bottom: `${height + spacing}px`,
+            left: textAlign === "center" ? "50%" : textAlign === "right" ? "auto" : "0",
+            right: textAlign === "right" ? "0" : "auto",
+            transform: textAlign === "center" ? "translateX(-50%)" : "none",
+            maxWidth: `${maxWidth}px`,
+            width: textAlign === "center" ? "max-content" : `${maxWidth}px`,
+            minWidth: textAlign === "center" ? "max-content" : "auto",
+            whiteSpace: textAlign === "center" ? "nowrap" : "normal",
+          },
+        };
+
+      case "bottom":
+        return {
+          className: `${baseClasses} ${alignmentClasses[textAlign]}`,
+          style: {
+            top: `${height + spacing}px`,
+            left: textAlign === "center" ? "50%" : textAlign === "right" ? "auto" : "0",
+            right: textAlign === "right" ? "0" : "auto",
+            transform: textAlign === "center" ? "translateX(-50%)" : "none",
+            maxWidth: `${maxWidth}px`,
+            width: textAlign === "center" ? "max-content" : `${maxWidth}px`,
+            minWidth: textAlign === "center" ? "max-content" : "auto",
+            whiteSpace: textAlign === "center" ? "nowrap" : "normal",
+          },
+        };
+
+      case "left":
+        return {
+          className: `${baseClasses} ${alignmentClasses[textAlign]}`,
+          style: {
+            right: `${width + spacing}px`,
+            top: "50%",
+            transform: "translateY(-50%)",
+            maxWidth: `${maxWidth}px`,
+            width: `${maxWidth}px`,
+          },
+        };
+
+      case "right":
+        return {
+          className: `${baseClasses} ${alignmentClasses[textAlign]}`,
+          style: {
+            left: `${width + spacing}px`,
+            top: "50%",
+            transform: "translateY(-50%)",
+            maxWidth: `${maxWidth}px`,
+            width: `${maxWidth}px`,
+          },
+        };
+
+      default:
+        return {
+          className: `${baseClasses} ${alignmentClasses[textAlign]}`,
+          style: {
+            top: `${height + spacing}px`,
+            left: textAlign === "center" ? "50%" : "0",
+            transform: textAlign === "center" ? "translateX(-50%)" : "none",
+            width: textAlign === "center" ? "max-content" : `${width}px`,
+            maxWidth: `${maxWidth}px`,
+          },
+        };
+    }
+  };
+
   // 아이콘 렌더링
   const renderIcon = () => {
     if (!icon) return null;
 
     const imageStyle = calculateImageSize();
+    const sparkleStyle = getSparkleStyles();
 
     switch (iconType) {
       case "image":
@@ -100,9 +279,10 @@ const ImageBox = ({
           <img
             src={icon}
             alt={text}
-            className="transition-transform duration-200 hover:scale-110"
+            className={`transition-transform duration-200 hover:scale-110 ${getSparkleClasses()}`}
             style={{
               ...imageStyle,
+              ...sparkleStyle,
               objectFit: imageObjectFit,
             }}
           />
@@ -111,9 +291,10 @@ const ImageBox = ({
       case "emoji":
         return (
           <span
-            className="text-center transition-transform duration-200 hover:scale-110"
+            className={`text-center transition-transform duration-200 hover:scale-110 ${getSparkleClasses()}`}
             style={{
               fontSize: `${Math.min(parseInt(imageStyle.width), parseInt(imageStyle.height)) * 0.6}px`,
+              ...sparkleStyle,
             }}
           >
             {icon}
@@ -124,8 +305,11 @@ const ImageBox = ({
       default:
         return (
           <div
-            className="flex items-center justify-center transition-transform duration-200 hover:scale-110"
-            style={imageStyle}
+            className={`flex items-center justify-center transition-transform duration-200 hover:scale-110 ${getSparkleClasses()}`}
+            style={{
+              ...imageStyle,
+              ...sparkleStyle,
+            }}
             dangerouslySetInnerHTML={{ __html: icon }}
           />
         );
@@ -135,31 +319,37 @@ const ImageBox = ({
   // 연결점 위치 계산
   const getConnectionPoints = () => {
     return {
-      top: { x: x + width / 2, y: y },
-      right: { x: x + width, y: y + height / 2 },
-      bottom: { x: x + width / 2, y: y + height },
-      left: { x: x, y: y + height / 2 },
+      top: { x: currentX + width / 2, y: currentY },
+      right: { x: currentX + width, y: currentY + height / 2 },
+      bottom: { x: currentX + width / 2, y: currentY + height },
+      left: { x: currentX, y: currentY + height / 2 },
     };
   };
 
   const connectionPoints = getConnectionPoints();
+  const textPositionStyles = getTextPositionStyles();
 
   return (
     <div
-      className="absolute"
+      ref={boxRef}
+      className={`absolute ${isDragging ? "z-50" : "z-10"} ${draggable ? "cursor-move" : "cursor-pointer"}`}
       style={{
-        left: `${x}px`,
-        top: `${y}px`,
+        left: `${currentX}px`,
+        top: `${currentY}px`,
       }}
       data-box-id={id}
+      onMouseDown={handleMouseDown}
     >
       {/* 메인 박스 - 이미지만 포함 */}
       <div
-        className={`relative cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 ${className}`}
+        className={`relative select-none focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 ${className} ${
+          isDragging ? "shadow-2xl scale-105" : ""
+        } ${sparkle ? "animate-pulse" : ""}`}
         style={{
           width: `${width}px`,
           height: `${height}px`,
           padding: `${imagePadding}px`,
+          ...getSparkleStyles(),
         }}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
@@ -169,19 +359,19 @@ const ImageBox = ({
       >
         {/* 아이콘 영역 - 박스 전체를 차지 */}
         <div className="w-full h-full flex items-center justify-center">{renderIcon()}</div>
+
+        {/* 🆕 드래그 가능 표시 */}
+        {draggable && (
+          <div className="absolute top-1 right-1 w-2 h-2 bg-gray-400 rounded-full opacity-50 hover:opacity-100 transition-opacity">
+            <div className="absolute top-0.5 left-0.5 w-1 h-1 bg-white rounded-full"></div>
+          </div>
+        )}
       </div>
 
-      {/* 텍스트 영역 - 박스 외부 하단에 위치 */}
+      {/* 🆕 텍스트 영역 - 설정된 위치에 배치 */}
       {text && (
-        <div
-          className="absolute text-center font-medium px-1"
-          style={{
-            top: `${height + 2}px`, // 박스 하단에서 2px 아래
-            left: 0,
-            width: `${width}px`,
-          }}
-        >
-          <span className="break-words leading-tight text-xs">{text}</span>
+        <div className={textPositionStyles.className} style={textPositionStyles.style}>
+          <span>{text}</span>
         </div>
       )}
 
@@ -191,14 +381,14 @@ const ImageBox = ({
           key={position}
           className="absolute w-2 h-2 bg-gray-600 rounded-full opacity-0 hover:opacity-100 transition-all duration-200 cursor-crosshair hover:scale-150 hover:bg-gray-500"
           style={{
-            left: `${point.x - x - 4}px`,
-            top: `${point.y - y - 4}px`,
+            left: `${point.x - currentX - 4}px`,
+            top: `${point.y - currentY - 4}px`,
           }}
           data-connection-point={position}
           data-box-id={id}
           data-x={point.x}
           data-y={point.y}
-          title={`${id ? `${id} - ` : ""}${position} 연결점`}
+          title={`연결점: ${position}`}
         />
       ))}
     </div>

@@ -934,36 +934,7 @@ const Connector = ({
               filter: drop-shadow(0 0 12px rgba(59, 130, 246, 1)) drop-shadow(0 0 20px rgba(96, 165, 250, 0.6));
             }
           }
-          .electric-particles {
-            animation: electricSpark ${speed * 0.6}s ease-in-out infinite;
-          }
-          @keyframes electricSpark {
-            0% { 
-              opacity: 0; 
-              r: 1; 
-              fill: #3b82f6;
-            }
-            25% { 
-              opacity: 0.8; 
-              r: 2; 
-              fill: #60a5fa;
-            }
-            50% { 
-              opacity: 1; 
-              r: 2.5; 
-              fill: #93c5fd;
-            }
-            75% { 
-              opacity: 0.6; 
-              r: 1.8; 
-              fill: #60a5fa;
-            }
-            100% { 
-              opacity: 0; 
-              r: 1; 
-              fill: #3b82f6;
-            }
-          }
+
         `;
 
       case "water":
@@ -1004,36 +975,7 @@ const Connector = ({
               filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.6));
             }
           }
-          .water-drops {
-            animation: waterDroplet ${speed * 0.8}s ease-in-out infinite;
-          }
-          @keyframes waterDroplet {
-            0% { 
-              opacity: 0; 
-              r: 1.2; 
-              fill: #3b82f6;
-            }
-            25% { 
-              opacity: 0.6; 
-              r: 2; 
-              fill: #0ea5e9;
-            }
-            50% { 
-              opacity: 0.9; 
-              r: 2.5; 
-              fill: #06b6d4;
-            }
-            75% { 
-              opacity: 0.5; 
-              r: 1.8; 
-              fill: #0891b2;
-            }
-            100% { 
-              opacity: 0; 
-              r: 1.2; 
-              fill: #3b82f6;
-            }
-          }
+
         `;
 
       case "wind":
@@ -1077,36 +1019,7 @@ const Connector = ({
               filter: drop-shadow(0 0 3px rgba(156, 163, 175, 0.5));
             }
           }
-          .wind-particles {
-            animation: windParticle ${speed * 1}s ease-in-out infinite;
-          }
-          @keyframes windParticle {
-            0% { 
-              opacity: 0; 
-              r: 0.8;
-              fill: #9ca3af;
-            }
-            25% { 
-              opacity: 0.4; 
-              r: 1.5;
-              fill: #6b7280;
-            }
-            50% { 
-              opacity: 0.6; 
-              r: 1.8;
-              fill: #4b5563;
-            }
-            75% { 
-              opacity: 0.3; 
-              r: 1.2;
-              fill: #374151;
-            }
-            100% { 
-              opacity: 0; 
-              r: 0.8;
-              fill: #9ca3af;
-            }
-          }
+
         `;
 
       case "gas":
@@ -1150,41 +1063,7 @@ const Connector = ({
               filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.6));
             }
           }
-          .gas-bubbles {
-            animation: gasBubble ${speed * 0.7}s ease-in-out infinite;
-          }
-          @keyframes gasBubble {
-            0% { 
-              opacity: 0; 
-              r: 0.8;
-              fill: #fbbf24;
-            }
-            20% { 
-              opacity: 0.4; 
-              r: 1.5;
-              fill: #f59e0b;
-            }
-            40% { 
-              opacity: 0.7; 
-              r: 2.2;
-              fill: #d97706;
-            }
-            60% { 
-              opacity: 0.8; 
-              r: 2.5;
-              fill: #b45309;
-            }
-            80% { 
-              opacity: 0.5; 
-              r: 1.8;
-              fill: #92400e;
-            }
-            100% { 
-              opacity: 0; 
-              r: 0.8;
-              fill: #fbbf24;
-            }
-          }
+
         `;
 
       case "data":
@@ -1282,93 +1161,10 @@ const Connector = ({
     }
   };
 
-  // 애니메이션 파티클 생성
+  // 애니메이션 파티클 생성 (비활성화)
   const renderAnimationParticles = () => {
-    if (!animated) return null;
-
-    const pathLength = Math.sqrt(
-      Math.pow(safeEndPoint.x - safeStartPoint.x, 2) + Math.pow(safeEndPoint.y - safeStartPoint.y, 2)
-    );
-
-    const particleCount = Math.min(Math.floor(pathLength / 50), 8);
-    const particles = [];
-
-    for (let i = 0; i < particleCount; i++) {
-      const progress = (i + 1) / (particleCount + 1);
-      const x = safeStartPoint.x + (safeEndPoint.x - safeStartPoint.x) * progress;
-      const y = safeStartPoint.y + (safeEndPoint.y - safeStartPoint.y) * progress;
-
-      switch (animationType) {
-        case "electric":
-          particles.push(
-            <circle
-              key={`electric-${i}`}
-              cx={x - minX}
-              cy={y - minY}
-              r="1.5"
-              className="electric-particles fill-current"
-              style={{ animationDelay: `${i * 0.2}s` }}
-            />
-          );
-          break;
-
-        case "water":
-          particles.push(
-            <circle
-              key={`water-${i}`}
-              cx={x - minX}
-              cy={y - minY}
-              r="2"
-              className="water-drops fill-current opacity-60"
-              style={{ animationDelay: `${i * 0.3}s` }}
-            />
-          );
-          break;
-
-        case "wind":
-          particles.push(
-            <ellipse
-              key={`wind-${i}`}
-              cx={x - minX}
-              cy={y - minY}
-              rx="3"
-              ry="1"
-              className="wind-particles fill-current opacity-40"
-              style={{ animationDelay: `${i * 0.25}s` }}
-            />
-          );
-          break;
-
-        case "gas":
-          particles.push(
-            <circle
-              key={`gas-${i}`}
-              cx={x - minX}
-              cy={y - minY}
-              r="1"
-              className="gas-bubbles fill-current opacity-50"
-              style={{ animationDelay: `${i * 0.4}s` }}
-            />
-          );
-          break;
-
-        case "data":
-          particles.push(
-            <rect
-              key={`data-${i}`}
-              x={x - minX - 1.5}
-              y={y - minY - 1}
-              width="3"
-              height="2"
-              className="data-packets fill-current"
-              style={{ animationDelay: `${i * 0.1}s` }}
-            />
-          );
-          break;
-      }
-    }
-
-    return particles;
+    // 애니메이션 파티클 제거
+    return null;
   };
 
   return (
@@ -1447,31 +1243,6 @@ const Connector = ({
           )}
         </>
       )}
-
-      {/* 연결점 표시 */}
-      <circle
-        cx={safeStartPoint.x - minX}
-        cy={safeStartPoint.y - minY}
-        r="2"
-        className="fill-current opacity-60 hover:opacity-100 transition-opacity"
-      />
-      <circle
-        cx={safeEndPoint.x - minX}
-        cy={safeEndPoint.y - minY}
-        r="2"
-        className="fill-current opacity-60 hover:opacity-100 transition-opacity"
-      />
-
-      {/* bendPoints 표시 (디버깅용) */}
-      {filteredBendPoints.map((point, index) => (
-        <circle
-          key={index}
-          cx={point.x - minX}
-          cy={point.y - minY}
-          r="1.5"
-          className="fill-current opacity-40 hover:opacity-80 transition-opacity"
-        />
-      ))}
     </svg>
   );
 };

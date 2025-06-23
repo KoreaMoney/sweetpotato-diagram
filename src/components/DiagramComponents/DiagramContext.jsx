@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, useRef } from "react";
+import Box from "./Box";
 
 const DiagramContext = createContext();
 
@@ -14,6 +15,15 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
   const [boxes, setBoxes] = useState(new Map());
   const [connections, setConnections] = useState([]);
   const [selectedConnection, setSelectedConnection] = useState(null);
+  const [selectedBoxes, setSelectedBoxes] = useState(new Set());
+  const [isDragging, setIsDragging] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionStartBox, setConnectionStartBox] = useState(null);
+  const [diagramHistory, setDiagramHistory] = useState([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [scale, setScale] = useState(1);
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const [dynamicBoxes, setDynamicBoxes] = useState(new Map());
   const containerRef = useRef(null);
 
   // Box 등록 - 위치 정보 포함
@@ -34,6 +44,48 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
     });
   }, []);
 
+  // 동적 박스 추가 (실제로 렌더링될 박스)
+  const addDynamicBox = useCallback((boxConfig) => {
+    const newId = boxConfig.id || `dynamic-box-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const newBox = {
+      id: newId,
+      x: boxConfig.x || Math.random() * 400 + 50,
+      y: boxConfig.y || Math.random() * 300 + 50,
+      width: boxConfig.width || 120,
+      height: boxConfig.height || 80,
+      text: boxConfig.text || `박스 ${newId}`,
+      className: boxConfig.className || "bg-blue-500 text-white border-blue-600 border-2 rounded-lg",
+      ...boxConfig,
+    };
+
+    setDynamicBoxes((prev) => {
+      const newDynamicBoxes = new Map(prev);
+      newDynamicBoxes.set(newId, newBox);
+      return newDynamicBoxes;
+    });
+
+    // 박스 정보를 boxes Map에도 등록
+    setBoxes((prev) => {
+      const newBoxes = new Map(prev);
+      newBoxes.set(newId, newBox);
+      return newBoxes;
+    });
+
+    return newId;
+  }, []);
+
+  // 동적 박스 제거
+  const removeDynamicBox = useCallback((id) => {
+    setDynamicBoxes((prev) => {
+      const newDynamicBoxes = new Map(prev);
+      newDynamicBoxes.delete(id);
+      return newDynamicBoxes;
+    });
+
+    // 관련 정보도 모두 제거
+    unregisterBox(id);
+  }, []);
+
   // Box 위치 업데이트
   const updateBoxPosition = useCallback((id, newPosition) => {
     setBoxes((prev) => {
@@ -42,7 +94,18 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
       if (box) {
         // 위치가 실제로 변경된 경우에만 업데이트
         if (box.x !== newPosition.x || box.y !== newPosition.y) {
-          newBoxes.set(id, { ...box, ...newPosition });
+          const updatedBox = { ...box, ...newPosition };
+          newBoxes.set(id, updatedBox);
+
+          // 동적 박스도 업데이트
+          setDynamicBoxes((prevDynamic) => {
+            const newDynamicBoxes = new Map(prevDynamic);
+            if (newDynamicBoxes.has(id)) {
+              newDynamicBoxes.set(id, updatedBox);
+            }
+            return newDynamicBoxes;
+          });
+
           return newBoxes;
         }
       }
@@ -60,6 +123,12 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
     });
     // 해당 박스와 연결된 connections도 제거
     setConnections((prev) => prev.filter((conn) => conn.fromBox?.id !== id && conn.toBox?.id !== id));
+    // 선택된 박스에서도 제거
+    setSelectedBoxes((prev) => {
+      const newSelected = new Set(prev);
+      newSelected.delete(id);
+      return newSelected;
+    });
   }, []);
 
   // Box 정보 가져오기
@@ -75,6 +144,39 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
   const getAllBoxes = useCallback(() => {
     return Array.from(boxes.values());
   }, [boxes]);
+
+  // 박스 선택/해제 (개선된 다중 선택)
+  const selectBox = useCallback((id, multiSelect = false) => {
+    setSelectedBoxes((prev) => {
+      const newSelected = new Set();
+
+      if (multiSelect) {
+        // 다중 선택 모드
+        newSelected.add(...prev);
+        if (prev.has(id)) {
+          newSelected.delete(id); // 이미 선택된 경우 해제
+        } else {
+          newSelected.add(id); // 선택되지 않은 경우 추가
+        }
+      } else {
+        // 단일 선택 모드
+        if (prev.has(id) && prev.size === 1) {
+          // 이미 선택된 박스를 다시 클릭하면 해제
+          // newSelected는 비어있음
+        } else {
+          // 새로운 박스 선택
+          newSelected.add(id);
+        }
+      }
+
+      return newSelected;
+    });
+  }, []);
+
+  // 모든 박스 선택 해제
+  const clearSelection = useCallback(() => {
+    setSelectedBoxes(new Set());
+  }, []);
 
   // 연결 추가
   const addConnection = useCallback((connectionInfo) => {
@@ -145,16 +247,226 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
     [boxes]
   );
 
+  // 히스토리 관리
+  const saveState = useCallback(() => {
+    const currentState = {
+      boxes: new Map(boxes),
+      connections: [...connections],
+      dynamicBoxes: new Map(dynamicBoxes),
+      timestamp: Date.now(),
+    };
+
+    setDiagramHistory((prev) => {
+      const newHistory = prev.slice(0, historyIndex + 1);
+      newHistory.push(currentState);
+      return newHistory.slice(-50); // 최대 50개 상태 유지
+    });
+
+    setHistoryIndex((prev) => Math.min(prev + 1, 49));
+  }, [boxes, connections, dynamicBoxes, historyIndex]);
+
+  // Undo 기능
+  const undo = useCallback(() => {
+    if (historyIndex > 0) {
+      const previousState = diagramHistory[historyIndex - 1];
+      setBoxes(new Map(previousState.boxes));
+      setConnections([...previousState.connections]);
+      setDynamicBoxes(new Map(previousState.dynamicBoxes || new Map()));
+      setHistoryIndex((prev) => prev - 1);
+    }
+  }, [diagramHistory, historyIndex]);
+
+  // Redo 기능
+  const redo = useCallback(() => {
+    if (historyIndex < diagramHistory.length - 1) {
+      const nextState = diagramHistory[historyIndex + 1];
+      setBoxes(new Map(nextState.boxes));
+      setConnections([...nextState.connections]);
+      setDynamicBoxes(new Map(nextState.dynamicBoxes || new Map()));
+      setHistoryIndex((prev) => prev + 1);
+    }
+  }, [diagramHistory, historyIndex]);
+
+  // 다이어그램 클리어
+  const clearDiagram = useCallback(() => {
+    setBoxes(new Map());
+    setConnections([]);
+    setDynamicBoxes(new Map());
+    setSelectedBoxes(new Set());
+    setSelectedConnection(null);
+    saveState();
+  }, [saveState]);
+
+  // 줌 기능
+  const zoomIn = useCallback(() => {
+    setScale((prev) => Math.min(prev * 1.2, 3));
+  }, []);
+
+  const zoomOut = useCallback(() => {
+    setScale((prev) => Math.max(prev / 1.2, 0.1));
+  }, []);
+
+  const resetZoom = useCallback(() => {
+    setScale(1);
+    setPanOffset({ x: 0, y: 0 });
+  }, []);
+
+  // 다이어그램 통계
+  const getDiagramStats = useCallback(() => {
+    return {
+      boxCount: boxes.size,
+      connectionCount: connections.length,
+      selectedBoxCount: selectedBoxes.size,
+      canUndo: historyIndex > 0,
+      canRedo: historyIndex < diagramHistory.length - 1,
+      scale,
+      panOffset,
+    };
+  }, [boxes.size, connections.length, selectedBoxes.size, historyIndex, diagramHistory.length, scale, panOffset]);
+
+  // 박스 찾기
+  const findBoxes = useCallback(
+    (predicate) => {
+      return Array.from(boxes.values()).filter(predicate);
+    },
+    [boxes]
+  );
+
+  // 연결선 찾기
+  const findConnections = useCallback(
+    (predicate) => {
+      return connections.filter(predicate);
+    },
+    [connections]
+  );
+
+  // 박스 배치 최적화 (개선된 버전)
+  const optimizeLayout = useCallback(() => {
+    const boxArray = Array.from(boxes.values());
+    if (boxArray.length === 0) return;
+
+    const updatedBoxes = new Map();
+    const iterations = 50; // 최적화 반복 횟수
+    const containerWidth = 800;
+    const containerHeight = 600;
+
+    // 초기 위치 복사
+    boxArray.forEach((box) => {
+      updatedBoxes.set(box.id, { ...box });
+    });
+
+    // 포스 기반 레이아웃 알고리즘
+    for (let iter = 0; iter < iterations; iter++) {
+      const forces = new Map();
+
+      // 각 박스에 대해 힘 계산
+      boxArray.forEach((box) => {
+        let fx = 0,
+          fy = 0;
+        const currentBox = updatedBoxes.get(box.id);
+
+        // 다른 박스들과의 반발력 계산
+        boxArray.forEach((otherBox) => {
+          if (box.id !== otherBox.id) {
+            const otherCurrentBox = updatedBoxes.get(otherBox.id);
+            const dx = currentBox.x - otherCurrentBox.x;
+            const dy = currentBox.y - otherCurrentBox.y;
+            const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+            const force = Math.min(1000 / (distance * distance), 10); // 최대 힘 제한
+
+            fx += (dx / distance) * force;
+            fy += (dy / distance) * force;
+          }
+        });
+
+        // 연결된 박스들과의 인력 계산
+        connections.forEach((conn) => {
+          let targetBox = null;
+          if (conn.fromBox?.id === box.id) {
+            targetBox = updatedBoxes.get(conn.toBox?.id);
+          } else if (conn.toBox?.id === box.id) {
+            targetBox = updatedBoxes.get(conn.fromBox?.id);
+          }
+
+          if (targetBox) {
+            const dx = targetBox.x - currentBox.x;
+            const dy = targetBox.y - currentBox.y;
+            const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+            const idealDistance = 150; // 이상적인 연결 거리
+            const force = (distance - idealDistance) * 0.05;
+
+            fx += (dx / distance) * force;
+            fy += (dy / distance) * force;
+          }
+        });
+
+        // 중앙으로의 약한 인력
+        const centerX = containerWidth / 2;
+        const centerY = containerHeight / 2;
+        const toCenterX = (centerX - currentBox.x) * 0.001;
+        const toCenterY = (centerY - currentBox.y) * 0.001;
+
+        fx += toCenterX;
+        fy += toCenterY;
+
+        forces.set(box.id, { fx, fy });
+      });
+
+      // 힘 적용 및 위치 업데이트
+      boxArray.forEach((box) => {
+        const force = forces.get(box.id);
+        const currentBox = updatedBoxes.get(box.id);
+        const damping = 0.1; // 감쇠 계수
+
+        let newX = currentBox.x + force.fx * damping;
+        let newY = currentBox.y + force.fy * damping;
+
+        // 경계 체크
+        newX = Math.max(10, Math.min(containerWidth - currentBox.width - 10, newX));
+        newY = Math.max(10, Math.min(containerHeight - currentBox.height - 10, newY));
+
+        updatedBoxes.set(box.id, {
+          ...currentBox,
+          x: newX,
+          y: newY,
+        });
+      });
+    }
+
+    // 위치 업데이트 적용
+    setBoxes(updatedBoxes);
+
+    // 동적 박스도 업데이트
+    setDynamicBoxes((prev) => {
+      const newDynamicBoxes = new Map(prev);
+      updatedBoxes.forEach((box, id) => {
+        if (newDynamicBoxes.has(id)) {
+          newDynamicBoxes.set(id, box);
+        }
+      });
+      return newDynamicBoxes;
+    });
+
+    saveState();
+  }, [boxes, connections, saveState]);
+
   const value = {
-    // 박스 관련
+    // 박스 관리
     boxes,
     registerBox,
     unregisterBox,
     updateBoxPosition,
     getBox,
     getAllBoxes,
+    selectBox,
+    clearSelection,
+    selectedBoxes,
+    findBoxes,
+    addDynamicBox,
+    removeDynamicBox,
+    dynamicBoxes,
 
-    // 연결 관련
+    // 연결 관리
     connections,
     addConnection,
     removeConnection,
@@ -162,6 +474,34 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
     selectedConnection,
     setSelectedConnection,
     getOptimalConnectionPoints,
+    findConnections,
+
+    // 상태 관리
+    isDragging,
+    setIsDragging,
+    isConnecting,
+    setIsConnecting,
+    connectionStartBox,
+    setConnectionStartBox,
+
+    // 히스토리 관리
+    undo,
+    redo,
+    saveState,
+    clearDiagram,
+
+    // 뷰 관리
+    scale,
+    setScale,
+    panOffset,
+    setPanOffset,
+    zoomIn,
+    zoomOut,
+    resetZoom,
+
+    // 유틸리티
+    getDiagramStats,
+    optimizeLayout,
 
     // 컨테이너 관련
     containerRef,
@@ -181,6 +521,7 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
     <DiagramContext.Provider value={value}>
       <div ref={containerRef} className={combinedClassName} style={defaultStyle}>
         {children}
+        {/* 동적 박스 렌더링을 각 컴포넌트에서 직접 하도록 제거 */}
       </div>
     </DiagramContext.Provider>
   );

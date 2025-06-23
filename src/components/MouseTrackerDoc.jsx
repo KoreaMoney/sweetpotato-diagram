@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MouseTracker from "./MouseTracker";
 
-const MouseTrackerDemo = () => {
+const MouseTrackerDoc = () => {
   const [currentExample, setCurrentExample] = useState(0);
   const [positionData, setPositionData] = useState({ x: 0, y: 0 });
 
@@ -284,4 +284,4 @@ function App() {
   );
 };
 
-export default MouseTrackerDemo;
+export default MouseTrackerDoc;

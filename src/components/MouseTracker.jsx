@@ -36,8 +36,8 @@ const MouseTracker = ({
     };
 
     const handleMouseClick = (event) => {
-      // Ctrl + 클릭으로 포인트 저장
-      if (event.ctrlKey && showSavedPoints) {
+      // Ctrl + 클릭 (Windows/Linux) 또는 Cmd + 클릭 (Mac)으로 포인트 저장
+      if ((event.ctrlKey || event.metaKey) && showSavedPoints) {
         const newPoint = {
           id: Date.now(),
           x: event.clientX,
@@ -264,7 +264,9 @@ const MouseTracker = ({
               </div>
             ))}
           </div>
-          <div className={`text-xs ${themeStyles.detail} mt-2 text-center`}>💡 Ctrl + 클릭으로 포인트 저장</div>
+          <div className={`text-xs ${themeStyles.detail} mt-2 text-center`}>
+            💡 Ctrl + 클릭 (Win) / Cmd + 클릭 (Mac)으로 포인트 저장
+          </div>
         </div>
       )}
 

@@ -18,13 +18,14 @@ const ImageBoxSection = () => {
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold mb-4">🖼️ ImageBox 컴포넌트</h2>
         <p className="text-gray-600 mb-6">
-          아이콘이나 이미지를 포함할 수 있는 박스 컴포넌트입니다. **🆕 NEW! 이미지 크기 조절 기능 추가!**
+          아이콘이나 이미지를 포함할 수 있는 박스 컴포넌트입니다. NEW! 이미지 크기 조절 기능 및 텍스트 위치 설정 기능
+          추가!**
         </p>
 
         <div className="bg-gray-900 text-green-400 p-4 rounded-lg mb-6">
           <h3 className="text-white text-lg font-semibold mb-3">기본 사용법</h3>
           <pre className="text-sm overflow-x-auto">
-            {`// 기본 사용법
+            {`// 기본 사용법 (텍스트는 하단 중앙)
 <ImageBox
   id="image1"
   x={100}
@@ -34,12 +35,10 @@ const ImageBoxSection = () => {
   text="수소 탱크"
   icon="/path/to/hydrogen-tank.png"
   iconType="image"
-  backgroundColor="#E0F2FE"
-  borderColor="#0284C7"
   onClick={() => console.log('수소 탱크 클릭')}
 />
 
-// 🆕 NEW! 이미지 크기 조절 기능
+// 🆕 NEW! 텍스트 위치 4방향 설정
 <ImageBox
   x={200}
   y={150}
@@ -48,55 +47,352 @@ const ImageBoxSection = () => {
   text="연료전지 스택"
   icon="/path/to/fuel-cell.png"
   iconType="image"
-  imageScale={0.8}          // 이미지를 80% 크기로
-  imagePadding={12}         // 12px 여백
-  imageObjectFit="cover"    // 이미지 피팅 방식
+  textPosition="top"                    // 텍스트를 상단에 배치
+  textAlign="center"                    // 텍스트 중앙 정렬
+  textSpacing={8}                       // 박스와 텍스트 간격 8px
+  textClassName="text-sm font-bold text-blue-600"  // 텍스트 스타일
 />
 
-// 절대 크기 지정
+// 왼쪽에 텍스트 배치
 <ImageBox
   x={350}
   y={150}
-  width={150}
-  height={120}
+  width={100}
+  height={80}
   text="컨트롤러"
-  icon="/path/to/controller.png"
-  iconType="image"
-  imageWidth={60}           // 이미지 너비 60px
-  imageHeight={40}          // 이미지 높이 40px
-  imagePadding={16}         // 16px 여백
+  icon="⚙️"
+  iconType="emoji"
+  textPosition="left"                   // 텍스트를 왼쪽에 배치
+  textAlign="right"                     // 텍스트 우측 정렬
+  textSpacing={12}                      // 박스와 텍스트 간격 12px
+  textMaxWidth={80}                     // 텍스트 최대 너비 80px
+  textClassName="text-xs text-gray-500" // 작은 회색 텍스트
 />
 
-// 이모지 크기 조절
+// 오른쪽에 텍스트 배치
 <ImageBox
   x={50}
   y={300}
   width={80}
   height={80}
-  text="배터리"
+  text="배터리 상태: 85%"
   icon="🔋"
   iconType="emoji"
-  imageScale={1.5}          // 이모지를 1.5배 크기로
-  imagePadding={10}
+  textPosition="right"                  // 텍스트를 오른쪽에 배치
+  textAlign="left"                      // 텍스트 좌측 정렬
+  textSpacing={16}                      // 박스와 텍스트 간격 16px
+  textMaxWidth={120}                    // 텍스트 최대 너비 120px
+  textClassName="text-sm font-medium text-green-600"
 />
 
-// SVG 아이콘 사용
+// 🆕 이미지 크기 조절과 함께 사용
 <ImageBox
   x={150}
   y={300}
   width={100}
   height={80}
-  text="센서"
-  icon='<svg viewBox="0 0 24 24" fill="#3B82F6">...</svg>'
+  text="센서 데이터"
+  icon={sensorIcon}
   iconType="svg"
-  imageScale={0.9}
-  imagePadding={15}
+  textPosition="bottom"                 // 텍스트를 하단에 배치
+  textAlign="center"                    // 텍스트 중앙 정렬
+  textSpacing={4}                       // 박스와 텍스트 간격 4px
+  textClassName="text-xs font-semibold text-blue-700"
+  imageScale={0.9}                      // 이미지를 90% 크기로
+  imagePadding={15}                     // 15px 여백
 />`}
           </pre>
         </div>
 
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3">라이브 예제</h3>
+          <h3 className="text-lg font-semibold mb-3">🆕 텍스트 위치 설정 예제</h3>
+          <div className="relative w-full h-80 border border-gray-200 rounded bg-gray-50 p-8">
+            {/* TOP 위치 예제 */}
+            <ImageBox
+              id="text-position-top"
+              x={50}
+              y={60}
+              width={80}
+              height={60}
+              icon="🌡️"
+              iconType="emoji"
+              text="상단 텍스트"
+              textPosition="top"
+              textAlign="center"
+              textSpacing={8}
+              textClassName="text-sm font-bold text-red-600"
+              className="border-2 border-red-500 rounded-lg shadow-md bg-red-50"
+              onClick={() => addToast("상단 텍스트 클릭! 🔝", "info")}
+            />
+
+            {/* BOTTOM 위치 예제 */}
+            <ImageBox
+              id="text-position-bottom"
+              x={180}
+              y={60}
+              width={80}
+              height={60}
+              icon="⚙️"
+              iconType="emoji"
+              text="하단 텍스트"
+              textPosition="bottom"
+              textAlign="center"
+              textSpacing={8}
+              textClassName="text-sm font-bold text-blue-600"
+              className="border-2 border-blue-500 rounded-lg shadow-md bg-blue-50"
+              onClick={() => addToast("하단 텍스트 클릭! 🔽", "info")}
+            />
+
+            {/* LEFT 위치 예제 */}
+            <ImageBox
+              id="text-position-left"
+              x={150}
+              y={180}
+              width={80}
+              height={60}
+              icon="📊"
+              iconType="emoji"
+              text="좌측 텍스트"
+              textPosition="left"
+              textAlign="right"
+              textSpacing={12}
+              textMaxWidth={100}
+              textClassName="text-sm font-bold text-green-600"
+              className="border-2 border-green-500 rounded-lg shadow-md bg-green-50"
+              onClick={() => addToast("좌측 텍스트 클릭! ◀️", "success")}
+            />
+
+            {/* RIGHT 위치 예제 */}
+            <ImageBox
+              id="text-position-right"
+              x={280}
+              y={180}
+              width={80}
+              height={60}
+              icon="🔧"
+              iconType="emoji"
+              text="우측 텍스트"
+              textPosition="right"
+              textAlign="left"
+              textSpacing={12}
+              textMaxWidth={100}
+              textClassName="text-sm font-bold text-purple-600"
+              className="border-2 border-purple-500 rounded-lg shadow-md bg-purple-50"
+              onClick={() => addToast("우측 텍스트 클릭! ▶️", "info")}
+            />
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-3">✨ 반짝이는 효과 & 드래그 기능 예제</h3>
+          <div className="relative w-full h-80 border border-gray-200 rounded bg-gray-50 p-8">
+            {/* 반짝이는 효과 예제들 */}
+            <ImageBox
+              id="sparkle-low"
+              x={50}
+              y={60}
+              width={80}
+              height={60}
+              icon="💎"
+              iconType="emoji"
+              text="저강도 반짝임"
+              textPosition="bottom"
+              textAlign="center"
+              textSpacing={8}
+              textClassName="text-xs font-medium text-blue-600"
+              sparkle={true}
+              sparkleIntensity="low"
+              sparkleColor="#3B82F6"
+              className="border-2 border-blue-500 rounded-lg shadow-md bg-blue-50"
+              onClick={() => addToast("저강도 반짝임 클릭! 💎", "info")}
+            />
+
+            <ImageBox
+              id="sparkle-medium"
+              x={150}
+              y={60}
+              width={80}
+              height={60}
+              icon="⭐"
+              iconType="emoji"
+              text="중강도 반짝임"
+              textPosition="bottom"
+              textAlign="center"
+              textSpacing={8}
+              textClassName="text-xs font-medium text-yellow-600"
+              sparkle={true}
+              sparkleIntensity="medium"
+              sparkleColor="#FFD700"
+              className="border-2 border-yellow-500 rounded-lg shadow-md bg-yellow-50"
+              onClick={() => addToast("중강도 반짝임 클릭! ⭐", "warning")}
+            />
+
+            <ImageBox
+              id="sparkle-high"
+              x={250}
+              y={60}
+              width={80}
+              height={60}
+              icon="🔥"
+              iconType="emoji"
+              text="고강도 반짝임"
+              textPosition="bottom"
+              textAlign="center"
+              textSpacing={8}
+              textClassName="text-xs font-medium text-red-600"
+              sparkle={true}
+              sparkleIntensity="high"
+              sparkleColor="#EF4444"
+              className="border-2 border-red-500 rounded-lg shadow-md bg-red-50"
+              onClick={() => addToast("고강도 반짝임 클릭! 🔥", "error")}
+            />
+
+            {/* 드래그 가능한 예제들 */}
+            <ImageBox
+              id="draggable-1"
+              x={50}
+              y={180}
+              width={90}
+              height={70}
+              icon="🚀"
+              iconType="emoji"
+              text="드래그 가능!"
+              textPosition="right"
+              textAlign="left"
+              textSpacing={10}
+              textMaxWidth={100}
+              textClassName="text-sm font-bold text-indigo-600"
+              draggable={true}
+              sparkle={true}
+              sparkleIntensity="medium"
+              sparkleColor="#6366F1"
+              className="border-2 border-indigo-500 rounded-lg shadow-md bg-indigo-50"
+              onDrag={(position) => console.log("드래그 중:", position)}
+              onDragEnd={(position) =>
+                addToast(`새 위치: (${Math.round(position.x)}, ${Math.round(position.y)})`, "success")
+              }
+              onClick={() => addToast("드래그 가능한 박스 클릭! 🚀", "info")}
+            />
+
+            <ImageBox
+              id="draggable-2"
+              x={200}
+              y={180}
+              width={90}
+              height={70}
+              icon="🎯"
+              iconType="emoji"
+              text="이동 가능"
+              textPosition="top"
+              textAlign="center"
+              textSpacing={8}
+              textClassName="text-sm font-bold text-green-600"
+              draggable={true}
+              sparkle={true}
+              sparkleIntensity="low"
+              sparkleColor="#10B981"
+              className="border-2 border-green-500 rounded-lg shadow-md bg-green-50"
+              onDrag={(position) => console.log("이동 중:", position)}
+              onDragEnd={(position) =>
+                addToast(`타겟 이동: (${Math.round(position.x)}, ${Math.round(position.y)})`, "success")
+              }
+              onClick={() => addToast("타겟 박스 클릭! 🎯", "success")}
+            />
+
+            <ImageBox
+              id="draggable-3"
+              x={320}
+              y={180}
+              width={80}
+              height={60}
+              icon="🎨"
+              iconType="emoji"
+              text="자유롭게 움직여보세요"
+              textPosition="left"
+              textAlign="right"
+              textSpacing={12}
+              textMaxWidth={120}
+              textClassName="text-xs font-medium text-purple-600 leading-tight"
+              draggable={true}
+              sparkle={true}
+              sparkleIntensity="high"
+              sparkleColor="#A855F7"
+              className="border-2 border-purple-500 rounded-lg shadow-md bg-purple-50"
+              onDrag={(position) => console.log("자유 이동:", position)}
+              onDragEnd={(position) =>
+                addToast(`아트 위치: (${Math.round(position.x)}, ${Math.round(position.y)})`, "info")
+              }
+              onClick={() => addToast("아트 박스 클릭! 🎨", "info")}
+            />
+          </div>
+          <p className="text-sm text-gray-600 mt-2">
+            💡 <strong>팁:</strong> 드래그 가능한 박스들을 마우스로 드래그해서 이동시켜보세요! 오른쪽 상단의 작은 점이
+            드래그 가능 표시입니다.
+          </p>
+        </div>
+
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-3">다양한 텍스트 스타일 예제</h3>
+          <div className="relative w-full h-64 border border-gray-200 rounded bg-gray-50 p-8">
+            {/* 큰 굵은 텍스트 */}
+            <ImageBox
+              id="text-style-large"
+              x={50}
+              y={50}
+              width={100}
+              height={70}
+              icon={cpuIcon}
+              iconType="svg"
+              text="CPU 모듈"
+              textPosition="bottom"
+              textAlign="center"
+              textSpacing={6}
+              textClassName="text-lg font-black text-yellow-600 tracking-wide"
+              className="border-2 border-yellow-500 rounded-lg shadow-md"
+              onClick={() => addToast("큰 텍스트 클릭! 📏", "warning")}
+            />
+
+            {/* 작은 회색 텍스트 */}
+            <ImageBox
+              id="text-style-small"
+              x={200}
+              y={50}
+              width={90}
+              height={70}
+              icon="🔋"
+              iconType="emoji"
+              text="배터리 상태: 정상"
+              textPosition="top"
+              textAlign="center"
+              textSpacing={4}
+              textClassName="text-xs text-gray-500 font-light italic"
+              className="border-2 border-gray-400 rounded-lg shadow-md"
+              onClick={() => addToast("작은 텍스트 클릭! 🔬", "info")}
+            />
+
+            {/* 긴 텍스트 + 줄바꿈 */}
+            <ImageBox
+              id="text-style-long"
+              x={330}
+              y={50}
+              width={80}
+              height={70}
+              icon="📡"
+              iconType="emoji"
+              text="통신 모듈 데이터 전송 상태"
+              textPosition="right"
+              textAlign="left"
+              textSpacing={10}
+              textMaxWidth={120}
+              textClassName="text-sm font-medium text-indigo-600 leading-tight"
+              className="border-2 border-indigo-500 rounded-lg shadow-md"
+              onClick={() => addToast("긴 텍스트 클릭! 📝", "info")}
+            />
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-3">기존 라이브 예제</h3>
           <div className="relative w-full h-96 border border-gray-200 rounded bg-gray-50 p-4">
             {/* SVG 아이콘 예제 */}
             <ImageBox
@@ -374,6 +670,172 @@ const ImageBoxSection = () => {
                     <code className="text-sm bg-gray-100 px-1 rounded">"contain"</code>
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-600">'contain', 'cover', 'fill', 'scale-down', 'none'</td>
+                </tr>
+
+                {/* 🆕 텍스트 위치 설정 Props */}
+                <tr className="hover:bg-blue-50 bg-blue-25">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-blue-100 px-2 py-1 rounded text-blue-800">🆕 textPosition</code>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">string</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">"bottom"</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">텍스트 위치 ('top', 'bottom', 'left', 'right')</td>
+                </tr>
+                <tr className="hover:bg-blue-50 bg-blue-25">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-blue-100 px-2 py-1 rounded text-blue-800">🆕 textClassName</code>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">string</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">"text-xs..."</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">텍스트 TailwindCSS 클래스</td>
+                </tr>
+                <tr className="hover:bg-blue-50 bg-blue-25">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-blue-100 px-2 py-1 rounded text-blue-800">🆕 textSpacing</code>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">number</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">4</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">텍스트와 박스 사이 간격 (px)</td>
+                </tr>
+                <tr className="hover:bg-blue-50 bg-blue-25">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-blue-100 px-2 py-1 rounded text-blue-800">🆕 textMaxWidth</code>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">number | null</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">null</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">텍스트 최대 너비 (px), null이면 박스 너비 사용</td>
+                </tr>
+                <tr className="hover:bg-blue-50 bg-blue-25">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-blue-100 px-2 py-1 rounded text-blue-800">🆕 textAlign</code>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">string</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">"center"</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">텍스트 정렬 ('left', 'center', 'right')</td>
+                </tr>
+
+                {/* 🆕 드래그 기능 Props */}
+                <tr className="hover:bg-purple-50 bg-purple-25">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-purple-100 px-2 py-1 rounded text-purple-800">🆕 draggable</code>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">boolean</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">false</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">
+                    드래그 가능 여부. 우상단에 드래그 표시 아이콘 추가됨
+                  </td>
+                </tr>
+                <tr className="hover:bg-purple-50 bg-purple-25">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-purple-100 px-2 py-1 rounded text-purple-800">🆕 initialX</code>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">number</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">0</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">초기 X 좌표 (드래그 기능 사용 시 권장)</td>
+                </tr>
+                <tr className="hover:bg-purple-50 bg-purple-25">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-purple-100 px-2 py-1 rounded text-purple-800">🆕 initialY</code>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">number</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">0</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">초기 Y 좌표 (드래그 기능 사용 시 권장)</td>
+                </tr>
+                <tr className="hover:bg-purple-50 bg-purple-25">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-purple-100 px-2 py-1 rounded text-purple-800">🆕 onDrag</code>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">function</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">null</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">
+                    드래그 중 실시간 콜백. (position, info) =&gt; void
+                  </td>
+                </tr>
+                <tr className="hover:bg-purple-50 bg-purple-25">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-purple-100 px-2 py-1 rounded text-purple-800">🆕 onDragEnd</code>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">function</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">null</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">드래그 완료 시 콜백. 최종 위치에서 호출됨</td>
+                </tr>
+
+                {/* 🆕 반짝이는 효과 Props */}
+                <tr className="hover:bg-yellow-50 bg-yellow-25">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-yellow-100 px-2 py-1 rounded text-yellow-800">🆕 sparkle</code>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">boolean</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">false</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">반짝이는 애니메이션 효과 활성화 여부</td>
+                </tr>
+                <tr className="hover:bg-yellow-50 bg-yellow-25">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-yellow-100 px-2 py-1 rounded text-yellow-800">🆕 sparkleColor</code>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">string</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">"#FFD700"</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">반짝이는 효과의 색상 (HEX 코드)</td>
+                </tr>
+                <tr className="hover:bg-yellow-50 bg-yellow-25">
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-yellow-100 px-2 py-1 rounded text-yellow-800">🆕 sparkleIntensity</code>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-orange-600 font-medium">string</span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <code className="text-sm bg-gray-100 px-1 rounded">"medium"</code>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">반짝이는 강도 ('low', 'medium', 'high')</td>
                 </tr>
 
                 {/* 기타 Props */}

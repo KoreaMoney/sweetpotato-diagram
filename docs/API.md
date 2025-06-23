@@ -325,92 +325,651 @@ import { DraggableBox } from "sweet-diagram";
 
 ### ImageBox 컴포넌트
 
-이미지를 포함할 수 있는 박스 컴포넌트입니다.
+이미지나 아이콘을 포함할 수 있는 박스 컴포넌트입니다. **🆕 NEW! 텍스트 4방향 위치 설정 및 이미지 크기 조절 기능 추가!**
 
 #### Props
 
-| 속성              | 타입       | 기본값      | 필수 | 설명                             |
-| ----------------- | ---------- | ----------- | ---- | -------------------------------- |
-| `id`              | `string`   | `""`        | ❌   | 고유 식별자                      |
-| `x`               | `number`   | `0`         | ❌   | X 좌표                           |
-| `y`               | `number`   | `0`         | ❌   | Y 좌표                           |
-| `width`           | `number`   | `120`       | ❌   | 너비                             |
-| `height`          | `number`   | `80`        | ❌   | 높이                             |
-| `imageUrl`        | `string`   | `""`        | ❌   | 이미지 URL                       |
-| `altText`         | `string`   | `""`        | ❌   | 이미지 대체 텍스트               |
-| `text`            | `string`   | `""`        | ❌   | 추가 텍스트                      |
-| `textPosition`    | `string`   | `"bottom"`  | ❌   | 텍스트 위치 (top/bottom/overlay) |
-| `backgroundColor` | `string`   | `"#F3F4F6"` | ❌   | 배경색                           |
-| `borderColor`     | `string`   | `"#D1D5DB"` | ❌   | 테두리 색상                      |
-| `borderWidth`     | `number`   | `1`         | ❌   | 테두리 두께                      |
-| `borderRadius`    | `number`   | `8`         | ❌   | 모서리 둥글기                    |
-| `objectFit`       | `string`   | `"cover"`   | ❌   | 이미지 맞춤 방식                 |
-| `onClick`         | `function` | `null`      | ❌   | 클릭 이벤트 핸들러               |
+| 속성                  | 타입       | 기본값                                | 필수 | 설명                                                                                          |
+| --------------------- | ---------- | ------------------------------------- | ---- | --------------------------------------------------------------------------------------------- |
+| `id`                  | `string`   | `""`                                  | ❌   | 고유 식별자                                                                                   |
+| `initialX` 🆕         | `number`   | `0`                                   | ❌   | 초기 X 좌표 (드래그 기능 사용 시 권장)                                                        |
+| `initialY` 🆕         | `number`   | `0`                                   | ❌   | 초기 Y 좌표 (드래그 기능 사용 시 권장)                                                        |
+| `x`                   | `number`   | `0`                                   | ❌   | X 좌표 (정적 위치, draggable=false일 때 사용)                                                 |
+| `y`                   | `number`   | `0`                                   | ❌   | Y 좌표 (정적 위치, draggable=false일 때 사용)                                                 |
+| `width`               | `number`   | `100`                                 | ❌   | 박스 너비                                                                                     |
+| `height`              | `number`   | `80`                                  | ❌   | 박스 높이                                                                                     |
+| `text`                | `string`   | `""`                                  | ❌   | 텍스트 내용                                                                                   |
+| `textPosition` 🆕     | `string`   | `"bottom"`                            | ❌   | 텍스트 위치 (`top`, `bottom`, `left`, `right`)                                                |
+| `textClassName` 🆕    | `string`   | `"text-xs text-gray-700 font-medium"` | ❌   | 텍스트 TailwindCSS 클래스                                                                     |
+| `textSpacing` 🆕      | `number`   | `4`                                   | ❌   | 텍스트와 박스 사이 간격 (px)                                                                  |
+| `textMaxWidth` 🆕     | `number`   | `null`                                | ❌   | 텍스트 최대 너비 (px), null이면 박스 너비 사용                                                |
+| `textAlign` 🆕        | `string`   | `"center"`                            | ❌   | 텍스트 정렬 (`left`, `center`, `right`)                                                       |
+| `icon`                | `string`   | `baseImage`                           | ❌   | 아이콘/이미지 URL 또는 이모지                                                                 |
+| `iconType`            | `string`   | `"image"`                             | ❌   | 아이콘 타입 (`image`, `emoji`, `svg`)                                                         |
+| `imageWidth` 🆕       | `number`   | `null`                                | ❌   | 이미지 절대 너비 (px)                                                                         |
+| `imageHeight` 🆕      | `number`   | `null`                                | ❌   | 이미지 절대 높이 (px)                                                                         |
+| `imageScale` 🆕       | `number`   | `1`                                   | ❌   | 이미지 크기 비율 (0.1 ~ 2.0)                                                                  |
+| `imagePadding` 🆕     | `number`   | `8`                                   | ❌   | 이미지 주변 여백 (px)                                                                         |
+| `imageObjectFit` 🆕   | `string`   | `"contain"`                           | ❌   | 이미지 피팅 방식 (`contain`, `cover`, `fill`, `scale-down`, `none`)                           |
+| `draggable` 🆕        | `boolean`  | `false`                               | ❌   | 드래그 가능 여부. true일 때 마우스로 드래그하여 이동 가능. 우상단에 드래그 표시 아이콘 추가됨 |
+| `onDrag` 🆕           | `function` | `null`                                | ❌   | 드래그 중 실시간 콜백 함수. `(position: {x, y}, info: {id, width, height}) => void`           |
+| `onDragEnd` 🆕        | `function` | `null`                                | ❌   | 드래그 완료 시 콜백 함수. 최종 위치에서 호출됨. 동일한 시그니처로 호출                        |
+| `sparkle` 🆕          | `boolean`  | `false`                               | ❌   | 반짝이는 애니메이션 효과 활성화 여부. 주목도를 높이고 싶을 때 사용                            |
+| `sparkleColor` 🆕     | `string`   | `"#FFD700"`                           | ❌   | 반짝이는 효과의 색상 (HEX 코드). 그림자와 글로우 효과에 적용됨                                |
+| `sparkleIntensity` 🆕 | `string`   | `"medium"`                            | ❌   | 반짝이는 애니메이션 강도. `low`(부드러운 pulse), `medium`(바운스), `high`(강렬한 ping)        |
+| `className`           | `string`   | TailwindCSS 기본 클래스               | ❌   | 박스 스타일 클래스                                                                            |
+| `onClick`             | `function` | `null`                                | ❌   | 클릭 이벤트 핸들러                                                                            |
 
 #### 사용 예시
 
-**TailwindCSS를 사용한 현대적 스타일링 (권장):**
+**🆕 새로운 텍스트 위치 설정 기능 (권장):**
 
 ```jsx
 import { ImageBox } from "sweet-diagram";
 
+// 기본 사용법 (텍스트 하단 배치)
 <ImageBox
-  id="compressor-image"
-  x={200}
-  y={100}
-  width={150}
-  height={100}
-  imageUrl="/images/compressor.png"
-  altText="수소 압축기"
-  text="압축기"
+  id="hydrogen-tank"
+  x={100}
+  y={50}
+  width={120}
+  height={80}
+  text="수소 탱크"
+  icon="/images/hydrogen-tank.png"
+  iconType="image"
   textPosition="bottom"
-  className="bg-white border-2 border-green-500 rounded-lg shadow-lg
-             hover:shadow-xl hover:border-green-600 transition-all duration-300
-             cursor-pointer transform hover:scale-105"
-  objectFit="contain"
-  onClick={(event, info) => console.log("이미지 박스 클릭", info)}
+  textAlign="center"
+  textSpacing={6}
+  textClassName="text-sm font-semibold text-blue-600"
+  className="bg-blue-50 border-2 border-blue-500 rounded-lg shadow-md
+             hover:shadow-lg hover:border-blue-600 transition-all duration-300"
+  onClick={(event, info) => console.log("수소 탱크 클릭", info)}
 />
 
-// 다양한 스타일 예시
+// 🆕 상단에 텍스트 배치
 <ImageBox
-  id="sensor"
+  id="compressor"
+  x={250}
+  y={50}
+  width={100}
+  height={70}
+  text="압축기 모듈"
+  icon="⚙️"
+  iconType="emoji"
+  textPosition="top"
+  textAlign="center"
+  textSpacing={8}
+  textClassName="text-lg font-bold text-green-600 tracking-wide"
+  className="bg-green-50 border-2 border-green-500 rounded-xl shadow-lg"
+/>
+
+// 🆕 왼쪽에 텍스트 배치
+<ImageBox
+  id="sensor-module"
+  x={400}
+  y={50}
+  width={80}
+  height={60}
+  text="온도 센서"
+  icon="🌡️"
+  iconType="emoji"
+  textPosition="left"
+  textAlign="right"
+  textSpacing={12}
+  textMaxWidth={80}
+  textClassName="text-sm font-medium text-red-600"
+  className="bg-red-50 border-2 border-red-500 rounded-lg shadow-md"
+/>
+
+// 🆕 오른쪽에 텍스트 배치
+<ImageBox
+  id="battery"
   x={100}
-  y={250}
+  y={150}
+  width={90}
+  height={70}
+  text="배터리 상태: 85%"
+  icon="🔋"
+  iconType="emoji"
+  textPosition="right"
+  textAlign="left"
+  textSpacing={16}
+  textMaxWidth={120}
+  textClassName="text-sm font-semibold text-purple-600 leading-tight"
+  className="bg-purple-50 border-2 border-purple-500 rounded-lg shadow-md"
+/>
+
+// 🆕 이미지 크기 조절과 함께 사용
+<ImageBox
+  id="control-unit"
+  x={250}
+  y={150}
+  width={120}
+  height={100}
+  text="제어 유닛"
+  icon="/images/cpu-icon.svg"
+  iconType="svg"
+  textPosition="bottom"
+  textAlign="center"
+  textSpacing={4}
+  textClassName="text-xs font-bold text-yellow-700"
+  // 🆕 이미지 크기 조절 옵션
+  imageScale={0.8}
+  imagePadding={15}
+  imageObjectFit="contain"
+  className="bg-yellow-50 border-2 border-yellow-500 rounded-lg shadow-lg"
+/>
+
+// 🆕 절대 크기로 이미지 설정
+<ImageBox
+  id="valve-control"
+  x={400}
+  y={150}
   width={100}
   height={80}
-  imageUrl="/images/sensor.svg"
-  text="센서"
-  textPosition="overlay"
-  className="bg-gradient-to-br from-blue-50 to-blue-100
-             border border-blue-300 rounded-xl shadow-md
-             hover:shadow-lg transition-shadow duration-200"
-/>
-
-<ImageBox
-  id="valve"
-  x={350}
-  y={250}
-  imageUrl="/images/valve.png"
-  text="밸브"
-  className="bg-gray-50 border-2 border-gray-300 rounded-lg
-             hover:bg-gray-100 hover:border-gray-400
-             transition-colors duration-300"
+  text="밸브 제어기"
+  icon="/images/valve.png"
+  iconType="image"
+  textPosition="top"
+  textAlign="center"
+  textSpacing={6}
+  textClassName="text-sm font-medium text-indigo-600"
+  // 🆕 절대 크기 설정
+  imageWidth={50}
+  imageHeight={40}
+  imagePadding={20}
+  imageObjectFit="cover"
+  className="bg-indigo-50 border-2 border-indigo-500 rounded-lg shadow-md"
 />
 ```
 
-**기존 방식 (색상 props 사용):**
+**다양한 텍스트 스타일링 예시:**
+
+```jsx
+// 큰 굵은 텍스트
+<ImageBox
+  id="main-controller"
+  x={100}
+  y={300}
+  width={120}
+  height={90}
+  text="메인 컨트롤러"
+  icon="💻"
+  iconType="emoji"
+  textPosition="bottom"
+  textClassName="text-lg font-black text-gray-800 tracking-wide uppercase"
+  textSpacing={8}
+  className="bg-gray-100 border-3 border-gray-600 rounded-xl shadow-xl"
+/>
+
+// 작은 세밀한 텍스트
+<ImageBox
+  id="status-indicator"
+  x={250}
+  y={300}
+  width={80}
+  height={60}
+  text="상태: 정상 동작 중"
+  icon="🟢"
+  iconType="emoji"
+  textPosition="right"
+  textClassName="text-xs text-gray-500 font-light italic leading-relaxed"
+  textSpacing={10}
+  textMaxWidth={100}
+  className="bg-white border border-gray-300 rounded-md shadow-sm"
+/>
+
+// 긴 텍스트 + 줄바꿈 처리
+<ImageBox
+  id="communication-module"
+  x={400}
+  y={300}
+  width={90}
+  height={70}
+  text="통신 모듈 데이터 송수신 상태 모니터링"
+  icon="📡"
+  iconType="emoji"
+  textPosition="left"
+  textAlign="center"
+  textClassName="text-sm font-medium text-blue-700 leading-tight"
+  textSpacing={12}
+  textMaxWidth={140}
+  className="bg-blue-50 border-2 border-blue-400 rounded-lg shadow-md"
+/>
+```
+
+**🆕 반짝이는 효과 & 드래그 기능:**
+
+```jsx
+// 반짝이는 효과가 있는 ImageBox
+<ImageBox
+  id="sparkle-box"
+  x={100}
+  y={450}
+  width={90}
+  height={70}
+  text="반짝이는 보석"
+  icon="💎"
+  iconType="emoji"
+  sparkle={true}
+  sparkleIntensity="high"
+  sparkleColor="#FFD700"
+  textPosition="bottom"
+  textClassName="text-sm font-bold text-yellow-600"
+  className="bg-yellow-50 border-2 border-yellow-500 rounded-lg shadow-lg"
+  onClick={() => alert("반짝이는 보석 클릭!")}
+/>
+
+// 드래그 가능한 ImageBox
+<ImageBox
+  id="draggable-rocket"
+  x={250}
+  y={450}
+  width={80}
+  height={60}
+  text="드래그해보세요!"
+  icon="🚀"
+  iconType="emoji"
+  draggable={true}
+  sparkle={true}
+  sparkleIntensity="medium"
+  sparkleColor="#6366F1"
+  textPosition="right"
+  textClassName="text-sm font-semibold text-indigo-600"
+  className="bg-indigo-50 border-2 border-indigo-500 rounded-lg shadow-md"
+  onDrag={(position, info) => {
+    console.log("드래그 중:", position, info);
+  }}
+  onDragEnd={(position, info) => {
+    console.log("드래그 완료:", position, info);
+    alert(`새 위치: (${Math.round(position.x)}, ${Math.round(position.y)})`);
+  }}
+  onClick={() => alert("로켓 클릭!")}
+/>
+
+// 드래그 + 반짝임 + 커스텀 스타일링 조합
+<ImageBox
+  id="premium-component"
+  x={400}
+  y={450}
+  width={100}
+  height={80}
+  text="프리미엄 컴포넌트"
+  icon="⭐"
+  iconType="emoji"
+  draggable={true}
+  sparkle={true}
+  sparkleIntensity="high"
+  sparkleColor="#A855F7"
+  textPosition="top"
+  textAlign="center"
+  textSpacing={8}
+  textClassName="text-base font-black text-purple-700 uppercase tracking-widest"
+  imageScale={1.5}
+  imagePadding={12}
+  className="bg-gradient-to-br from-purple-100 to-purple-200
+             border-3 border-purple-600 rounded-xl shadow-2xl
+             hover:shadow-purple-500/50 transition-all duration-300"
+  onDrag={(position) => console.log("프리미엄 이동 중:", position)}
+  onDragEnd={(position) => alert(`프리미엄 최종 위치: (${Math.round(position.x)}, ${Math.round(position.y)})`)}
+/>
+```
+
+**이모지와 SVG 아이콘 활용:**
+
+```jsx
+// 이모지 크기 조절
+<ImageBox
+  id="emoji-large"
+  x={100}
+  y={550}
+  width={80}
+  height={80}
+  text="대형 배터리"
+  icon="🔋"
+  iconType="emoji"
+  imageScale={2.0}      // 이모지를 2배 크기로
+  imagePadding={10}
+  textClassName="text-sm font-bold text-green-600"
+  className="bg-green-50 border-2 border-green-500 rounded-full shadow-lg"
+/>
+
+// SVG 아이콘 사용
+<ImageBox
+  id="svg-icon"
+  x={200}
+  y={550}
+  width={100}
+  height={70}
+  text="센서 네트워크"
+  icon='<svg viewBox="0 0 24 24" fill="#3B82F6"><circle cx="12" cy="12" r="8"/></svg>'
+  iconType="svg"
+  imageScale={0.9}
+  imagePadding={12}
+  textPosition="top"
+  textClassName="text-sm font-semibold text-blue-600"
+  className="bg-blue-50 border-2 border-blue-500 rounded-lg shadow-md"
+/>
+```
+
+### 🎯 새로운 기능 상세 가이드
+
+#### ✨ 반짝이는 애니메이션 효과 (Sparkle Effects)
+
+반짝이는 효과는 사용자의 시선을 특정 컴포넌트로 유도하거나 중요한 상태를 표시할 때 유용합니다.
+
+##### 반짝이는 강도별 특징
+
+| 강도         | CSS 애니메이션   | 사용 시점              | 시각적 효과                              |
+| ------------ | ---------------- | ---------------------- | ---------------------------------------- |
+| **`low`**    | `animate-pulse`  | 조용한 알림, 배경 강조 | 부드러운 페이드 인/아웃 (0.5~1.0 투명도) |
+| **`medium`** | `animate-bounce` | 일반적인 주목 효과     | 위아래 바운스 애니메이션 (기본값)        |
+| **`high`**   | `animate-ping`   | 긴급 알림, 중요 상태   | 강렬한 확산 링 효과로 최대 임팩트        |
+
+##### 반짝이는 색상 가이드
+
+```jsx
+// 🟡 경고/주의 (노란색 계열)
+sparkleColor = "#FFD700"; // 골드
+sparkleColor = "#FCD34D"; // 앰버
+
+// 🔴 위험/오류 (빨간색 계열)
+sparkleColor = "#EF4444"; // 레드
+sparkleColor = "#F87171"; // 로즈
+
+// 🔵 정보/일반 (파란색 계열)
+sparkleColor = "#3B82F6"; // 블루
+sparkleColor = "#06B6D4"; // 시안
+
+// 🟢 성공/안전 (녹색 계열)
+sparkleColor = "#10B981"; // 에메랄드
+sparkleColor = "#22C55E"; // 그린
+
+// 🟣 특별/프리미엄 (보라색 계열)
+sparkleColor = "#8B5CF6"; // 바이올렛
+sparkleColor = "#A855F7"; // 퍼플
+```
+
+##### 반짝이는 효과 조합 예시
+
+```jsx
+// 💎 프리미엄 보석 효과
+<ImageBox
+  sparkle={true}
+  sparkleIntensity="high"
+  sparkleColor="#8B5CF6"
+  className="bg-gradient-to-br from-purple-100 to-purple-200 border-2 border-purple-500"
+/>
+
+// ⚠️ 경고 상태 표시
+<ImageBox
+  sparkle={true}
+  sparkleIntensity="medium"
+  sparkleColor="#F59E0B"
+  className="bg-yellow-50 border-2 border-yellow-400"
+/>
+
+// 🔥 긴급 알림
+<ImageBox
+  sparkle={true}
+  sparkleIntensity="high"
+  sparkleColor="#EF4444"
+  className="bg-red-50 border-2 border-red-500"
+/>
+```
+
+#### 🖱️ 드래그 기능 (Drag & Drop)
+
+드래그 기능을 사용하면 사용자가 마우스로 ImageBox를 자유롭게 이동시킬 수 있습니다.
+
+##### 드래그 기능 활성화
 
 ```jsx
 <ImageBox
-  id="legacy-image"
-  x={200}
-  y={300}
-  imageUrl="/images/device.png"
-  text="기존 방식"
-  backgroundColor="#F3F4F6"
-  borderColor="#10B981"
-  borderWidth={2}
-  borderRadius={8}
+  draggable={true} // 드래그 기능 활성화
+  // ... 기타 props
+/>
+```
+
+##### 드래그 이벤트 콜백 함수
+
+```jsx
+// onDrag: 드래그 중 실시간 호출 (매우 자주 호출됨)
+onDrag={(position, info) => {
+  // position: { x: number, y: number } - 현재 드래그 위치
+  // info: { id: string, width: number, height: number } - 박스 정보
+
+  console.log(`${info.id} 이동 중: (${position.x}, ${position.y})`);
+
+  // 실시간 위치 추적, 충돌 감지 등에 활용
+  checkCollisionWithOtherElements(position, info);
+}}
+
+// onDragEnd: 드래그 완료 시 호출 (마우스 버튼을 뗄 때)
+onDragEnd={(position, info) => {
+  // 최종 위치에서 필요한 작업 수행
+  console.log(`${info.id} 최종 위치: (${position.x}, ${position.y})`);
+
+  // 위치 저장, 스냅핑, 유효성 검사 등
+  saveComponentPosition(info.id, position);
+  snapToGrid(position);
+  validatePosition(position, info);
+}}
+```
+
+##### 드래그 관련 시각적 피드백
+
+드래그 중에는 자동으로 다음과 같은 시각적 효과가 적용됩니다:
+
+- **z-index 증가**: 다른 요소들 위에 표시
+- **그림자 확대**: `shadow-2xl` 클래스 적용
+- **크기 확대**: `scale-105` 효과
+- **커서 변경**: `cursor-move` 표시
+- **드래그 표시**: 우상단에 작은 원형 인디케이터
+
+##### 고급 드래그 활용 예시
+
+```jsx
+// 스마트 스냅핑 기능
+<ImageBox
+  draggable={true}
+  onDragEnd={(position, info) => {
+    // 20px 단위로 스냅핑
+    const snappedX = Math.round(position.x / 20) * 20;
+    const snappedY = Math.round(position.y / 20) * 20;
+
+    // 위치 업데이트 (컴포넌트 재렌더링 필요)
+    updatePosition(info.id, { x: snappedX, y: snappedY });
+  }}
+/>
+
+// 영역 제한 드래그
+<ImageBox
+  draggable={true}
+  onDrag={(position, info) => {
+    // 특정 영역 내에서만 이동 허용
+    const maxX = 800 - info.width;
+    const maxY = 600 - info.height;
+
+    if (position.x < 0 || position.x > maxX ||
+        position.y < 0 || position.y > maxY) {
+      // 경계를 벗어나면 경고
+      showBoundaryWarning();
+    }
+  }}
+/>
+
+// 다른 컴포넌트와의 충돌 감지
+<ImageBox
+  draggable={true}
+  onDrag={(position, info) => {
+    const isColliding = checkCollisionWithOthers(position, info);
+
+    if (isColliding) {
+      // 충돌 시 시각적 피드백
+      highlightCollision(true);
+    } else {
+      highlightCollision(false);
+    }
+  }}
+  onDragEnd={(position, info) => {
+    // 충돌 해제
+    highlightCollision(false);
+  }}
+/>
+```
+
+#### 🎨 드래그 + 반짝이는 효과 조합
+
+두 기능을 함께 사용하면 더욱 인터랙티브한 경험을 제공할 수 있습니다:
+
+```jsx
+// 드래그 가능한 반짝이는 보석
+<ImageBox
+  id="magic-gem"
+  icon="💎"
+  iconType="emoji"
+  text="마법의 보석"
+  // 드래그 기능
+  draggable={true}
+  onDrag={(pos) => console.log("보석 이동 중:", pos)}
+  onDragEnd={(pos) => saveGemPosition(pos)}
+  // 반짝이는 효과
+  sparkle={true}
+  sparkleIntensity="high"
+  sparkleColor="#8B5CF6"
+  className="bg-gradient-to-br from-purple-100 to-purple-200
+             border-2 border-purple-500 rounded-xl shadow-lg
+             hover:shadow-purple-500/50 transition-all duration-300"
+/>;
+
+// 상태에 따른 동적 효과
+const [isImportant, setIsImportant] = useState(false);
+const [isDragEnabled, setIsDragEnabled] = useState(true);
+
+<ImageBox
+  id="dynamic-component"
+  icon="⚡"
+  iconType="emoji"
+  text="동적 컴포넌트"
+  // 조건부 드래그 기능
+  draggable={isDragEnabled}
+  onDrag={(pos) => console.log("동적 이동:", pos)}
+  // 조건부 반짝이는 효과
+  sparkle={isImportant}
+  sparkleIntensity={isImportant ? "high" : "low"}
+  sparkleColor={isImportant ? "#EF4444" : "#3B82F6"}
+  className={`border-2 rounded-lg shadow-md transition-all duration-300 ${
+    isImportant ? "bg-red-50 border-red-500" : "bg-blue-50 border-blue-500"
+  }`}
+/>;
+```
+
+#### ⚡ 성능 최적화 팁
+
+##### 1. onDrag 콜백 최적화
+
+`onDrag`는 드래그 중 매우 자주 호출되므로 성능에 주의해야 합니다:
+
+```jsx
+import { useCallback, useRef } from "react";
+
+// 디바운싱으로 onDrag 호출 빈도 제한
+const throttledOnDrag = useCallback(
+  throttle((position, info) => {
+    console.log("위치 업데이트:", position);
+  }, 100), // 100ms마다 한 번만 호출
+  []
+);
+
+<ImageBox
+  draggable={true}
+  onDrag={throttledOnDrag}
+  onDragEnd={(position, info) => {
+    // 최종 위치는 항상 정확하게 저장
+    savePosition(info.id, position);
+  }}
+/>;
+```
+
+##### 2. 조건부 반짝이는 효과 활성화
+
+불필요한 애니메이션을 줄여 성능을 향상시킬 수 있습니다:
+
+```jsx
+// 필요할 때만 반짝이는 효과 활성화
+<ImageBox
+  sparkle={isImportant || hasAlert} // 조건부 활성화
+  sparkleIntensity={alertLevel} // 'low', 'medium', 'high'
+  sparkleColor={getAlertColor(alertLevel)}
+/>
+```
+
+##### 3. 메모이제이션 활용
+
+복잡한 계산이 필요한 props는 메모이제이션을 활용하세요:
+
+```jsx
+import { useMemo } from "react";
+
+const memoizedClassName = useMemo(() => {
+  return `bg-${color}-50 border-2 border-${color}-500 rounded-lg shadow-md
+          hover:shadow-lg transition-all duration-300 ${extraClasses}`;
+}, [color, extraClasses]);
+
+<ImageBox className={memoizedClassName} />;
+```
+
+<ImageBox
+id="status-indicator"
+icon={isOnline ? "🟢" : "🔴"}
+text={isOnline ? "온라인" : "오프라인"}
+
+draggable={true}
+
+// 상태에 따른 반짝이는 효과
+sparkle={!isOnline} // 오프라인일 때만 반짝임
+sparkleIntensity="medium"
+sparkleColor={isOnline ? "#10B981" : "#EF4444"}
+
+onDragEnd={(pos) => updateDevicePosition(deviceId, pos)}
+/>
+
+````
+
+#### 📋 성능 최적화 팁
+
+##### 드래그 이벤트 최적화
+
+```jsx
+import { useCallback, useRef } from "react";
+
+// 디바운싱으로 onDrag 호출 빈도 제한
+const throttledOnDrag = useCallback(
+  throttle((position, info) => {
+    console.log("위치 업데이트:", position);
+  }, 100), // 100ms마다 한 번만 호출
+  []
+);
+
+<ImageBox
+  draggable={true}
+  onDrag={throttledOnDrag}
+  onDragEnd={(position, info) => {
+    // 최종 위치는 즉시 처리
+    savePosition(info.id, position);
+  }}
+/>;
+````
+
+##### 반짝이는 효과 조건부 적용
+
+```jsx
+// 필요할 때만 반짝이는 효과 활성화
+<ImageBox
+  sparkle={isImportant || hasAlert} // 조건부 활성화
+  sparkleIntensity={alertLevel} // 'low', 'medium', 'high'
+  sparkleColor={getAlertColor(alertLevel)}
 />
 ```
 

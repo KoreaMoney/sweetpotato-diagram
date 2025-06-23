@@ -55,14 +55,7 @@ CSS 파일에 Tailwind 임포트:
 
 ## 기본 사용법
 
-### 1. CSS 스타일 임포트
-
-```javascript
-// CSS 스타일을 임포트합니다
-import "sweet-diagram/dist/sweet-diagram.css";
-```
-
-### 2. 컴포넌트 사용
+### 1. 컴포넌트 사용
 
 ```javascript
 import React from "react";
@@ -233,17 +226,25 @@ function App() {
 </Box>
 ```
 
-## TypeScript 지원
+## TypeScript 지원 (도입 예정)
 
-TypeScript를 사용하는 경우, 타입 정의가 자동으로 제공됩니다:
+현재 JavaScript로 개발되었으며, TypeScript 지원은 향후 버전에서 제공될 예정입니다.
 
-```typescript
-import { BoxProps, ConnectorProps } from "sweet-diagram";
+```javascript
+// 현재: JavaScript 사용
+import { Box, Connector, DiagramProvider } from "sweet-diagram";
 
-const MyBox: React.FC<BoxProps> = ({ id, x, y, children }) => {
-  // 타입 안전한 컴포넌트 구현
-};
+// 향후 예정: TypeScript 지원
+// import { BoxProps, ConnectorProps } from "sweet-diagram";
+// const MyBox: React.FC<BoxProps> = ({ id, x, y, children }) => {
+//   // 타입 안전한 컴포넌트 구현
+// };
 ```
+
+**개발 로드맵**:
+
+- v1.0.0: 완전한 TypeScript 타입 정의 제공 예정
+- 현재: JavaScript 기반으로 안정적인 기능 개발 집중
 
 ## 주의사항
 
