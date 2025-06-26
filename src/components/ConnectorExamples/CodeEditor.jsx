@@ -146,21 +146,52 @@ const codeTemplates = {
 </DiagramProvider>`,
 };
 
-const CodeEditor = ({ editableCode, onCodeChange }) => {
+const CodeEditor = ({ editableCode, onCodeChange, onRunCode }) => {
   const handleTemplateClick = (templateKey) => {
     onCodeChange({ target: { value: codeTemplates[templateKey] } });
   };
 
+  const handleRunClick = () => {
+    if (onRunCode) {
+      onRunCode();
+    }
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">
-      <h3 className="text-lg font-semibold mb-4">코드 예제 (수정 가능)</h3>
-      <textarea
-        value={editableCode}
-        onChange={onCodeChange}
-        className="w-full h-64 p-4 bg-gray-900 text-green-400 font-mono text-sm rounded border resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 whitespace-pre-wrap break-words overflow-x-auto"
-        spellCheck={false}
-        wrap="soft"
-      />
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold">코드 예제 (수정 가능)</h3>
+        {onRunCode && (
+          <button
+            onClick={handleRunClick}
+            className="px-4 py-2 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white text-sm rounded-lg font-medium transition-all transform hover:scale-105 active:scale-95 shadow-lg"
+          >
+            🚀 실행하기
+          </button>
+        )}
+      </div>
+      <div className="relative">
+        <textarea
+          value={editableCode}
+          onChange={onCodeChange}
+          onKeyDown={(e) => {
+            // Ctrl+Enter 또는 Cmd+Enter로 코드 실행
+            if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+              e.preventDefault();
+              handleRunClick();
+            }
+          }}
+          className="w-full h-64 p-4 bg-gray-900 text-green-400 font-mono text-sm rounded border resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 whitespace-pre-wrap break-words overflow-x-auto"
+          spellCheck={false}
+          wrap="soft"
+          placeholder="여기에 JSX 코드를 작성하세요... (Ctrl+Enter로 실행)"
+        />
+        {onRunCode && (
+          <div className="absolute bottom-3 right-3 text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded">
+            Ctrl+Enter로 실행
+          </div>
+        )}
+      </div>
 
       {/* 빠른 예제 버튼들 */}
       <div className="mt-4 flex flex-wrap gap-2">

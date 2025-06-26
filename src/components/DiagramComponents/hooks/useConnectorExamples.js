@@ -53,6 +53,9 @@ export const useConnectorExamples = () => {
       setCustomElements(elements);
       setIsCustomMode(true);
       setParseError("");
+
+      // 코드 실행 후 자동으로 코드 에디터 숨기기 (미리보기로 전환)
+      setIsCodeEditorVisible(false);
     } catch (error) {
       setParseError(`코드 실행 에러: ${error.message}`);
       console.error("Code execution error:", error);

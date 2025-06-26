@@ -11,7 +11,7 @@ export const useDiagram = () => {
   return context;
 };
 
-export const DiagramProvider = ({ children, className = "", style = {} }) => {
+export const DiagramProvider = ({ children, className = "", style = {}, width = null, height = null }) => {
   const [boxes, setBoxes] = useState(new Map());
   const [connections, setConnections] = useState([]);
   const [selectedConnection, setSelectedConnection] = useState(null);
@@ -24,6 +24,25 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
   const [scale, setScale] = useState(1);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [dynamicBoxes, setDynamicBoxes] = useState(new Map());
+  const [autoConnections, setAutoConnections] = useState([]);
+  const [isAutoConnectMode, setIsAutoConnectMode] = useState(false);
+  const [autoConnectStartBox, setAutoConnectStartBox] = useState(null);
+  const [autoConnectSettings, setAutoConnectSettings] = useState({
+    connectionType: "smart", // "smart", "straight", "curved", "orthogonal", "stepped"
+    color: "purple",
+    strokeWidth: 3,
+    arrowShape: "triangle", // "triangle", "diamond", "circle", "square", "none"
+    arrowSize: 10,
+    animationType: "flow", // "none", "flow", "pulse", "glow", "electric"
+    animationSpeed: 2,
+    curveStrength: 0.3,
+    opacity: 1,
+    showShadow: true,
+    showConnectionPoints: true,
+    autoCleanup: false,
+    maxConnections: 20,
+    smartSnap: true,
+  });
   const containerRef = useRef(null);
 
   // Box 등록 - 위치 정보 포함
@@ -450,6 +469,71 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
     saveState();
   }, [boxes, connections, saveState]);
 
+  // 자동 연결 관련 함수들
+  const startAutoConnect = useCallback((boxId) => {
+    setIsAutoConnectMode(true);
+    setAutoConnectStartBox(boxId);
+  }, []);
+
+  const cancelAutoConnect = useCallback(() => {
+    setIsAutoConnectMode(false);
+    setAutoConnectStartBox(null);
+  }, []);
+
+  const addAutoConnection = useCallback(
+    (toPoint) => {
+      if (!autoConnectStartBox) return null;
+
+      const newAutoConnection = {
+        id: `auto-conn-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        fromBoxId: autoConnectStartBox,
+        toPoint: toPoint,
+        type: "auto",
+        createdAt: new Date().toISOString(),
+      };
+
+      setAutoConnections((prev) => [...prev, newAutoConnection]);
+
+      // 자동 연결 모드 종료
+      setIsAutoConnectMode(false);
+      setAutoConnectStartBox(null);
+
+      return newAutoConnection.id;
+    },
+    [autoConnectStartBox]
+  );
+
+  const removeAutoConnection = useCallback((connectionId) => {
+    setAutoConnections((prev) => prev.filter((conn) => conn.id !== connectionId));
+  }, []);
+
+  const clearAutoConnections = useCallback(() => {
+    setAutoConnections([]);
+  }, []);
+
+  const updateAutoConnectSettings = useCallback((newSettings) => {
+    setAutoConnectSettings((prev) => ({ ...prev, ...newSettings }));
+  }, []);
+
+  const resetAutoConnectSettings = useCallback(() => {
+    setAutoConnectSettings({
+      connectionType: "smart",
+      color: "purple",
+      strokeWidth: 3,
+      arrowShape: "triangle",
+      arrowSize: 10,
+      animationType: "flow",
+      animationSpeed: 2,
+      curveStrength: 0.3,
+      opacity: 1,
+      showShadow: true,
+      showConnectionPoints: true,
+      autoCleanup: false,
+      maxConnections: 20,
+      smartSnap: true,
+    });
+  }, []);
+
   const value = {
     // 박스 관리
     boxes,
@@ -503,6 +587,19 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
     getDiagramStats,
     optimizeLayout,
 
+    // 자동 연결 관련
+    autoConnections,
+    isAutoConnectMode,
+    autoConnectStartBox,
+    startAutoConnect,
+    cancelAutoConnect,
+    addAutoConnection,
+    removeAutoConnection,
+    clearAutoConnections,
+    autoConnectSettings,
+    updateAutoConnectSettings,
+    resetAutoConnectSettings,
+
     // 컨테이너 관련
     containerRef,
   };
@@ -510,8 +607,11 @@ export const DiagramProvider = ({ children, className = "", style = {} }) => {
   // 기본 스타일과 사용자 스타일 병합
   const defaultStyle = {
     position: "relative",
-    width: "100%",
-    height: "100%",
+    width: width !== null ? `${width}px` : "100%",
+    height: height !== null ? `${height}px` : "100%",
+    maxWidth: width !== null ? `${width}px` : "none",
+    maxHeight: height !== null ? `${height}px` : "none",
+    overflow: width !== null || height !== null ? "hidden" : "visible",
     ...style,
   };
 

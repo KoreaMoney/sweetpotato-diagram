@@ -51,6 +51,12 @@ const UsageGuide = () => {
     setEditableCode(e.target.value);
   };
 
+  const handleRunCode = () => {
+    // 실시간 업데이트는 이미 parsedComponents를 통해 처리되므로
+    // 여기서는 추가적인 피드백만 제공
+    console.log("코드 실행됨:", editableCode);
+  };
+
   // JSX 코드를 파싱하여 Box와 Connector 컴포넌트 추출
   const parseComponents = (code) => {
     const boxes = [];
@@ -201,7 +207,7 @@ const UsageGuide = () => {
       <p className="text-gray-600 mb-6">왼쪽에서 코드를 편집하면 오른쪽에서 실시간으로 결과를 확인할 수 있습니다.</p>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <CodeEditor editableCode={editableCode} onCodeChange={handleCodeChange} />
+        <CodeEditor editableCode={editableCode} onCodeChange={handleCodeChange} onRunCode={handleRunCode} />
         <LivePreview parsedComponents={parsedComponents} />
       </div>
 

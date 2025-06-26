@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { DiagramProvider } from "./DiagramComponents";
 import ConnectorSection from "./documentation/ConnectorSection";
+import AutoConnectSection from "./documentation/AutoConnectSection";
 import OverviewSection from "./documentation/OverviewSection";
 import BoxSection from "./documentation/BoxSection";
 import TriangleSection from "./documentation/TriangleSection";
@@ -15,16 +16,17 @@ const Documentation = () => {
   const [activeSection, setActiveSection] = useState("overview");
 
   const sections = [
-    { id: "overview", title: "Getting Started", icon: "🚀" },
-    { id: "box", title: "Box", icon: "🧩" },
-    { id: "connector", title: "Connectors", icon: "🔗" },
-    { id: "triangle", title: "Triangle", icon: "🎨" },
-    { id: "valve", title: "Valve", icon: "⚡" },
-    { id: "imagebox", title: "Image Box", icon: "💡" },
-    { id: "arrow", title: "Arrow", icon: "➡️" },
-    { id: "line", title: "Line", icon: "📏" },
-    { id: "mousetracker", title: "Mouse Tracker", icon: "🖱️" },
-    { id: "examples", title: "Examples", icon: "💡" },
+    { id: "overview", title: "Getting Started", icon: "🚀", color: "from-blue-500 to-cyan-500" },
+    { id: "box", title: "Box", icon: "📦", color: "from-purple-500 to-pink-500" },
+    { id: "connector", title: "Connectors", icon: "🔗", color: "from-green-500 to-emerald-500" },
+    { id: "autoconnect", title: "Auto Connect", icon: "⚡", color: "from-purple-600 to-blue-600" },
+    { id: "triangle", title: "Triangle", icon: "🔺", color: "from-red-500 to-orange-500" },
+    { id: "valve", title: "Valve", icon: "🎛️", color: "from-indigo-500 to-purple-500" },
+    { id: "imagebox", title: "Image Box", icon: "🖼️", color: "from-yellow-500 to-orange-500" },
+    { id: "arrow", title: "Arrow", icon: "↗️", color: "from-teal-500 to-cyan-500" },
+    { id: "line", title: "Line", icon: "📐", color: "from-pink-500 to-rose-500" },
+    { id: "mousetracker", title: "Mouse Tracker", icon: "🎯", color: "from-violet-500 to-purple-500" },
+    { id: "examples", title: "Examples", icon: "✨", color: "from-amber-500 to-yellow-500" },
   ];
 
   const renderOverview = () => {
@@ -37,6 +39,10 @@ const Documentation = () => {
 
   const renderConnector = () => {
     return <ConnectorSection />;
+  };
+
+  const renderAutoConnect = () => {
+    return <AutoConnectSection />;
   };
 
   const renderTriangle = () => {
@@ -75,6 +81,8 @@ const Documentation = () => {
         return renderBox();
       case "connector":
         return renderConnector();
+      case "autoconnect":
+        return renderAutoConnect();
       case "triangle":
         return renderTriangle();
       case "valve":
@@ -108,24 +116,55 @@ const Documentation = () => {
     <DiagramProvider>
       <div className="h-full bg-gray-100 flex">
         {/* Sidebar - fixed height with internal scroll */}
-        <div className="w-64 bg-white shadow-lg flex-shrink-0 flex flex-col h-full">
-          <div className="p-6 border-b flex-shrink-0">
-            <h1 className="text-lg font-bold text-gray-800">🍠 Documentation</h1>
+        <div className="w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl flex-shrink-0 flex flex-col h-full border-r border-slate-700">
+          <div className="p-6 border-b border-slate-700 flex-shrink-0 bg-gradient-to-r from-slate-800 to-slate-700">
+            <h1 className="text-xl font-bold text-white flex items-center">
+              <span className="text-2xl mr-3 animate-pulse">🍠</span>
+              <span className="bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent">
+                Documentation
+              </span>
+            </h1>
           </div>
-          <nav className="p-4 overflow-y-auto flex-1">
-            <ul className="space-y-2">
-              {sections.map((section) => (
-                <li key={section.id}>
+          <nav className="p-4 overflow-y-auto flex-1 space-y-1">
+            <ul className="space-y-3">
+              {sections.map((section, index) => (
+                <li key={section.id} style={{ animationDelay: `${index * 50}ms` }} className="animate-fade-in">
                   <button
                     onClick={() => setActiveSection(section.id)}
-                    className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-                      activeSection === section.id
-                        ? "bg-blue-100 text-blue-800 font-medium"
-                        : "text-gray-600 hover:bg-gray-100"
-                    }`}
+                    className={`group w-full text-left px-4 py-3 rounded-xl transition-all duration-300 transform
+                              ${
+                                activeSection === section.id
+                                  ? `bg-gradient-to-r ${section.color} text-white shadow-lg scale-105 shadow-black/20`
+                                  : "text-gray-300 hover:text-white hover:bg-slate-700/50 hover:scale-102 hover:translate-x-1"
+                              }
+                              hover:shadow-lg active:scale-95 backdrop-blur-sm border border-slate-600/30
+                              hover:border-slate-500/50`}
                   >
-                    <span className="mr-2">{section.icon}</span>
-                    {section.title}
+                    <div className="flex items-center">
+                      <span
+                        className={`text-xl mr-3 transition-all duration-300 
+                                     ${
+                                       activeSection === section.id
+                                         ? "scale-110 rotate-6"
+                                         : "group-hover:scale-110 group-hover:rotate-3"
+                                     }`}
+                      >
+                        {section.icon}
+                      </span>
+                      <span
+                        className={`font-medium transition-all duration-300 
+                                      ${
+                                        activeSection === section.id
+                                          ? "font-semibold tracking-wide"
+                                          : "group-hover:translate-x-1"
+                                      }`}
+                      >
+                        {section.title}
+                      </span>
+                    </div>
+                    {activeSection === section.id && (
+                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-white rounded-r-full animate-pulse"></div>
+                    )}
                   </button>
                 </li>
               ))}
