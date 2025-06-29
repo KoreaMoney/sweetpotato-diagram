@@ -119,8 +119,8 @@ declare module "sweet-diagram" {
     children: ReactNode;
     className?: string;
     style?: CSSProperties;
-    width?: number;
-    height?: number;
+    width?: number | null;
+    height?: number | null;
   }
 
   // Box data interface

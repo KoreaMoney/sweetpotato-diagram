@@ -49,7 +49,7 @@ function App() {
 
   const handlePositionChange = (pos) => {
     setPosition(pos);
-    console.log("Mouse position:", pos);
+    ("Mouse position:", pos);
   };
 
   return (

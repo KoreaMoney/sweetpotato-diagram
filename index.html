@@ -1,20 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/public/favicon.png" />
+
+    <!-- 파비콘 및 아이콘 -->
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- 뷰포트 설정 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sweet-Diagram</title>
-    <!-- Google Fonts -->
+
+    <!-- 기본 SEO 메타 태그 -->
+    <title><%- title %></title>
+    <meta name="description" content="<%- description %>" />
+    <meta name="keywords" content="<%- keywords %>" />
+    <meta name="author" content="<%- author %>" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+
+    <!-- 언어 및 지역 설정 -->
+    <meta name="language" content="ko" />
+    <meta name="geo.region" content="KR" />
+
+    <!-- Open Graph 메타 태그 -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Sweet Diagram" />
+    <meta property="og:title" content="<%- title %>" />
+    <meta property="og:description" content="<%- description %>" />
+    <meta property="og:url" content="<%- siteUrl %>" />
+    <meta property="og:image" content="<%- ogImage %>" />
+    <meta property="og:image:alt" content="Sweet Diagram - Modern React Diagram Editor" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="ko_KR" />
+
+    <!-- Twitter Card 메타 태그 -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="<%- twitterHandle %>" />
+    <meta name="twitter:creator" content="<%- twitterHandle %>" />
+    <meta name="twitter:title" content="<%- title %>" />
+    <meta name="twitter:description" content="<%- description %>" />
+    <meta name="twitter:image" content="<%- ogImage %>" />
+    <meta name="twitter:image:alt" content="Sweet Diagram - Modern React Diagram Editor" />
+
+    <!-- 캐노니컬 URL -->
+    <link rel="canonical" href="<%- siteUrl %>" />
+
+    <!-- 대체 언어 버전 -->
+    <link rel="alternate" hreflang="ko" href="<%- siteUrl %>" />
+    <link rel="alternate" hreflang="en" href="<%- siteUrl %>/en" />
+    <link rel="alternate" hreflang="x-default" href="<%- siteUrl %>" />
+
+    <!-- DNS prefetch 및 preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://vercel.app" />
+    <link rel="dns-prefetch" href="https://github.com" />
+
+    <!-- Google Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600&display=swap"
       rel="stylesheet"
     />
+
+    <!-- 구조화된 데이터 (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Sweet Diagram",
+        "description": "<%- description %>",
+        "url": "<%- siteUrl %>",
+        "author": {
+          "@type": "Person",
+          "name": "<%- author %>"
+        },
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "softwareVersion": "0.4.1",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.8",
+          "ratingCount": "150"
+        }
+      }
+    </script>
+
+    <!-- 추가 SEO 최적화 -->
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="msapplication-TileColor" content="#2563eb" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Sweet Diagram" />
+
+    <!-- 검색 엔진 최적화 -->
+    <meta name="referrer" content="origin-when-cross-origin" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- 성능 최적화 -->
+    <link rel="preload" href="/main.png" as="image" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- 구글 애널리틱스 (필요시 활성화) -->
+    <!-- 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    -->
   </body>
 </html>

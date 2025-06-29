@@ -15,3 +15,12 @@ export { DiagramProvider, useDiagram } from "./DiagramContext";
 
 // 애니메이션 예제 컴포넌트
 export { default as AnimationExamples } from "./examples/AnimationExamples";
+
+// 자동 연결 기능 컴포넌트들
+export { default as AutoConnector } from "./AutoConnector";
+export { default as AutoConnectManager } from "./AutoConnectManager";
+export { default as AutoConnectSettings } from "./AutoConnectSettings";
+export { default as AutoConnectCompactSettings } from "./AutoConnectCompactSettings";
+export { default as AutoConnectExample } from "./examples/AutoConnectExample";
+export { default as AutoConnectCompactExample } from "./examples/AutoConnectCompactExample";
+export { default as AutoConnectCustomExample } from "./examples/AutoConnectCustomExample";

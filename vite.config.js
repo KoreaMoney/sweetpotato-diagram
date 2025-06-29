@@ -1,6 +1,8 @@
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react-swc";
+import { createHtmlPlugin } from "vite-plugin-html";
+import sitemap from "vite-plugin-sitemap";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -8,12 +10,57 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
   const isLibrary = mode === "library";
+  const siteUrl = "https://sweetpotato-diagram.vercel.app";
 
   const config = {
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      // HTML 최적화 플러그인
+      createHtmlPlugin({
+        inject: {
+          data: {
+            title: "Sweet Diagram - Modern React Diagram Editor",
+            description:
+              "A modern and intuitive diagram editor component for React applications with auto-connect features, vertical text support, and animation effects",
+            keywords:
+              "react,diagram,editor,visualization,sweet-diagram,javascript,auto-connect,animation,vertical-text,drag-drop",
+            author: "KimDowon",
+            siteUrl: siteUrl,
+            twitterHandle: "@sweetdiagram",
+            ogImage: `${siteUrl}/main.png`,
+          },
+        },
+      }),
+      // 사이트맵 생성 플러그인
+      sitemap({
+        hostname: siteUrl,
+        urls: ["/", "/components", "/documentation", "/examples", "/hooks"],
+        lastmod: new Date().toISOString(),
+        changefreq: "weekly",
+        priority: {
+          "/": 1.0,
+          "/components": 0.8,
+          "/documentation": 0.8,
+          "/examples": 0.7,
+          "/hooks": 0.6,
+        },
+      }),
+    ],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
+      },
+    },
+    // SEO 관련 최적화
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ["react", "react-dom"],
+            three: ["three", "@react-three/fiber", "@react-three/drei"],
+          },
+        },
       },
     },
     test: {

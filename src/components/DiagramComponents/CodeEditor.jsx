@@ -68,9 +68,9 @@ const CodeEditor = ({ initialCode = "", onChange, onRun, language = "jsx", readO
         {!readOnly && (
           <button
             onClick={handleRunCode}
-            className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-[#0066ff] transition-colors"
+            className="px-3 py-1 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white text-sm rounded transition-all transform hover:scale-105 active:scale-95 shadow-lg"
           >
-            Run (Ctrl+Enter)
+            🚀 Run (Ctrl+Enter)
           </button>
         )}
       </div>

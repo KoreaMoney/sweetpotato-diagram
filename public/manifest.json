@@ -1,0 +1,62 @@
+{
+  "name": "Sweet Diagram - Modern React Diagram Editor",
+  "short_name": "Sweet Diagram",
+  "description": "A modern and intuitive diagram editor component for React applications with auto-connect features, vertical text support, and animation effects",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "ko",
+  "dir": "ltr",
+  "categories": ["developer", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/main.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Components",
+      "short_name": "Components",
+      "description": "Browse diagram components",
+      "url": "/components",
+      "icons": [{ "src": "/favicon.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Documentation",
+      "short_name": "Docs",
+      "description": "Read documentation",
+      "url": "/documentation",
+      "icons": [{ "src": "/favicon.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Examples",
+      "short_name": "Examples",
+      "description": "View examples",
+      "url": "/examples",
+      "icons": [{ "src": "/favicon.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/main.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Sweet Diagram main interface"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

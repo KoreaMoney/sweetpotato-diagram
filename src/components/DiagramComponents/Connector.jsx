@@ -893,9 +893,6 @@ const Connector = ({
 
     const speed = animationSpeed || 2;
 
-    // 디버깅: 애니메이션이 활성화되었는지 콘솔에 로그
-    console.log(`Animation enabled: ${animated}, Type: ${animationType}, Speed: ${speed}`);
-
     switch (animationType) {
       case "electric":
         return `

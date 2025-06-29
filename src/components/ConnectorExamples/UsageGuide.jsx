@@ -128,7 +128,6 @@ const UsageGuide = () => {
             }
             if (bendPoints.length > 0) {
               props.bendPoints = bendPoints;
-              console.log(`✅ bendPoints 파싱 성공: ${bendPoints.length}개 포인트`, bendPoints);
             } else {
               // 더 복잡한 형태의 bendPoints 파싱 시도 (여러 줄, 공백 등)
               const multilinePointMatches = bendPointsStr.matchAll(/{\s*x:\s*(\d+)\s*,\s*y:\s*(\d+)\s*},?\s*/g);
@@ -141,10 +140,6 @@ const UsageGuide = () => {
               }
               if (multilineBendPoints.length > 0) {
                 props.bendPoints = multilineBendPoints;
-                console.log(
-                  `✅ bendPoints 멀티라인 파싱 성공: ${multilineBendPoints.length}개 포인트`,
-                  multilineBendPoints
-                );
               } else {
                 console.warn(`⚠️ bendPoints 파싱 실패 - 패턴을 찾을 수 없습니다:`, bendPointsStr);
               }
@@ -201,7 +196,7 @@ const UsageGuide = () => {
       <p className="text-gray-600 mb-6">왼쪽에서 코드를 편집하면 오른쪽에서 실시간으로 결과를 확인할 수 있습니다.</p>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <CodeEditor editableCode={editableCode} onCodeChange={handleCodeChange} />
+        <CodeEditor editableCode={editableCode} onCodeChange={handleCodeChange}/>
         <LivePreview parsedComponents={parsedComponents} />
       </div>
 

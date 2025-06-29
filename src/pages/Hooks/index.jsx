@@ -33,9 +33,8 @@ const DiagramControls = () => {
   const stats = getDiagramStats();
 
   // 간단한 toast 함수 (ToastProvider 없이 사용)
-  const showToast = (message, type = "info") => {
+  const showToast = (message) => {
     setToastMessage(message);
-    console.log(`[${type.toUpperCase()}] ${message}`);
     // 3초 후 메시지 클리어
     setTimeout(() => setToastMessage(""), 3000);
   };
