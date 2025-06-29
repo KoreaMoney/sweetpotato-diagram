@@ -58,8 +58,16 @@ const Box = ({
     // 자동 연결 기능 처리 (Shift + 클릭으로 활성화)
     if (enableAutoConnect && startAutoConnect && event.shiftKey && id) {
       event.stopPropagation();
-      startAutoConnect(id);
-      console.log(`자동 연결 모드 시작: 박스 ${id}에서 출발`);
+
+      // 클릭한 정확한 위치 계산 (박스 내에서의 절대 좌표)
+      const boxElement = event.currentTarget;
+      const rect = boxElement.getBoundingClientRect();
+      const clickPoint = {
+        x: x + (event.clientX - rect.left), // 박스의 절대 X + 박스 내 상대 X
+        y: y + (event.clientY - rect.top), // 박스의 절대 Y + 박스 내 상대 Y
+      };
+
+      startAutoConnect(id, clickPoint);
     }
   };
 
@@ -100,7 +108,9 @@ const Box = ({
     let additionalClasses = "";
     let additionalStyles = {};
 
-    if (isAutoConnectMode && autoConnectStartBox === id) {
+    const startBoxId = autoConnectStartBox?.boxId || autoConnectStartBox; // 기존 호환성 유지
+
+    if (isAutoConnectMode && startBoxId === id) {
       // 선택된 시작 박스 스타일
       additionalClasses = " ring-4 ring-purple-400 ring-opacity-75 shadow-lg shadow-purple-500/50";
       additionalStyles.animation = "autoConnectPulse 2s ease-in-out infinite";
@@ -158,7 +168,7 @@ const Box = ({
         ))}
 
         {/* 자동 연결 모드일 때 추가 UI 표시 */}
-        {isAutoConnectMode && autoConnectStartBox === id && (
+        {isAutoConnectMode && (autoConnectStartBox?.boxId || autoConnectStartBox) === id && (
           <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg z-30">
             시작점
           </div>

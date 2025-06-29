@@ -20,6 +20,7 @@ export { default as AnimationExamples } from "./examples/AnimationExamples";
 export { default as AutoConnector } from "./AutoConnector";
 export { default as AutoConnectManager } from "./AutoConnectManager";
 export { default as AutoConnectSettings } from "./AutoConnectSettings";
+export { default as AutoConnectCompactSettings } from "./AutoConnectCompactSettings";
 export { default as AutoConnectExample } from "./examples/AutoConnectExample";
 export { default as AutoConnectCompactExample } from "./examples/AutoConnectCompactExample";
 export { default as AutoConnectCustomExample } from "./examples/AutoConnectCustomExample";

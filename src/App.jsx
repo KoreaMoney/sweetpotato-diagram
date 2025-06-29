@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DiagramProvider } from "./components/DiagramComponents/DiagramContext";
 import { ToastProvider } from "./components/ToastSystem";
+
+// SEO Utils
+import { setPageMeta, trackWebVitals } from "./utils/seo";
 
 // Pages
 import Home from "./pages/Home";
@@ -21,11 +24,71 @@ import AnimationTest from "./components/DiagramComponents/AnimationTest";
 // Constants
 import { DEFAULT_TAB } from "./shared/constants/tabs";
 
+// 탭과 SEO 페이지 키 매핑
+const tabToSeoMap = {
+  home: "home",
+  connectors: "components",
+  arrows: "components",
+  hooks: "hooks",
+  mouse: "components",
+  docs: "documentation",
+  test: "examples",
+  "animation-test": "examples",
+};
+
 function App() {
   const [activeTab, setActiveTab] = useState(DEFAULT_TAB);
 
+  // 초기 로드 시 Web Vitals 추적 시작
+  useEffect(() => {
+    trackWebVitals();
+  }, []);
+
+  // 탭 변경 시 SEO 메타 태그 업데이트
+  useEffect(() => {
+    const seoPageKey = tabToSeoMap[activeTab] || "home";
+
+    // 특정 탭에 대한 커스텀 메타데이터 설정
+    const customMeta = getCustomMetaForTab(activeTab);
+
+    setPageMeta(seoPageKey, customMeta);
+  }, [activeTab]);
+
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
+  };
+
+  // 탭별 커스텀 메타데이터 반환
+  const getCustomMetaForTab = (tabId) => {
+    const customMetas = {
+      connectors: {
+        title: "Connectors - Sweet Diagram Components",
+        description:
+          "Interactive connector components with auto-connect features, bidirectional connections, and advanced styling options",
+      },
+      arrows: {
+        title: "Arrows - Sweet Diagram Components",
+        description:
+          "Customizable arrow components with various styles, directions, and interactive features for diagram connections",
+      },
+      mouse: {
+        title: "Mouse Tracker - Sweet Diagram Components",
+        description:
+          "Advanced mouse tracking component for interactive diagram experiences and cursor-based interactions",
+      },
+      test: {
+        title: "Component Test - Sweet Diagram Examples",
+        description:
+          "Live testing environment for Sweet Diagram components with interactive examples and code playground",
+      },
+      "animation-test": {
+        title: "Animation Test - Sweet Diagram Examples",
+        description:
+          "Animation testing and examples showcasing smooth transitions and interactive effects in diagram components",
+      },
+    };
+
+    return customMetas[tabId] || {};
   };
 
   // Content renderer based on active tab

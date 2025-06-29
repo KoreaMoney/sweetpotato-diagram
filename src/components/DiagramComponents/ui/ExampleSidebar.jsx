@@ -9,7 +9,7 @@ const ExampleSidebar = ({ selectedExample, onExampleSelect }) => {
   return (
     <div
       className="w-80 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl flex-shrink-0 flex flex-col border-r border-slate-700"
-      style={{ height: "calc(100vh - 300px)" }}
+      style={{ height: "calc(100vh - 100px)" }}
     >
       {/* Header */}
       <div className="p-6 border-b border-slate-700 flex-shrink-0 bg-gradient-to-r from-slate-800 to-slate-700">

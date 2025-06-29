@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDiagram } from "./DiagramContext";
 import AutoConnector from "./AutoConnector";
 import AutoConnectSettings from "./AutoConnectSettings";
+import AutoConnectCompactSettings from "./AutoConnectCompactSettings";
 
 /**
  * AutoConnectManager 컴포넌트
@@ -38,6 +39,7 @@ const AutoConnectManager = ({
     autoConnections,
     removeAutoConnection,
     containerRef,
+    autoConnectSettings,
   } = useDiagram();
 
   const managerRef = useRef(null);
@@ -54,16 +56,7 @@ const AutoConnectManager = ({
       const isConnectionPoint = clickedElement.hasAttribute("data-connection-point");
       const isBoxMainArea = clickedElement.closest("[data-box-id]") && !isConnectionPoint;
 
-      console.log("자동 연결 클릭 감지:", {
-        element: clickedElement,
-        isConnectionPoint,
-        isBoxMainArea,
-        elementClasses: clickedElement.className,
-        attributes: Object.fromEntries([...clickedElement.attributes].map((attr) => [attr.name, attr.value])),
-      });
-
       if (isBoxMainArea) {
-        console.log("박스 메인 영역 클릭으로 무시됨");
         return;
       }
 
@@ -71,39 +64,15 @@ const AutoConnectManager = ({
       const container = containerRef?.current || managerRef.current;
       if (!container || !container.contains(event.target)) return;
 
-      // 좌표 계산 - 연결점 클릭인 경우 해당 연결점의 정확한 좌표 사용
-      let x, y;
-
-      if (isConnectionPoint) {
-        // 연결점의 data 속성에서 좌표 가져오기
-        const connectionX = clickedElement.getAttribute("data-x");
-        const connectionY = clickedElement.getAttribute("data-y");
-        if (connectionX && connectionY) {
-          x = parseInt(connectionX);
-          y = parseInt(connectionY);
-        } else {
-          // data 속성이 없는 경우 컨테이너 상대 좌표 계산
-          const rect = container.getBoundingClientRect();
-          x = event.clientX - rect.left;
-          y = event.clientY - rect.top;
-        }
-      } else {
-        // 일반 클릭의 경우 컨테이너 상대 좌표 계산
-        const rect = container.getBoundingClientRect();
-        x = event.clientX - rect.left;
-        y = event.clientY - rect.top;
-      }
+      // 클릭된 위치 계산
+      const rect = container.getBoundingClientRect();
+      const clickPoint = {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+      };
 
       // 자동 연결 생성
-      console.log(`자동 연결 시도: 박스 ${autoConnectStartBox}에서 포인트 (${x}, ${y})로`);
-      const connectionId = addAutoConnection({ x, y });
-
-      if (connectionId) {
-        console.log(`✅ 자동 연결 생성 성공: ${connectionId}`);
-      } else {
-        console.log("❌ 자동 연결 생성 실패");
-      }
-
+      addAutoConnection(clickPoint);
       event.stopPropagation();
     };
 
@@ -111,7 +80,6 @@ const AutoConnectManager = ({
     const handleKeyDown = (event) => {
       if (event.key === "Escape" && isAutoConnectMode) {
         cancelAutoConnect();
-        console.log("자동 연결 모드 취소됨");
         event.stopPropagation();
         event.preventDefault();
       }
@@ -188,16 +156,9 @@ const AutoConnectManager = ({
             toPoint={connection.toPoint}
             onRemove={removeAutoConnection}
             fromBoxInfo={fallbackBoxInfo}
-            settings={{
-              connectionType: "smart",
-              color: "purple",
-              strokeWidth: 3,
-              animationType: "flow",
-              animationSpeed: 2,
-            }}
-            className="text-purple-500 hover:text-purple-600 transition-colors duration-200"
-            animated={true}
-            strokeWidth={3}
+            settings={autoConnectSettings}
+            userClickPoint={connection.userClickPoint} // 사용자 클릭 위치 전달
+            className="transition-colors duration-200"
           />
         );
       })}
@@ -295,12 +256,12 @@ const AutoConnectManager = ({
         </div>
       )}
 
-      {/* 설정 패널 */}
-      <AutoConnectSettings
+      {/* 설정 패널 - 컴팩트 버전으로 교체 */}
+      <AutoConnectCompactSettings
         isOpen={showSettings}
         onClose={() => setShowSettings(false)}
-        position="right"
-        {...settingsProps}
+        position="top-left"
+        theme="modern"
       />
     </div>
   );

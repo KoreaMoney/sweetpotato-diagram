@@ -52,12 +52,14 @@ CSS 파일에 Tailwind를 임포트하세요:
 
 ```jsx
 import React from "react";
-import { DiagramProvider, Box, Connector } from "sweet-diagram";
+import { DiagramProvider, Box, Connector, AutoConnectManager } from "sweet-diagram";
 
 function App() {
   return (
     <div className="w-full h-full absolute">
-      <DiagramProvider>{/* Your diagram components */}</DiagramProvider>
+      <DiagramProvider>
+        <AutoConnectManager>{/* Your diagram components */}</AutoConnectManager>
+      </DiagramProvider>
     </div>
   );
 }
@@ -95,21 +97,24 @@ Basic rectangular component for creating diagram elements.
 
 #### Props
 
-| Prop        | Type                                         | Default      | Description       |
-| ----------- | -------------------------------------------- | ------------ | ----------------- |
-| `id`        | `string`                                     | **required** | Unique identifier |
-| `x`         | `number`                                     | **required** | X position        |
-| `y`         | `number`                                     | **required** | Y position        |
-| `width`     | `number`                                     | `100`        | Box width         |
-| `height`    | `number`                                     | `60`         | Box height        |
-| `text`      | `string`                                     | -            | Text content      |
-| `className` | `string`                                     | -            | CSS classes       |
-| `style`     | `CSSProperties`                              | -            | Inline styles     |
-| `onClick`   | `(event: MouseEvent, data: BoxData) => void` | -            | Click handler     |
+| Prop                | Type                                         | Default        | Description                  |
+| ------------------- | -------------------------------------------- | -------------- | ---------------------------- |
+| `id`                | `string`                                     | **required**   | Unique identifier            |
+| `x`                 | `number`                                     | **required**   | X position                   |
+| `y`                 | `number`                                     | **required**   | Y position                   |
+| `width`             | `number`                                     | `100`          | Box width                    |
+| `height`            | `number`                                     | `60`           | Box height                   |
+| `text`              | `string`                                     | -              | Text content                 |
+| `textDirection`     | `'horizontal' \| 'vertical'`                 | `'horizontal'` | Text direction (🆕)          |
+| `verticalDirection` | `'lr' \| 'rl'`                               | `'lr'`         | Vertical text direction (🆕) |
+| `className`         | `string`                                     | -              | CSS classes                  |
+| `style`             | `CSSProperties`                              | -              | Inline styles                |
+| `onClick`           | `(event: MouseEvent, data: BoxData) => void` | -              | Click handler                |
 
-#### Example
+#### Examples
 
 ```jsx
+// Basic horizontal text box
 <Box
   id="my-box"
   x={100}
@@ -119,6 +124,32 @@ Basic rectangular component for creating diagram elements.
   text="My Content"
   className="bg-blue-500 text-white border-blue-600 border-2 rounded-lg"
   onClick={(event, data) => console.log("Box clicked:", data)}
+/>
+
+// 🆕 Vertical text box (Left-to-Right)
+<Box
+  id="vertical-lr"
+  x={250}
+  y={50}
+  width={60}
+  height={120}
+  text="세로텍스트"
+  textDirection="vertical"
+  verticalDirection="lr"
+  className="bg-green-500 text-white border-green-600 border-2 rounded-lg"
+/>
+
+// 🆕 Vertical text box (Right-to-Left)
+<Box
+  id="vertical-rl"
+  x={330}
+  y={50}
+  width={60}
+  height={120}
+  text="시스템관리"
+  textDirection="vertical"
+  verticalDirection="rl"
+  className="bg-purple-500 text-white border-purple-600 border-2 rounded-lg"
 />
 ```
 
@@ -244,6 +275,187 @@ Creates connections between boxes with various connection types and arrow styles
   }}
 />
 ```
+
+---
+
+### 🆕 AutoConnectManager
+
+Manages automatic connection mode and handles user interactions for creating auto-connections.
+
+#### Props
+
+| Prop                 | Type                       | Default | Description                                         |
+| -------------------- | -------------------------- | ------- | --------------------------------------------------- |
+| `children`           | `ReactNode`                | -       | Child components (diagram elements)                 |
+| `className`          | `string`                   | `""`    | Additional CSS classes                              |
+| `style`              | `CSSProperties`            | `{}`    | Inline styles                                       |
+| `showSettingsButton` | `boolean`                  | `true`  | Show settings button for auto-connect configuration |
+| `settingsProps`      | `AutoConnectSettingsProps` | `{}`    | Configuration for settings UI                       |
+
+#### AutoConnectSettingsProps
+
+| Prop             | Type                                     | Default    | Description             |
+| ---------------- | ---------------------------------------- | ---------- | ----------------------- |
+| `position`       | `'left' \| 'right' \| 'top' \| 'bottom'` | `'right'`  | Settings panel position |
+| `size`           | `'small' \| 'normal' \| 'large'`         | `'normal'` | Settings panel size     |
+| `theme`          | `'modern' \| 'classic' \| 'minimal'`     | `'modern'` | UI theme                |
+| `compactMode`    | `boolean`                                | `false`    | Use compact settings UI |
+| `enableTabs`     | `boolean`                                | `true`     | Enable tabbed interface |
+| `enableAdvanced` | `boolean`                                | `true`     | Show advanced settings  |
+| `showHeader`     | `boolean`                                | `true`     | Show settings header    |
+| `showFooter`     | `boolean`                                | `true`     | Show settings footer    |
+| `backdrop`       | `boolean`                                | `true`     | Show backdrop when open |
+| `borderRadius`   | `'none' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'lg'`     | Border radius           |
+| `shadow`         | `'none' \| 'sm' \| 'md' \| 'lg' \| 'xl'` | `'xl'`     | Drop shadow             |
+| `hiddenSections` | `Array<string>`                          | `[]`       | Hidden setting sections |
+
+#### Usage
+
+```jsx
+import { DiagramProvider, AutoConnectManager, Box } from "sweet-diagram";
+
+function AutoConnectExample() {
+  return (
+    <div className="w-full h-screen bg-gray-50">
+      <DiagramProvider>
+        <AutoConnectManager
+          showSettingsButton={true}
+          settingsProps={{
+            position: "right",
+            size: "normal",
+            theme: "modern",
+            compactMode: false,
+            enableAdvanced: true,
+          }}
+        >
+          <Box
+            id="source"
+            x={100}
+            y={100}
+            width={120}
+            height={60}
+            text="Source Box"
+            className="bg-blue-500 text-white border-2 border-blue-600 rounded-lg"
+          />
+
+          <Box
+            id="target"
+            x={400}
+            y={200}
+            width={120}
+            height={60}
+            text="Target Box"
+            className="bg-green-500 text-white border-2 border-green-600 rounded-lg"
+          />
+
+          {/* 
+            사용법:
+            1. Shift + 박스 클릭으로 자동 연결 모드 시작
+            2. 다른 지점을 클릭하여 연결선 생성
+            3. ESC 키로 모드 취소
+            4. 연결선 더블클릭으로 제거
+          */}
+        </AutoConnectManager>
+      </DiagramProvider>
+    </div>
+  );
+}
+```
+
+#### Key Features
+
+- **자동 연결 모드**: Shift + 박스 클릭으로 시작
+- **스마트 연결점 계산**: 최적의 연결 위치 자동 결정
+- **실시간 설정**: 연결 스타일 실시간 변경
+- **시각적 피드백**: 모드 상태 및 안내 메시지
+- **키보드 단축키**: ESC로 취소, 더블클릭으로 제거
+
+---
+
+### 🆕 AutoConnector
+
+Creates automatic connections from boxes to clicked points with smart connection logic.
+
+#### Props
+
+| Prop             | Type                     | Default      | Description                                 |
+| ---------------- | ------------------------ | ------------ | ------------------------------------------- |
+| `id`             | `string`                 | **required** | Unique identifier for the connection        |
+| `fromBoxId`      | `string`                 | **required** | Source box ID                               |
+| `toPoint`        | `{x: number, y: number}` | **required** | Target click point coordinates              |
+| `onRemove`       | `(id: string) => void`   | `null`       | Callback when connection is removed         |
+| `fromBoxInfo`    | `BoxInfo`                | `null`       | Fallback box info (when no DiagramProvider) |
+| `settings`       | `AutoConnectSettings`    | `null`       | Connection settings override                |
+| `userClickPoint` | `{x: number, y: number}` | `null`       | Original user click position on box         |
+
+#### AutoConnectSettings
+
+| Prop             | Type                                                             | Default      | Description           |
+| ---------------- | ---------------------------------------------------------------- | ------------ | --------------------- |
+| `connectionType` | `'straight' \| 'curved' \| 'orthogonal' \| 'stepped' \| 'smart'` | `'smart'`    | Connection path type  |
+| `color`          | `string`                                                         | `'purple'`   | Connection line color |
+| `strokeWidth`    | `number`                                                         | `3`          | Line thickness        |
+| `arrowShape`     | `'triangle' \| 'diamond' \| 'circle' \| 'square'`                | `'triangle'` | Arrow head shape      |
+| `arrowSize`      | `number`                                                         | `12`         | Arrow head size       |
+| `animationType`  | `'none' \| 'flow' \| 'dash' \| 'pulse'`                          | `'flow'`     | Animation type        |
+| `animationSpeed` | `number`                                                         | `2`          | Animation speed (1-5) |
+| `curveStrength`  | `number`                                                         | `0.5`        | Curve strength (0-1)  |
+| `opacity`        | `number`                                                         | `0.8`        | Line opacity (0-1)    |
+| `showShadow`     | `boolean`                                                        | `true`       | Show drop shadow      |
+
+#### Usage
+
+```jsx
+import { AutoConnector } from "sweet-diagram";
+
+// Direct usage (usually managed by AutoConnectManager)
+<AutoConnector
+  id="auto-conn-1"
+  fromBoxId="source-box"
+  toPoint={{ x: 300, y: 200 }}
+  settings={{
+    connectionType: "smart",
+    color: "purple",
+    strokeWidth: 3,
+    arrowShape: "triangle",
+    arrowSize: 12,
+    animationType: "flow",
+    animationSpeed: 2,
+    curveStrength: 0.5,
+    opacity: 0.8,
+    showShadow: true
+  }}
+  onRemove={(id) => console.log(`Connection ${id} removed`)}
+/>
+
+// With custom user click point
+<AutoConnector
+  id="auto-conn-2"
+  fromBoxId="source-box"
+  toPoint={{ x: 400, y: 300 }}
+  userClickPoint={{ x: 150, y: 120 }} // Where user actually clicked on the box
+  settings={{
+    connectionType: "curved",
+    color: "blue",
+    animationType: "dash"
+  }}
+/>
+```
+
+#### Connection Types
+
+1. **Smart**: Automatically chooses the best connection type based on positions
+2. **Straight**: Direct line from box edge to target point
+3. **Curved**: Bezier curve with configurable strength
+4. **Orthogonal**: Right-angled connections (horizontal then vertical)
+5. **Stepped**: Multi-step orthogonal connections
+
+#### Animation Types
+
+1. **None**: Static connection line
+2. **Flow**: Animated dots flowing along the line
+3. **Dash**: Animated dashed line pattern
+4. **Pulse**: Pulsing opacity effect
 
 ---
 
@@ -418,6 +630,17 @@ React Hook for comprehensive diagram state management with advanced features lik
 | `zoomIn`                     | `() => void`                                                               | Zoom in (scale \* 1.2)                     |
 | `zoomOut`                    | `() => void`                                                               | Zoom out (scale / 1.2)                     |
 | `resetZoom`                  | `() => void`                                                               | Reset zoom to 1 and center                 |
+| **🆕 자동 연결 관리**        |
+| `isAutoConnectMode`          | `boolean`                                                                  | Whether auto-connect mode is active        |
+| `autoConnectStartBox`        | `string \| null`                                                           | Box ID where auto-connection started       |
+| `startAutoConnect`           | `(boxId: string, clickPoint?: {x: number, y: number}) => void`             | Start auto-connect mode from a box         |
+| `cancelAutoConnect`          | `() => void`                                                               | Cancel auto-connect mode                   |
+| `addAutoConnection`          | `(toPoint: {x: number, y: number}) => void`                                | Add auto-connection to clicked point       |
+| `autoConnections`            | `AutoConnectionData[]`                                                     | All auto-connections                       |
+| `removeAutoConnection`       | `(connectionId: string) => void`                                           | Remove specific auto-connection            |
+| `clearAutoConnections`       | `() => void`                                                               | Clear all auto-connections                 |
+| `autoConnectSettings`        | `AutoConnectSettings`                                                      | Current auto-connect settings              |
+| `updateAutoConnectSettings`  | `(settings: Partial<AutoConnectSettings>) => void`                         | Update auto-connect settings               |
 | **유틸리티**                 |
 | `getDiagramStats`            | `() => DiagramStats`                                                       | Get diagram statistics                     |
 | `optimizeLayout`             | `() => void`                                                               | Auto-optimize box layout (improved)        |
@@ -435,6 +658,8 @@ interface DiagramStats {
   scale: number; // Current zoom scale
   panOffset: { x: number; y: number }; // Current pan offset
   dynamicBoxCount?: number; // Number of dynamic boxes (NEW)
+  autoConnectionCount?: number; // Number of auto-connections (🆕)
+  isAutoConnectMode?: boolean; // Whether auto-connect mode is active (🆕)
 }
 ```
 
@@ -484,13 +709,56 @@ interface ConnectionData {
 }
 ```
 
+#### 🆕 AutoConnectionData Interface
+
+```typescript
+interface AutoConnectionData {
+  id: string;
+  fromBoxId: string;
+  toPoint: { x: number; y: number };
+  userClickPoint?: { x: number; y: number }; // Original click position on box
+  createdAt: Date;
+  settings?: AutoConnectSettings;
+}
+```
+
+#### 🆕 AutoConnectSettings Interface
+
+```typescript
+interface AutoConnectSettings {
+  connectionType: "straight" | "curved" | "orthogonal" | "stepped" | "smart";
+  color: string;
+  strokeWidth: number;
+  arrowShape: "triangle" | "diamond" | "circle" | "square";
+  arrowSize: number;
+  animationType: "none" | "flow" | "dash" | "pulse";
+  animationSpeed: number; // 1-5
+  curveStrength: number; // 0-1
+  opacity: number; // 0-1
+  showShadow: boolean;
+}
+```
+
 #### Basic Usage Example
 
 ```jsx
-import { DiagramProvider, useDiagram, Box } from "sweet-diagram";
+import { DiagramProvider, useDiagram, Box, AutoConnectManager } from "sweet-diagram";
 
 function DiagramControls() {
-  const { boxes, connections, selectedBoxes, addConnection, selectBox, getDiagramStats } = useDiagram();
+  const {
+    boxes,
+    connections,
+    selectedBoxes,
+    addConnection,
+    selectBox,
+    getDiagramStats,
+    // 🆕 AutoConnect 관련
+    isAutoConnectMode,
+    autoConnections,
+    startAutoConnect,
+    cancelAutoConnect,
+    clearAutoConnections,
+  } = useDiagram();
 
   const stats = getDiagramStats();
 
@@ -499,6 +767,21 @@ function DiagramControls() {
       <p>박스 개수: {stats.boxCount}</p>
       <p>연결선 개수: {stats.connectionCount}</p>
       <p>선택된 박스: {stats.selectedBoxCount}</p>
+      <p>🆕 자동 연결: {stats.autoConnectionCount || 0}개</p>
+      <p>🆕 자동 연결 모드: {stats.isAutoConnectMode ? "활성" : "비활성"}</p>
+
+      {/* 🆕 AutoConnect 컨트롤 */}
+      <div>
+        <button
+          onClick={() => (isAutoConnectMode ? cancelAutoConnect() : startAutoConnect("box1"))}
+          disabled={!boxes.has("box1")}
+        >
+          {isAutoConnectMode ? "자동 연결 취소" : "자동 연결 시작"}
+        </button>
+        <button onClick={clearAutoConnections} disabled={autoConnections.length === 0}>
+          모든 자동 연결 제거
+        </button>
+      </div>
     </div>
   );
 }
@@ -506,8 +789,11 @@ function DiagramControls() {
 function App() {
   return (
     <DiagramProvider>
-      <DiagramControls />
-      <Box id="box1" x={100} y={100} text="클릭하세요" onClick={(e, data) => selectBox(data.id)} />
+      <AutoConnectManager>
+        <DiagramControls />
+        <Box id="box1" x={100} y={100} text="클릭하세요" onClick={(e, data) => selectBox(data.id)} />
+        <Box id="box2" x={300} y={200} text="Target Box" />
+      </AutoConnectManager>
     </DiagramProvider>
   );
 }
@@ -538,7 +824,6 @@ function AdvancedControls() {
   // Find large boxes
   const findLargeBoxes = () => {
     const largeBoxes = findBoxes((box) => box.width > 120 || box.height > 80);
-    console.log(`Found ${largeBoxes.length} large boxes`);
   };
 
   // Find connections for specific box
@@ -666,8 +951,6 @@ function SearchExample() {
 
     // Select found boxes
     largeBoxes.forEach((box) => selectBox(box.id, true));
-
-    console.log(`Found ${largeBoxes.length} large boxes`);
   };
 
   // Find connections for specific box
@@ -693,7 +976,6 @@ function SearchExample() {
         placeholder="Search boxes by text..."
         onChange={(e) => {
           const results = searchBoxesByText(e.target.value);
-          console.log(`Search results: ${results.length} boxes`);
         }}
       />
     </div>

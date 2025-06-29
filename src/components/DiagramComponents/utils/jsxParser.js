@@ -212,7 +212,6 @@ export const parseProps = (propsString) => {
             }
             if (bendPoints.length > 0) {
               props[key] = bendPoints;
-              console.log(`✅ jsxParser bendPoints 파싱 성공: ${bendPoints.length}개 포인트`, bendPoints);
             }
           } catch (error) {
             console.error("bendPoints 파싱 오류:", error);
@@ -245,7 +244,6 @@ export const parseProps = (propsString) => {
 
             if (Object.keys(settingsObj).length > 0) {
               props[key] = settingsObj;
-              console.log(`✅ jsxParser ${key} 파싱 성공:`, settingsObj);
             }
           } catch (error) {
             console.error(`${key} 파싱 오류:`, error);
@@ -296,7 +294,6 @@ export const parseJSXCode = (code) => {
         const props = parseProps(propsString);
         if (props) {
           elements.push({ type: componentType, props });
-          console.log(`✅ ${componentType} 컴포넌트 파싱 성공:`, props);
         }
       }
 
@@ -313,13 +310,10 @@ export const parseJSXCode = (code) => {
             const childElements = parseJSXCode(childrenString);
             props.children = childElements;
             elements.push({ type: componentType, props });
-            console.log(`✅ ${componentType} 컴포넌트 (children 포함) 파싱 성공:`, props);
           }
         }
       }
     });
-
-    console.log(`🔍 총 ${elements.length}개 컴포넌트 파싱됨:`, elements);
     return elements;
   } catch (error) {
     console.error("JSX 파싱 에러:", error);

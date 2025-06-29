@@ -15,6 +15,7 @@ const AutoConnector = ({
   // DiagramProvider가 없을 때 사용할 fallback props
   fromBoxInfo = null, // { x, y, width, height }
   settings = null, // AutoConnect 설정 오버라이드
+  userClickPoint = null, // 사용자가 실제로 클릭한 박스의 위치 { x, y }
 }) => {
   // DiagramProvider가 없을 때도 작동하도록 옵셔널 사용
   let getBox, autoConnectSettings;
@@ -23,7 +24,7 @@ const AutoConnector = ({
     const context = useDiagram();
     getBox = context.getBox;
     autoConnectSettings = context.autoConnectSettings;
-  } catch (error) {
+  } catch {
     // DiagramProvider가 없는 경우 기본값 사용
     console.warn("AutoConnector: DiagramProvider가 없어서 기본 설정으로 실행됩니다.");
     getBox = () => null;
@@ -64,8 +65,62 @@ const AutoConnector = ({
     return null;
   }
 
-  // 박스의 최적 연결점 계산 (자동)
+  // 박스의 최적 연결점 계산 (사용자 클릭 위치 우선)
   const getOptimalConnectionPoint = () => {
+    // 사용자가 클릭한 실제 위치가 있으면 그 위치를 박스 경계로 조정해서 사용
+    if (userClickPoint) {
+      const boxLeft = finalFromBox.x;
+      const boxRight = finalFromBox.x + finalFromBox.width;
+      const boxTop = finalFromBox.y;
+      const boxBottom = finalFromBox.y + finalFromBox.height;
+
+      // 클릭한 위치가 박스 내부라면 가장 가까운 경계로 이동
+      let connectionX = userClickPoint.x;
+      let connectionY = userClickPoint.y;
+
+      // 박스 경계에 맞춰 조정
+      if (connectionX >= boxLeft && connectionX <= boxRight) {
+        // 수직 경계 (위/아래)
+        if (Math.abs(connectionY - boxTop) < Math.abs(connectionY - boxBottom)) {
+          connectionY = boxTop; // 위쪽 경계
+        } else {
+          connectionY = boxBottom; // 아래쪽 경계
+        }
+      } else if (connectionY >= boxTop && connectionY <= boxBottom) {
+        // 수평 경계 (좌/우)
+        if (Math.abs(connectionX - boxLeft) < Math.abs(connectionX - boxRight)) {
+          connectionX = boxLeft; // 왼쪽 경계
+        } else {
+          connectionX = boxRight; // 오른쪽 경계
+        }
+      } else {
+        // 모서리 처리 - 가장 가까운 모서리로 이동
+        const distToTopLeft = Math.sqrt((connectionX - boxLeft) ** 2 + (connectionY - boxTop) ** 2);
+        const distToTopRight = Math.sqrt((connectionX - boxRight) ** 2 + (connectionY - boxTop) ** 2);
+        const distToBottomLeft = Math.sqrt((connectionX - boxLeft) ** 2 + (connectionY - boxBottom) ** 2);
+        const distToBottomRight = Math.sqrt((connectionX - boxRight) ** 2 + (connectionY - boxBottom) ** 2);
+
+        const minDist = Math.min(distToTopLeft, distToTopRight, distToBottomLeft, distToBottomRight);
+
+        if (minDist === distToTopLeft) {
+          connectionX = boxLeft;
+          connectionY = boxTop;
+        } else if (minDist === distToTopRight) {
+          connectionX = boxRight;
+          connectionY = boxTop;
+        } else if (minDist === distToBottomLeft) {
+          connectionX = boxLeft;
+          connectionY = boxBottom;
+        } else {
+          connectionX = boxRight;
+          connectionY = boxBottom;
+        }
+      }
+
+      return { x: connectionX, y: connectionY };
+    }
+
+    // 기존 자동 계산 로직 (userClickPoint가 없을 때)
     const boxCenterX = finalFromBox.x + finalFromBox.width / 2;
     const boxCenterY = finalFromBox.y + finalFromBox.height / 2;
 
@@ -106,22 +161,54 @@ const AutoConnector = ({
       case "straight":
         return `M ${startPoint.x} ${startPoint.y} L ${toPoint.x} ${toPoint.y}`;
 
-      case "curved":
+      case "curved": {
         const controlX = startPoint.x + dx * curveStrength;
         const controlY = startPoint.y + dy * curveStrength;
         return `M ${startPoint.x} ${startPoint.y} Q ${controlX} ${controlY} ${toPoint.x} ${toPoint.y}`;
+      }
 
-      case "orthogonal":
-        const midX = startPoint.x + dx * 0.5;
-        return `M ${startPoint.x} ${startPoint.y} L ${midX} ${startPoint.y} L ${midX} ${toPoint.y} L ${toPoint.x} ${toPoint.y}`;
+      case "orthogonal": {
+        // 박스의 연결점 방향을 고려한 직각 연결
+        const boxCenterX = finalFromBox.x + finalFromBox.width / 2;
+        const boxCenterY = finalFromBox.y + finalFromBox.height / 2;
 
-      case "stepped":
-        const stepX = startPoint.x + dx * 0.3;
-        const stepY = startPoint.y + dy * 0.7;
-        return `M ${startPoint.x} ${startPoint.y} L ${stepX} ${startPoint.y} L ${stepX} ${stepY} L ${toPoint.x} ${stepY} L ${toPoint.x} ${toPoint.y}`;
+        // 시작점이 박스의 어느 면에서 나오는지 판단
+        const isHorizontalExit = startPoint.y === boxCenterY; // 좌/우 면
+        const isVerticalExit = startPoint.x === boxCenterX; // 상/하 면
+
+        if (isHorizontalExit) {
+          // 좌/우 면에서 시작: 수평 → 수직
+          const midX = toPoint.x;
+          return `M ${startPoint.x} ${startPoint.y} L ${midX} ${startPoint.y} L ${midX} ${toPoint.y}`;
+        } else if (isVerticalExit) {
+          // 상/하 면에서 시작: 수직 → 수평
+          const midY = toPoint.y;
+          return `M ${startPoint.x} ${startPoint.y} L ${startPoint.x} ${midY} L ${toPoint.x} ${midY}`;
+        } else {
+          // 기본값: 중점에서 꺾기
+          const midX = startPoint.x + dx * 0.5;
+          return `M ${startPoint.x} ${startPoint.y} L ${midX} ${startPoint.y} L ${midX} ${toPoint.y} L ${toPoint.x} ${toPoint.y}`;
+        }
+      }
+
+      case "stepped": {
+        // 더 자연스러운 계단식 - 방향에 따라 수평/수직 우선 결정
+        const absX = Math.abs(dx);
+        const absY = Math.abs(dy);
+
+        if (absX > absY) {
+          // 수평 이동이 더 큰 경우: 수평 → 수직
+          const midX = startPoint.x + dx * 0.7; // 70% 지점에서 꺾기
+          return `M ${startPoint.x} ${startPoint.y} L ${midX} ${startPoint.y} L ${midX} ${toPoint.y} L ${toPoint.x} ${toPoint.y}`;
+        } else {
+          // 수직 이동이 더 큰 경우: 수직 → 수평
+          const midY = startPoint.y + dy * 0.7; // 70% 지점에서 꺾기
+          return `M ${startPoint.x} ${startPoint.y} L ${startPoint.x} ${midY} L ${toPoint.x} ${midY} L ${toPoint.x} ${toPoint.y}`;
+        }
+      }
 
       case "smart":
-      default:
+      default: {
         // Smart 모드 - 거리와 각도에 따라 자동 선택
         if (distance < 100) {
           return `M ${startPoint.x} ${startPoint.y} L ${toPoint.x} ${toPoint.y}`;
@@ -136,6 +223,7 @@ const AutoConnector = ({
           const controlY = startPoint.y + dy * curveStrength;
           return `M ${startPoint.x} ${startPoint.y} Q ${controlX} ${controlY} ${toPoint.x} ${toPoint.y}`;
         }
+      }
     }
   };
 
@@ -146,7 +234,6 @@ const AutoConnector = ({
     const angle = Math.atan2(dy, dx);
 
     const arrowLength = arrowSize;
-    const arrowWidth = arrowSize * 0.6;
 
     const x1 = toPoint.x - arrowLength * Math.cos(angle - Math.PI / 6);
     const y1 = toPoint.y - arrowLength * Math.sin(angle - Math.PI / 6);
@@ -156,8 +243,14 @@ const AutoConnector = ({
     return `M ${toPoint.x} ${toPoint.y} L ${x1} ${y1} M ${toPoint.x} ${toPoint.y} L ${x2} ${y2}`;
   };
 
-  // 색상 클래스 계산
+  // 색상 클래스 계산 - TailwindCSS 커스텀 지원
   const getColorClass = () => {
+    // 사용자가 직접 TailwindCSS 클래스를 입력한 경우 (공백이나 하이픈 포함)
+    if (color && (color.includes(" ") || color.includes("-") || color.startsWith("text-"))) {
+      return color; // 사용자 커스텀 TailwindCSS 클래스 그대로 사용
+    }
+
+    // 기본 제공 색상들
     const colorMap = {
       purple: "text-purple-500 hover:text-purple-600",
       blue: "text-blue-500 hover:text-blue-600",
@@ -167,7 +260,12 @@ const AutoConnector = ({
       pink: "text-pink-500 hover:text-pink-600",
       indigo: "text-indigo-500 hover:text-indigo-600",
       cyan: "text-cyan-500 hover:text-cyan-600",
+      yellow: "text-yellow-500 hover:text-yellow-600",
+      emerald: "text-emerald-500 hover:text-emerald-600",
+      rose: "text-rose-500 hover:text-rose-600",
+      violet: "text-violet-500 hover:text-violet-600",
     };
+
     return colorMap[color] || colorMap.purple;
   };
 
@@ -215,17 +313,13 @@ const AutoConnector = ({
 
     // 더블클릭으로만 제거하도록 변경
     if (event.detail === 2 && onRemove) {
-      console.log(`연결선 ${id} 더블클릭으로 제거됨`);
       onRemove(id);
-    } else {
-      console.log(`연결선 ${id} 클릭됨 (더블클릭시 제거)`);
     }
   };
 
   const handleKeyDown = (event) => {
     if (event.key === "Delete" || event.key === "Backspace") {
       if (onRemove) {
-        console.log(`연결선 ${id} ${event.key} 키로 제거됨`);
         onRemove(id);
       }
       event.stopPropagation();

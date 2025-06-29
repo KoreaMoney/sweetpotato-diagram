@@ -470,9 +470,9 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
   }, [boxes, connections, saveState]);
 
   // 자동 연결 관련 함수들
-  const startAutoConnect = useCallback((boxId) => {
+  const startAutoConnect = useCallback((boxId, clickPoint = null) => {
     setIsAutoConnectMode(true);
-    setAutoConnectStartBox(boxId);
+    setAutoConnectStartBox({ boxId, clickPoint }); // 박스 ID와 클릭 위치 함께 저장
   }, []);
 
   const cancelAutoConnect = useCallback(() => {
@@ -486,8 +486,9 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
 
       const newAutoConnection = {
         id: `auto-conn-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        fromBoxId: autoConnectStartBox,
+        fromBoxId: autoConnectStartBox.boxId || autoConnectStartBox, // 기존 호환성 유지
         toPoint: toPoint,
+        userClickPoint: autoConnectStartBox.clickPoint || null, // 사용자 클릭 위치 저장
         type: "auto",
         createdAt: new Date().toISOString(),
       };

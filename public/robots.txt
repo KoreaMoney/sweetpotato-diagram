@@ -1,0 +1,35 @@
+User-agent: *
+Allow: /
+
+# 주요 페이지 우선순위
+Allow: /components
+Allow: /documentation
+Allow: /examples
+Allow: /hooks
+
+# 크롤링 제외 디렉토리
+Disallow: /test/
+Disallow: /coverage/
+Disallow: /playwright-report/
+Disallow: /node_modules/
+Disallow: /dist/
+Disallow: /*.test.js
+Disallow: /*.spec.js
+
+# 사이트맵 위치
+Sitemap: https://sweetpotato-diagram.vercel.app/sitemap.xml
+
+# 크롤링 속도 제한 (초당 1회)
+Crawl-delay: 1
+
+# 구글봇 특별 설정
+User-agent: Googlebot
+Allow: /
+
+# 빙봇 특별 설정
+User-agent: Bingbot
+Allow: /
+
+# 네이버봇 특별 설정
+User-agent: Yeti
+Allow: / 

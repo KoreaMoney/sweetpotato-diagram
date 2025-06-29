@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDiagram } from "./DiagramContext";
 
 /**
@@ -13,7 +13,7 @@ const AutoConnectSettings = ({
   className = "",
 
   // 레이아웃 설정
-  position = "right", // "right", "left", "top", "bottom", "center", "top-left", "top-right", "bottom-left", "bottom-right"
+  position = "right", // eslint-disable-line no-unused-vars
   size = "normal", // "compact", "normal", "large", "fullscreen"
   width = null, // 커스텀 폭 (예: "400px", "50vw", "w-80")
   height = null, // 커스텀 높이 (예: "600px", "80vh", "h-96")
@@ -53,6 +53,7 @@ const AutoConnectSettings = ({
     autoConnections = context.autoConnections;
     clearAutoConnections = context.clearAutoConnections;
   } catch (error) {
+    console.log("error", error);
     // DiagramProvider가 없는 경우 기본값 사용
     console.warn("AutoConnectSettings: DiagramProvider가 없어서 기본 설정으로 실행됩니다.");
     autoConnectSettings = {
@@ -98,7 +99,16 @@ const AutoConnectSettings = ({
     { value: "pink", label: "분홍색", color: "#ec4899", bg: "bg-pink-500" },
     { value: "indigo", label: "남색", color: "#6366f1", bg: "bg-indigo-500" },
     { value: "cyan", label: "청록색", color: "#06b6d4", bg: "bg-cyan-500" },
+    { value: "yellow", label: "노란색", color: "#eab308", bg: "bg-yellow-500" },
+    { value: "emerald", label: "에메랄드", color: "#10b981", bg: "bg-emerald-500" },
+    { value: "rose", label: "장미색", color: "#f43f5e", bg: "bg-rose-500" },
+    { value: "violet", label: "보라빛", color: "#8b5cf6", bg: "bg-violet-500" },
   ];
+
+  // 기본 색상 체크 함수
+  const isBasicColor = (color) => {
+    return colorOptions.some((option) => option.value === color);
+  };
 
   const arrowShapeOptions = [
     { value: "triangle", label: "삼각형", icon: "▲" },
@@ -123,8 +133,8 @@ const AutoConnectSettings = ({
       return {
         width: width || "auto",
         height: height || "auto",
-        maxWidth: "90vw", // 반응형 최대 폭 제한
-        maxHeight: "90vh", // 반응형 최대 높이 제한
+        maxWidth: "min(90vw, 800px)", // 반응형 최대 폭 제한
+        maxHeight: "min(90vh, 700px)", // 반응형 최대 높이 제한
       };
     }
 
@@ -132,28 +142,28 @@ const AutoConnectSettings = ({
     switch (size) {
       case "compact":
         return {
-          width: "min(240px, 85vw)", // 모바일에서 화면 크기 고려
+          width: "min(280px, 90vw)", // 모바일에서 화면 크기 고려
           height: "auto",
-          maxHeight: "min(40vh, 500px)",
+          maxHeight: "min(50vh, 400px)",
         };
       case "large":
         return {
-          width: "min(500px, 90vw)",
+          width: "min(520px, 92vw)",
           height: "auto",
-          maxHeight: "min(85vh, 800px)",
+          maxHeight: "min(85vh, 750px)",
         };
       case "fullscreen":
         return {
-          width: "95vw",
-          height: "95vh",
+          width: "min(98vw, 1200px)",
+          height: "min(95vh, 800px)",
           maxHeight: "95vh",
         };
       case "normal":
       default:
         return {
-          width: "min(360px, 88vw)", // 모바일 화면 고려
+          width: "min(380px, 90vw)", // 모바일 화면 고려
           height: "auto",
-          maxHeight: "min(70vh, 600px)",
+          maxHeight: "min(75vh, 650px)",
         };
     }
   };
@@ -211,27 +221,14 @@ const AutoConnectSettings = ({
   const getPositionClasses = () => {
     const themeClasses = getThemeClasses();
 
-    switch (position) {
-      case "left":
-        return `${themeClasses} left-2 md:left-4 lg:left-6 top-1/2 transform -translate-y-1/2 max-w-[90vw] md:max-w-none`;
-      case "top":
-        return `${themeClasses} top-2 md:top-4 lg:top-6 left-1/2 transform -translate-x-1/2 max-w-[95vw] max-h-[85vh]`;
-      case "bottom":
-        return `${themeClasses} bottom-2 md:bottom-4 lg:bottom-6 left-1/2 transform -translate-x-1/2 max-w-[95vw] max-h-[85vh]`;
-      case "center":
-        return `${themeClasses} top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-[95vw] max-h-[95vh]`;
-      case "top-left":
-        return `${themeClasses} top-2 md:top-4 lg:top-6 left-2 md:left-4 lg:left-6 max-w-[90vw] md:max-w-none`;
-      case "top-right":
-        return `${themeClasses} top-2 md:top-4 lg:top-6 right-2 md:right-4 lg:right-6 max-w-[90vw] md:max-w-none`;
-      case "bottom-left":
-        return `${themeClasses} bottom-2 md:bottom-4 lg:bottom-6 left-2 md:left-4 lg:left-6 max-w-[90vw] md:max-w-none`;
-      case "bottom-right":
-        return `${themeClasses} bottom-2 md:bottom-4 lg:bottom-6 right-2 md:right-4 lg:right-6 max-w-[90vw] md:max-w-none`;
-      case "right":
-      default:
-        return `${themeClasses} right-2 md:right-4 lg:right-6 top-1/2 transform -translate-y-1/2 max-w-[90vw] md:max-w-none`;
-    }
+    // 모든 위치를 안전한 모달 스타일로 통일
+    return `${themeClasses} 
+      fixed inset-4 sm:inset-8 md:inset-16 lg:inset-x-32 lg:inset-y-12 
+      m-auto 
+      w-auto h-auto 
+      max-w-[calc(100vw-2rem)] sm:max-w-[calc(100vw-4rem)] md:max-w-[600px] 
+      max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] md:max-h-[80vh]
+      overflow-hidden`;
   };
 
   // 애니메이션 클래스
@@ -239,18 +236,6 @@ const AutoConnectSettings = ({
     if (!isOpen) return "opacity-0 scale-95 pointer-events-none";
     return "opacity-100 scale-100";
   };
-
-  // 디버깅을 위한 로그
-  console.log("AutoConnectSettings render:", {
-    isOpen,
-    position,
-    size,
-    theme,
-    widthClass,
-    heightClass,
-    maxWidthClass,
-    maxHeightClass,
-  });
 
   // 탭 렌더링
   const renderTabs = () => {
@@ -311,13 +296,12 @@ const AutoConnectSettings = ({
 
   // 외관 설정 렌더링
   const renderAppearanceSettings = () => {
-    console.log("renderAppearanceSettings 호출됨");
     return (
       <div className="space-y-6">
         {/* 연결 타입 */}
         <div>
           <SectionTitle title="연결 타입" subtitle="연결선의 모양을 선택하세요" icon="🔗" />
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
             {connectionTypeOptions.map((option) => (
               <label
                 key={option.value}
@@ -354,18 +338,20 @@ const AutoConnectSettings = ({
         {/* 색상 선택 */}
         <div>
           <SectionTitle title="색상" subtitle="연결선의 색상을 선택하세요" icon="🎨" />
-          <div className="grid grid-cols-4 gap-3">
+
+          {/* 기본 색상 팔레트 */}
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 mb-4">
             {colorOptions.map((option) => (
               <button
                 key={option.value}
                 onClick={() => handleSettingChange("color", option.value)}
-                className={`group relative p-3 rounded-lg border-2 transition-all ${
+                className={`group relative p-2 rounded-lg border-2 transition-all ${
                   autoConnectSettings.color === option.value
                     ? "border-gray-900 scale-105"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
               >
-                <div className={`w-full h-8 rounded-md ${option.bg} mb-2`}></div>
+                <div className={`w-full h-8 rounded-md ${option.bg} mb-1`}></div>
                 <div className={`text-xs font-medium ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
                   {option.label}
                 </div>
@@ -382,7 +368,90 @@ const AutoConnectSettings = ({
                 )}
               </button>
             ))}
+
+            {/* 커스텀 색상 버튼 */}
+            <button
+              onClick={() => {
+                if (isBasicColor(autoConnectSettings.color)) {
+                  handleSettingChange("color", "text-gray-500 hover:text-gray-700");
+                }
+              }}
+              className={`group relative p-2 rounded-lg border-2 border-dashed transition-all flex flex-col items-center justify-center ${
+                !isBasicColor(autoConnectSettings.color)
+                  ? "border-purple-500 bg-purple-50 scale-105"
+                  : "border-gray-400 hover:border-gray-500 hover:bg-gray-50"
+              }`}
+            >
+              <div className="w-full h-8 rounded-md bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500 mb-1 opacity-60"></div>
+              <div className={`text-xs font-medium ${theme === "dark" ? "text-white" : "text-gray-900"} text-center`}>
+                커스텀
+              </div>
+              {!isBasicColor(autoConnectSettings.color) && (
+                <div className="absolute -top-1 -right-1 w-5 h-5 bg-purple-500 rounded-full flex items-center justify-center">
+                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+              )}
+            </button>
           </div>
+
+          {/* 커스텀 색상 입력란 */}
+          {!isBasicColor(autoConnectSettings.color) && (
+            <div
+              className={`p-4 rounded-lg border-2 border-dashed ${
+                theme === "dark" ? "border-gray-600 bg-gray-800/50" : "border-purple-300 bg-purple-50"
+              }`}
+            >
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">✏️</span>
+                  <label className={`text-sm font-medium ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+                    커스텀 TailwindCSS 클래스
+                  </label>
+                </div>
+
+                <input
+                  type="text"
+                  value={autoConnectSettings.color}
+                  onChange={(e) => handleSettingChange("color", e.target.value)}
+                  placeholder="예: text-cyan-500 hover:text-cyan-700"
+                  className={`w-full px-3 py-2 text-sm border rounded-lg font-mono focus:ring-2 focus:ring-purple-500 focus:border-transparent ${
+                    theme === "dark"
+                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                      : "bg-white border-gray-300 text-gray-900"
+                  }`}
+                />
+
+                <div className={`text-xs ${theme === "dark" ? "text-gray-400" : "text-gray-600"} space-y-1`}>
+                  <div>
+                    💡 <strong>사용 예시:</strong>
+                  </div>
+                  <div className="pl-4 space-y-1 font-mono">
+                    <div>
+                      <code className={`px-2 py-1 rounded ${theme === "dark" ? "bg-gray-700" : "bg-gray-100"}`}>
+                        text-cyan-500 hover:text-cyan-700
+                      </code>
+                    </div>
+                    <div>
+                      <code className={`px-2 py-1 rounded ${theme === "dark" ? "bg-gray-700" : "bg-gray-100"}`}>
+                        text-emerald-600 hover:text-emerald-800
+                      </code>
+                    </div>
+                    <div>
+                      <code className={`px-2 py-1 rounded ${theme === "dark" ? "bg-gray-700" : "bg-gray-100"}`}>
+                        text-rose-400 hover:text-rose-600
+                      </code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* 선 두께 */}
@@ -408,7 +477,7 @@ const AutoConnectSettings = ({
         {/* 화살표 모양 */}
         <div>
           <SectionTitle title="화살표 모양" subtitle="연결선 끝의 화살표 모양" icon="➤" />
-          <div className="grid grid-cols-5 gap-2">
+          <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-5 gap-2">
             {arrowShapeOptions.map((option) => (
               <button
                 key={option.value}
@@ -441,12 +510,12 @@ const AutoConnectSettings = ({
       {/* 애니메이션 효과 */}
       <div>
         <SectionTitle title="애니메이션 효과" subtitle="연결선의 애니메이션을 선택하세요" icon="✨" />
-        <div className="grid grid-cols-1 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-2">
           {animationOptions.map((option) => (
             <label
               key={option.value}
               className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                autoConnectSettings.animation === option.value
+                autoConnectSettings.animationType === option.value
                   ? theme === "dark"
                     ? "border-purple-500 bg-purple-900/30"
                     : "border-purple-500 bg-purple-50"
@@ -457,10 +526,10 @@ const AutoConnectSettings = ({
             >
               <input
                 type="radio"
-                name="animation"
+                name="animationType"
                 value={option.value}
-                checked={autoConnectSettings.animation === option.value}
-                onChange={(e) => handleSettingChange("animation", e.target.value)}
+                checked={autoConnectSettings.animationType === option.value}
+                onChange={(e) => handleSettingChange("animationType", e.target.value)}
                 className="sr-only"
               />
               <span className="text-2xl">{option.icon}</span>
@@ -474,7 +543,7 @@ const AutoConnectSettings = ({
       </div>
 
       {/* 애니메이션 속도 */}
-      {autoConnectSettings.animation !== "none" && (
+      {autoConnectSettings.animationType !== "none" && (
         <div>
           <SectionTitle title="애니메이션 속도" subtitle={`현재: ${autoConnectSettings.animationSpeed}s`} icon="⚡" />
           <div className="space-y-3">
@@ -655,8 +724,6 @@ const AutoConnectSettings = ({
 
   // 컨텐츠 렌더링
   const renderContent = () => {
-    console.log("renderContent 호출됨:", { compactMode, activeTab, hiddenSections, enableAdvanced });
-
     if (compactMode) {
       const content = (
         <div className="space-y-8">
@@ -666,7 +733,6 @@ const AutoConnectSettings = ({
           {renderCustomSections()}
         </div>
       );
-      console.log("compactMode 컨텐츠 렌더링됨");
       return content;
     }
 
@@ -685,7 +751,6 @@ const AutoConnectSettings = ({
         content = renderAppearanceSettings();
         break;
     }
-    console.log(`${activeTab} 탭 컨텐츠 렌더링됨`);
     return content;
   };
 
@@ -699,9 +764,9 @@ const AutoConnectSettings = ({
   return (
     <>
       {/* 배경 오버레이 */}
-      {backdrop && (position === "center" || position === "fullscreen") && (
+      {backdrop && (
         <div
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity duration-300"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 transition-opacity duration-300"
           onClick={onClose}
         />
       )}
@@ -712,12 +777,7 @@ const AutoConnectSettings = ({
         style={{
           ...(widthClass || heightClass || maxWidthClass || maxHeightClass ? {} : sizeConfig),
           ...style,
-          // 디버깅을 위한 명확한 스타일
-          minWidth: "200px",
-          minHeight: "100px",
-          background: "white",
-          border: "2px solid #8b5cf6",
-          zIndex: 9999,
+          zIndex: 50,
         }}
       >
         {/* 헤더 */}

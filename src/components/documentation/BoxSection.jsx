@@ -22,7 +22,7 @@ const BoxSection = () => {
   height={40}
   text="컴포넌트"
   className="bg-[#0066ff] text-white border-blue-700 border-2 rounded-lg"
-  onClick={() => console.log('클릭됨')}
+  onClick={() => ('클릭됨')}
 />
 
 // 🆕 세로 텍스트 Box

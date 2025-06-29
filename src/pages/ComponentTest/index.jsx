@@ -515,18 +515,7 @@ const ComponentTest = () => {
       </div>
     </div>
     
-    {/* 독립적인 설정 패널 테스트 */}
-    <AutoConnectSettings
-      isOpen={true}
-      position="center"
-      size="normal"
-      theme="modern"
-      showHeader={true}
-      showFooter={true}
-      enableTabs={false}
-      compactMode={true}
-      enableAdvanced={false}
-    />
+
   </AutoConnectManager>
 </DiagramProvider>`,
   };
@@ -555,12 +544,10 @@ const ComponentTest = () => {
       } else {
         setParsedElements(elements);
         setIsCodeExecuted(true);
-        console.log("파싱된 요소들:", elements);
       }
     } catch (error) {
       setParseError(`코드 파싱 에러: ${error.message}`);
       setIsCodeExecuted(false);
-      console.error("Code parsing error:", error);
     }
 
     // 코드 실행 후 자동으로 미리보기로 전환
@@ -1126,98 +1113,138 @@ const ComponentTest = () => {
       <div className="flex h-[calc(100vh-140px)]">
         {/* 사이드바 - 템플릿 선택 */}
         <div
-          className={`w-80 p-6 ${
+          className={`w-80 ${
             theme === "dark" ? "bg-gray-800 border-gray-700" : "bg-white/70 border-white/20"
-          } border-r backdrop-blur-md`}
+          } border-r backdrop-blur-md flex flex-col`}
         >
-          <h3 className="text-xl font-bold mb-4 flex items-center">
-            <span className="text-2xl mr-2">🎨</span>
-            템플릿 선택
-          </h3>
-
-          <div className="space-y-3">
-            {Object.entries({
-              basic: { name: "기본 예제", icon: "🧩", desc: "Box와 Connector 기본 사용법" },
-              advanced: { name: "고급 컴포넌트", icon: "⚡", desc: "새로운 기능들 종합 사용" },
-              creative: { name: "창의적 예제", icon: "🌟", desc: "태양계 다이어그램" },
-              autoConnect: { name: "자동 연결 기능", icon: "🔗", desc: "Shift + 클릭으로 자동 연결" },
-              compactSettings: { name: "컴팩트 설정", icon: "📱", desc: "작은 설정 패널 모드" },
-              customSettings: { name: "커스텀 설정", icon: "🛠️", desc: "사용자 정의 섹션" },
-              documentation: { name: "문서 기능 모음", icon: "📚", desc: "Documentation의 모든 기능" },
-              playground: { name: "자유 놀이터", icon: "🎪", desc: "자유롭게 코드 작성" },
-            }).map(([key, template]) => (
-              <button
-                key={key}
-                onClick={() => setSelectedTemplate(key)}
-                className={`w-full p-4 rounded-xl text-left transition-all duration-300 transform hover:scale-105 ${
-                  selectedTemplate === key
-                    ? `${
-                        theme === "dark" ? "bg-purple-600" : "bg-gradient-to-r from-purple-500 to-blue-500"
-                      } text-white shadow-lg scale-105`
-                    : `${
-                        theme === "dark" ? "bg-gray-700 hover:bg-gray-600" : "bg-white/50 hover:bg-white/80"
-                      } hover:shadow-md`
-                }`}
-              >
-                <div className="flex items-center">
-                  <span className="text-2xl mr-3">{template.icon}</span>
-                  <div>
-                    <div className="font-semibold">{template.name}</div>
-                    <div
-                      className={`text-sm ${
-                        selectedTemplate === key
-                          ? "text-white/80"
-                          : theme === "dark"
-                          ? "text-gray-400"
-                          : "text-gray-600"
-                      }`}
-                    >
-                      {template.desc}
-                    </div>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-
-          {/* 설정 패널 */}
-          <div className="mt-8">
-            <h4 className="font-semibold mb-3 flex items-center">
-              <span className="mr-2">⚙️</span>
-              캔버스 설정
-            </h4>
+          {/* 스크롤 가능한 내용 영역 */}
+          <div className="flex-1 overflow-y-auto p-6">
+            <h3 className="text-xl font-bold mb-4 flex items-center">
+              <span className="text-2xl mr-2">🎨</span>
+              템플릿 선택
+            </h3>
 
             <div className="space-y-3">
-              <div>
-                <label
-                  className={`block text-sm font-medium mb-1 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+              {Object.entries({
+                basic: { name: "기본 예제", icon: "🧩", desc: "Box와 Connector 기본 사용법" },
+                advanced: { name: "고급 컴포넌트", icon: "⚡", desc: "새로운 기능들 종합 사용" },
+                creative: { name: "창의적 예제", icon: "🌟", desc: "태양계 다이어그램" },
+                autoConnect: { name: "자동 연결 기능", icon: "🔗", desc: "Shift + 클릭으로 자동 연결" },
+                compactSettings: { name: "컴팩트 설정", icon: "📱", desc: "작은 설정 패널 모드" },
+                customSettings: { name: "커스텀 설정", icon: "🛠️", desc: "사용자 정의 섹션" },
+                documentation: { name: "문서 기능 모음", icon: "📚", desc: "Documentation의 모든 기능" },
+                playground: { name: "자유 놀이터", icon: "🎪", desc: "자유롭게 코드 작성" },
+              }).map(([key, template]) => (
+                <button
+                  key={key}
+                  onClick={() => setSelectedTemplate(key)}
+                  className={`w-full p-4 rounded-xl text-left transition-all duration-300 transform hover:scale-105 ${
+                    selectedTemplate === key
+                      ? `${
+                          theme === "dark" ? "bg-purple-600" : "bg-gradient-to-r from-purple-500 to-blue-500"
+                        } text-white shadow-lg scale-105`
+                      : `${
+                          theme === "dark" ? "bg-gray-700 hover:bg-gray-600" : "bg-white/50 hover:bg-white/80"
+                        } hover:shadow-md`
+                  }`}
                 >
-                  폭: {canvasSize.width}px
-                </label>
-                <input
-                  type="range"
-                  min="400"
-                  max="1200"
-                  value={canvasSize.width}
-                  onChange={(e) => setCanvasSize((prev) => ({ ...prev, width: parseInt(e.target.value) }))}
-                  className="w-full accent-purple-500"
-                />
-              </div>
+                  <div className="flex items-center">
+                    <span className="text-2xl mr-3">{template.icon}</span>
+                    <div>
+                      <div className="font-semibold">{template.name}</div>
+                      <div
+                        className={`text-sm ${
+                          selectedTemplate === key
+                            ? "text-white/80"
+                            : theme === "dark"
+                            ? "text-gray-400"
+                            : "text-gray-600"
+                        }`}
+                      >
+                        {template.desc}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
 
-              <div>
-                <label
-                  className={`block text-sm font-medium mb-1 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
-                >
-                  높이: {canvasSize.height}px
-                </label>
-                <input
-                  type="range"
-                  min="300"
-                  max="800"
-                  value={canvasSize.height}
-                  onChange={(e) => setCanvasSize((prev) => ({ ...prev, height: parseInt(e.target.value) }))}
-                  className="w-full accent-purple-500"
-                />
+            {/* 설정 패널 */}
+            <div className="mt-8 pb-6">
+              <h4 className="font-semibold mb-3 flex items-center">
+                <span className="mr-2">⚙️</span>
+                캔버스 설정
+              </h4>
+
+              <div className="space-y-4">
+                <div>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+                  >
+                    폭: {canvasSize.width}px
+                  </label>
+                  <input
+                    type="range"
+                    min="400"
+                    max="1200"
+                    value={canvasSize.width}
+                    onChange={(e) => setCanvasSize((prev) => ({ ...prev, width: parseInt(e.target.value) }))}
+                    className="w-full accent-purple-500"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+                  >
+                    높이: {canvasSize.height}px
+                  </label>
+                  <input
+                    type="range"
+                    min="300"
+                    max="800"
+                    value={canvasSize.height}
+                    onChange={(e) => setCanvasSize((prev) => ({ ...prev, height: parseInt(e.target.value) }))}
+                    className="w-full accent-purple-500"
+                  />
+                </div>
+
+                {/* 추가 설정들 */}
+                <div>
+                  <label
+                    className={`flex items-center text-sm font-medium ${
+                      theme === "dark" ? "text-gray-300" : "text-gray-700"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={gridEnabled}
+                      onChange={(e) => setGridEnabled(e.target.checked)}
+                      className="mr-2 accent-purple-500"
+                    />
+                    격자 표시
+                  </label>
+                </div>
+
+                <div>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`}
+                  >
+                    테마
+                  </label>
+                  <select
+                    value={theme}
+                    onChange={(e) => setTheme(e.target.value)}
+                    className={`w-full p-2 rounded-lg border ${
+                      theme === "dark"
+                        ? "bg-gray-700 border-gray-600 text-white"
+                        : "bg-white border-gray-300 text-gray-900"
+                    }`}
+                  >
+                    <option value="light">라이트</option>
+                    <option value="dark">다크</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
