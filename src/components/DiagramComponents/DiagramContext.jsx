@@ -105,8 +105,43 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
       return newDynamicBoxes;
     });
 
-    // 관련 정보도 모두 제거
-    unregisterBox(id);
+    // 관련 정보도 모두 제거 (unregisterBox의 로직을 직접 구현)
+    setBoxes((prev) => {
+      const newBoxes = new Map(prev);
+      newBoxes.delete(id);
+      return newBoxes;
+    });
+
+    // 해당 박스와 연결된 connections도 제거
+    setConnections((prev) => prev.filter((conn) => conn.fromBox?.id !== id && conn.toBox?.id !== id));
+
+    // 선택된 박스에서도 제거
+    setSelectedBoxes((prev) => {
+      const newSelected = new Set(prev);
+      newSelected.delete(id);
+      return newSelected;
+    });
+
+    // 그룹에서도 박스 제거
+    setGroups((prev) => {
+      const newGroups = new Map(prev);
+      for (const [groupId, group] of newGroups.entries()) {
+        if (group.boxIds.includes(id)) {
+          const updatedBoxIds = group.boxIds.filter((boxId) => boxId !== id);
+          if (updatedBoxIds.length === 0) {
+            // 그룹에 박스가 없으면 그룹 삭제
+            newGroups.delete(groupId);
+          } else {
+            newGroups.set(groupId, {
+              ...group,
+              boxIds: updatedBoxIds,
+              updatedAt: new Date().toISOString(),
+            });
+          }
+        }
+      }
+      return newGroups;
+    });
   }, []);
 
   // Box 위치 업데이트
@@ -119,21 +154,25 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
         if (box.x !== newPosition.x || box.y !== newPosition.y) {
           const updatedBox = { ...box, ...newPosition };
           newBoxes.set(id, updatedBox);
-
-          // 동적 박스도 업데이트
-          setDynamicBoxes((prevDynamic) => {
-            const newDynamicBoxes = new Map(prevDynamic);
-            if (newDynamicBoxes.has(id)) {
-              newDynamicBoxes.set(id, updatedBox);
-            }
-            return newDynamicBoxes;
-          });
-
           return newBoxes;
         }
       }
       // 변경사항이 없으면 기존 Map 반환 (리렌더링 방지)
       return prev;
+    });
+
+    // 동적 박스도 별도로 업데이트 (setState 중첩 방지)
+    setDynamicBoxes((prevDynamic) => {
+      const newDynamicBoxes = new Map(prevDynamic);
+      if (newDynamicBoxes.has(id)) {
+        const box = newDynamicBoxes.get(id);
+        if (box && (box.x !== newPosition.x || box.y !== newPosition.y)) {
+          const updatedBox = { ...box, ...newPosition };
+          newDynamicBoxes.set(id, updatedBox);
+          return newDynamicBoxes;
+        }
+      }
+      return prevDynamic;
     });
   }, []);
 
@@ -293,14 +332,14 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
 
   // 히스토리 관리
   const saveState = useCallback(() => {
-    const currentState = {
-      boxes: new Map(boxes),
-      connections: [...connections],
-      dynamicBoxes: new Map(dynamicBoxes),
-      timestamp: Date.now(),
-    };
-
     setDiagramHistory((prev) => {
+      const currentState = {
+        boxes: new Map(boxes),
+        connections: [...connections],
+        dynamicBoxes: new Map(dynamicBoxes),
+        timestamp: Date.now(),
+      };
+
       const newHistory = prev.slice(0, historyIndex + 1);
       newHistory.push(currentState);
       return newHistory.slice(-50); // 최대 50개 상태 유지
@@ -338,8 +377,23 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
     setDynamicBoxes(new Map());
     setSelectedBoxes(new Set());
     setSelectedConnection(null);
-    saveState();
-  }, [saveState]);
+
+    // saveState를 직접 호출하지 않고 상태를 저장
+    const currentState = {
+      boxes: new Map(),
+      connections: [],
+      dynamicBoxes: new Map(),
+      timestamp: Date.now(),
+    };
+
+    setDiagramHistory((prev) => {
+      const newHistory = prev.slice(0, historyIndex + 1);
+      newHistory.push(currentState);
+      return newHistory.slice(-50);
+    });
+
+    setHistoryIndex((prev) => Math.min(prev + 1, 49));
+  }, [historyIndex]);
 
   // 줌 기능
   const zoomIn = useCallback(() => {
@@ -491,8 +545,22 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
       return newDynamicBoxes;
     });
 
-    saveState();
-  }, [boxes, connections, saveState]);
+    // saveState를 직접 호출하지 않고 상태를 저장
+    const currentState = {
+      boxes: new Map(updatedBoxes),
+      connections: [...connections],
+      dynamicBoxes: new Map(dynamicBoxes),
+      timestamp: Date.now(),
+    };
+
+    setDiagramHistory((prev) => {
+      const newHistory = prev.slice(0, historyIndex + 1);
+      newHistory.push(currentState);
+      return newHistory.slice(-50);
+    });
+
+    setHistoryIndex((prev) => Math.min(prev + 1, 49));
+  }, [boxes, connections, dynamicBoxes, historyIndex]);
 
   // 자동 연결 관련 함수들
   const startAutoConnect = useCallback((boxId, clickPoint = null) => {
@@ -694,7 +762,7 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
       const group = groups.get(groupId);
       if (!group) return;
 
-      // 그룹 내 모든 박스 이동
+      // 그룹 내 모든 박스 이동 - updateBoxPosition 사용하여 일관성 유지
       group.boxIds.forEach((boxId) => {
         const box = boxes.get(boxId);
         if (box) {
