@@ -4,6 +4,7 @@
 
 import React from "react";
 import { getDifficultyColor } from "../examples/exampleMetadata";
+import { DiagramProvider } from "../DiagramContext";
 
 const DiagramPreview = ({ ExampleComponent, isAnimated, isCustomMode, currentTemplate, parseError }) => {
   // 컴포넌트 리마운트를 위한 stable key 생성
@@ -44,7 +45,9 @@ const DiagramPreview = ({ ExampleComponent, isAnimated, isCustomMode, currentTem
 
       {/* 다이어그램 렌더링 영역 */}
       <div className="w-full h-full relative">
-        {ExampleComponent && <ExampleComponent key={stableKey} isAnimated={isAnimated} />}
+        <DiagramProvider width={800} height={600}>
+          {ExampleComponent && <ExampleComponent key={stableKey} isAnimated={isAnimated} />}
+        </DiagramProvider>
       </div>
     </div>
   );

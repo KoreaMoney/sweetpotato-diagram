@@ -2,39 +2,39 @@ import { useState, useEffect } from "react";
 import Navigation from "../Navigation";
 import logo from "../../assets/logo.png";
 
+const FULL_TEXT = "Sweet-Diagram";
+const TYPING_SPEED = 100;
+const DELETING_SPEED = 50;
+const PAUSE_TIME = 3000;
+
 const Header = ({ activeTab, onTabChange }) => {
   const [typedText, setTypedText] = useState("");
   const [showCursor, setShowCursor] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const fullText = "Sweet-Diagram";
-  const typingSpeed = 100;
-  const deletingSpeed = 50;
-  const pauseTime = 3000;
-
   // 타이핑 애니메이션 효과
   useEffect(() => {
     let timeout;
 
-    if (!isDeleting && typedText.length < fullText.length) {
+    if (!isDeleting && typedText.length < FULL_TEXT.length) {
       timeout = setTimeout(() => {
-        setTypedText(fullText.slice(0, typedText.length + 1));
-      }, typingSpeed);
-    } else if (!isDeleting && typedText.length === fullText.length) {
+        setTypedText(FULL_TEXT.slice(0, typedText.length + 1));
+      }, TYPING_SPEED);
+    } else if (!isDeleting && typedText.length === FULL_TEXT.length) {
       timeout = setTimeout(() => {
         setIsDeleting(true);
-      }, pauseTime);
+      }, PAUSE_TIME);
     } else if (isDeleting && typedText.length > 0) {
       timeout = setTimeout(() => {
         setTypedText(typedText.slice(0, -1));
-      }, deletingSpeed);
+      }, DELETING_SPEED);
     } else if (isDeleting && typedText.length === 0) {
       setIsDeleting(false);
     }
 
     return () => clearTimeout(timeout);
-  }, [typedText, isDeleting, fullText]);
+  }, [typedText, isDeleting]);
 
   // 커서 깜빡임 효과
   useEffect(() => {

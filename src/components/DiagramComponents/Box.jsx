@@ -62,8 +62,20 @@ const Box = ({
     if (x !== previousPositionRef.current.x || y !== previousPositionRef.current.y) {
       setPosition({ x, y });
       previousPositionRef.current = { x, y };
+
+      // DiagramContext에도 위치 업데이트
+      if (id && registerBox) {
+        const boxInfo = {
+          id,
+          x,
+          y,
+          width,
+          height,
+        };
+        registerBox(id, boxInfo);
+      }
     }
-  }, [x, y]);
+  }, [x, y, id, registerBox, width, height]);
 
   // 🔧 수정: DiagramContext에서 위치 변화를 감지하고 내부 상태 업데이트 (무한 루프 방지)
   useEffect(() => {
@@ -82,37 +94,34 @@ const Box = ({
     }
   }, [boxes, id]); // 🔧 position.x, position.y 제거
 
-  // 🔧 수정: Register/update Box information in Context (마운트 시에만)
+  // 🔧 수정: Register Box in DiagramContext and GroupProvider (마운트 시에만)
   useEffect(() => {
-    if (id && registerBox) {
-      const boxInfo = {
-        id,
-        x: position.x,
-        y: position.y,
-        width,
-        height,
-        groupId: groupContext?.groupId || null,
-      };
-      registerBox(id, boxInfo);
-    }
-  }, [id, registerBox]); // 마운트 시에만 실행하여 무한 루프 방지
+    if (id) {
+      // DiagramContext에 박스 등록
+      if (registerBox) {
+        const boxInfo = {
+          id,
+          x: position.x,
+          y: position.y,
+          width,
+          height,
+        };
+        registerBox(id, boxInfo);
+      }
 
-  // 🔧 완전히 안전한 해결책: 위치 변경 관련 useEffect 모두 제거
-  // DiagramContext와의 상호작용은 마운트 시에만 발생하도록 제한하여 무한 루프 완전 차단
-
-  // 🔧 수정: Register Box in GroupProvider
-  useEffect(() => {
-    if (id && groupContext?.registerBox) {
-      const boxInfo = {
-        id,
-        x: position.x,
-        y: position.y,
-        width,
-        height,
-      };
-      groupContext.registerBox(boxInfo);
+      // GroupProvider에 박스 등록
+      if (groupContext?.registerBox) {
+        const boxInfo = {
+          id,
+          x: position.x,
+          y: position.y,
+          width,
+          height,
+        };
+        groupContext.registerBox(boxInfo);
+      }
     }
-  }, [id, groupContext?.registerBox, width, height]); // position 제외하고 필요한 의존성만 포함
+  }, [id]); // 마운트 시에만 실행하여 무한 렌더링 완전 방지
 
   // Unregister when component unmounts
   useEffect(() => {
@@ -124,7 +133,7 @@ const Box = ({
         groupContext.unregisterBox(id);
       }
     };
-  }, [id, unregisterBox, groupContext]);
+  }, [id]); // unregisterBox와 groupContext 의존성 제거
 
   const handleClick = (event) => {
     // 기본 onClick 핸들러 실행

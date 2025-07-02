@@ -44,7 +44,7 @@ const ImageBox = ({
   const currentX = position.x;
   const currentY = position.y;
 
-  // DiagramContext를 optional하게 사용
+  // DiagramContext를 optional하게 사용 (에러 로깅 제거)
   let registerBox, unregisterBox, boxes;
   try {
     const context = useDiagram();
@@ -52,8 +52,7 @@ const ImageBox = ({
     unregisterBox = context.unregisterBox;
     boxes = context.boxes;
   } catch (error) {
-    console.error("DiagramContext 사용 중 오류:", error);
-    // DiagramProvider가 없으면 context 기능을 사용하지 않음
+    // DiagramProvider가 없으면 context 기능을 사용하지 않음 (에러 로깅 제거)
     registerBox = null;
     unregisterBox = null;
     boxes = null;
@@ -67,7 +66,7 @@ const ImageBox = ({
     setPosition({ x: initialX, y: initialY });
   }, [initialX, initialY]);
 
-  // DiagramContext에서 위치 변화를 감지하고 내부 상태 업데이트
+  // DiagramContext에서 위치 변화를 감지하고 내부 상태 업데이트 (의존성 최적화)
   useEffect(() => {
     if (boxes && id) {
       const boxFromContext = boxes.get(id);
@@ -75,9 +74,9 @@ const ImageBox = ({
         setPosition({ x: boxFromContext.x, y: boxFromContext.y });
       }
     }
-  }, [boxes, id, position.x, position.y]);
+  }, [boxes, id]); // position 의존성 제거하여 무한 루프 방지
 
-  // ImageBox 정보를 DiagramContext에 등록/업데이트 (Context가 있을 때만)
+  // ImageBox 정보를 DiagramContext에 등록/업데이트 (마운트 시에만)
   useEffect(() => {
     if (id && registerBox) {
       const boxInfo = {
@@ -90,9 +89,9 @@ const ImageBox = ({
       };
       registerBox(id, boxInfo);
     }
-  }, [id, currentX, currentY, width, height, groupContext?.groupId, registerBox]);
+  }, [id]); // 마운트 시에만 실행하여 무한 렌더링 방지
 
-  // 🆕 ImageBox를 GroupProvider에 등록 (그룹 컨텍스트가 있을 때만)
+  // 🆕 ImageBox를 GroupProvider에 등록 (마운트 시에만)
   useEffect(() => {
     if (id && groupContext?.registerBox) {
       const boxInfo = {
@@ -104,7 +103,7 @@ const ImageBox = ({
       };
       groupContext.registerBox(boxInfo);
     }
-  }, [id, currentX, currentY, width, height, groupContext]);
+  }, [id]); // 마운트 시에만 실행하여 무한 렌더링 방지
 
   // 컴포넌트 언마운트 시 등록 해제
   useEffect(() => {
@@ -116,7 +115,7 @@ const ImageBox = ({
         groupContext.unregisterBox(id);
       }
     };
-  }, [id, unregisterBox, groupContext]);
+  }, [id]); // 마운트 시에만 실행하여 무한 렌더링 방지
 
   // 🆕 드래그 이벤트 핸들러들 - 그룹 드래그와 분리
   const handleMouseDown = (event) => {
@@ -157,7 +156,7 @@ const ImageBox = ({
     }
   };
 
-  // 전역 마우스 이벤트 리스너 등록
+  // 전역 마우스 이벤트 리스너 등록 (의존성 최적화)
   useEffect(() => {
     if (isDragging) {
       document.addEventListener("mousemove", handleMouseMove);
@@ -167,7 +166,7 @@ const ImageBox = ({
         document.removeEventListener("mouseup", handleMouseUp);
       };
     }
-  }, [isDragging, dragStart, currentX, currentY, onDrag, onDragEnd]);
+  }, [isDragging]); // 불안정한 의존성들 제거하여 무한 렌더링 방지
 
   const handleClick = (event) => {
     if (onClick && !isDragging) {
