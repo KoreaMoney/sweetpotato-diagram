@@ -5,6 +5,7 @@ import AutoConnectSection from "./documentation/AutoConnectSection";
 import OverviewSection from "./documentation/OverviewSection";
 import BoxSection from "./documentation/BoxSection";
 import TriangleSection from "./documentation/TriangleSection";
+import DiamondSection from "./documentation/DiamondSection";
 import ValveSection from "./documentation/ValveSection";
 import ImageBoxSection from "./documentation/ImageBoxSection";
 import ArrowSection from "./documentation/ArrowSection";
@@ -21,6 +22,7 @@ const Documentation = () => {
     { id: "connector", title: "Connectors", icon: "🔗", color: "from-green-500 to-emerald-500" },
     { id: "autoconnect", title: "Auto Connect", icon: "⚡", color: "from-purple-600 to-blue-600" },
     { id: "triangle", title: "Triangle", icon: "🔺", color: "from-red-500 to-orange-500" },
+    { id: "diamond", title: "Diamond", icon: "💎", color: "from-cyan-500 to-blue-500" },
     { id: "valve", title: "Valve", icon: "🎛️", color: "from-indigo-500 to-purple-500" },
     { id: "imagebox", title: "Image Box", icon: "🖼️", color: "from-yellow-500 to-orange-500" },
     { id: "arrow", title: "Arrow", icon: "↗️", color: "from-teal-500 to-cyan-500" },
@@ -47,6 +49,10 @@ const Documentation = () => {
 
   const renderTriangle = () => {
     return <TriangleSection />;
+  };
+
+  const renderDiamond = () => {
+    return <DiamondSection />;
   };
 
   const renderValve = () => {
@@ -85,6 +91,8 @@ const Documentation = () => {
         return renderAutoConnect();
       case "triangle":
         return renderTriangle();
+      case "diamond":
+        return renderDiamond();
       case "valve":
         return renderValve();
       case "imagebox":

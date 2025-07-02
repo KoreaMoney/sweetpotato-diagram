@@ -43,6 +43,10 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
     maxConnections: 20,
     smartSnap: true,
   });
+
+  // 그룹 관리 상태
+  const [groups, setGroups] = useState(new Map());
+
   const containerRef = useRef(null);
 
   // Box 등록 - 위치 정보 포함
@@ -147,6 +151,27 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
       const newSelected = new Set(prev);
       newSelected.delete(id);
       return newSelected;
+    });
+
+    // 그룹에서도 박스 제거
+    setGroups((prev) => {
+      const newGroups = new Map(prev);
+      for (const [groupId, group] of newGroups.entries()) {
+        if (group.boxIds.includes(id)) {
+          const updatedBoxIds = group.boxIds.filter((boxId) => boxId !== id);
+          if (updatedBoxIds.length === 0) {
+            // 그룹에 박스가 없으면 그룹 삭제
+            newGroups.delete(groupId);
+          } else {
+            newGroups.set(groupId, {
+              ...group,
+              boxIds: updatedBoxIds,
+              updatedAt: new Date().toISOString(),
+            });
+          }
+        }
+      }
+      return newGroups;
     });
   }, []);
 
@@ -535,6 +560,154 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
     });
   }, []);
 
+  // 그룹 관리 함수들
+  const registerGroup = useCallback((groupId, groupInfo) => {
+    setGroups((prev) => {
+      const newGroups = new Map(prev);
+      const existingGroup = newGroups.get(groupId);
+
+      if (existingGroup) {
+        // 기존 그룹에 박스 ID 추가
+        const updatedBoxIds = new Set([...existingGroup.boxIds, ...groupInfo.boxIds]);
+        newGroups.set(groupId, {
+          ...existingGroup,
+          ...groupInfo,
+          boxIds: Array.from(updatedBoxIds),
+        });
+      } else {
+        // 새로운 그룹 생성
+        newGroups.set(groupId, {
+          id: groupId,
+          label: groupInfo.label || groupId,
+          style: groupInfo.style || {},
+          boxIds: groupInfo.boxIds || [],
+          createdAt: new Date().toISOString(),
+          ...groupInfo,
+        });
+      }
+
+      return newGroups;
+    });
+  }, []);
+
+  const unregisterGroup = useCallback((groupId) => {
+    setGroups((prev) => {
+      const newGroups = new Map(prev);
+      newGroups.delete(groupId);
+      return newGroups;
+    });
+  }, []);
+
+  const getGroup = useCallback(
+    (groupId) => {
+      return groups.get(groupId);
+    },
+    [groups]
+  );
+
+  const getAllGroups = useCallback(() => {
+    return Array.from(groups.values());
+  }, [groups]);
+
+  const getGroupBoxes = useCallback(
+    (groupId) => {
+      const group = groups.get(groupId);
+      if (!group) return [];
+
+      return group.boxIds.map((boxId) => boxes.get(boxId)).filter(Boolean);
+    },
+    [groups, boxes]
+  );
+
+  const updateGroupInfo = useCallback((groupId, updates) => {
+    setGroups((prev) => {
+      const newGroups = new Map(prev);
+      const existingGroup = newGroups.get(groupId);
+
+      if (existingGroup) {
+        newGroups.set(groupId, {
+          ...existingGroup,
+          ...updates,
+          updatedAt: new Date().toISOString(),
+        });
+      }
+
+      return newGroups;
+    });
+  }, []);
+
+  const addBoxToGroup = useCallback((groupId, boxId) => {
+    setGroups((prev) => {
+      const newGroups = new Map(prev);
+      const group = newGroups.get(groupId);
+
+      if (group && !group.boxIds.includes(boxId)) {
+        newGroups.set(groupId, {
+          ...group,
+          boxIds: [...group.boxIds, boxId],
+          updatedAt: new Date().toISOString(),
+        });
+      }
+
+      return newGroups;
+    });
+  }, []);
+
+  const removeBoxFromGroup = useCallback((groupId, boxId) => {
+    setGroups((prev) => {
+      const newGroups = new Map(prev);
+      const group = newGroups.get(groupId);
+
+      if (group) {
+        const updatedBoxIds = group.boxIds.filter((id) => id !== boxId);
+
+        if (updatedBoxIds.length === 0) {
+          // 그룹에 박스가 없으면 그룹 삭제
+          newGroups.delete(groupId);
+        } else {
+          newGroups.set(groupId, {
+            ...group,
+            boxIds: updatedBoxIds,
+            updatedAt: new Date().toISOString(),
+          });
+        }
+      }
+
+      return newGroups;
+    });
+  }, []);
+
+  const getBoxGroup = useCallback(
+    (boxId) => {
+      for (const group of groups.values()) {
+        if (group.boxIds.includes(boxId)) {
+          return group;
+        }
+      }
+      return null;
+    },
+    [groups]
+  );
+
+  const moveGroup = useCallback(
+    (groupId, deltaX, deltaY) => {
+      const group = groups.get(groupId);
+      if (!group) return;
+
+      // 그룹 내 모든 박스 이동
+      group.boxIds.forEach((boxId) => {
+        const box = boxes.get(boxId);
+        if (box) {
+          updateBoxPosition(boxId, {
+            x: box.x + deltaX,
+            y: box.y + deltaY,
+          });
+        }
+      });
+    },
+    [groups, boxes, updateBoxPosition]
+  );
+
   const value = {
     // 박스 관리
     boxes,
@@ -600,6 +773,19 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
     autoConnectSettings,
     updateAutoConnectSettings,
     resetAutoConnectSettings,
+
+    // 그룹 관리
+    groups,
+    registerGroup,
+    unregisterGroup,
+    getGroup,
+    getAllGroups,
+    getGroupBoxes,
+    updateGroupInfo,
+    addBoxToGroup,
+    removeBoxFromGroup,
+    getBoxGroup,
+    moveGroup,
 
     // 컨테이너 관련
     containerRef,

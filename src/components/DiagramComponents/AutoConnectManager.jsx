@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDiagram } from "./DiagramContext";
 import AutoConnector from "./AutoConnector";
-import AutoConnectSettings from "./AutoConnectSettings";
 import AutoConnectCompactSettings from "./AutoConnectCompactSettings";
 
 /**
@@ -257,12 +256,7 @@ const AutoConnectManager = ({
       )}
 
       {/* 설정 패널 - 컴팩트 버전으로 교체 */}
-      <AutoConnectCompactSettings
-        isOpen={showSettings}
-        onClose={() => setShowSettings(false)}
-        position="top-left"
-        theme="modern"
-      />
+      <AutoConnectCompactSettings isOpen={showSettings} onClose={() => setShowSettings(false)} {...settingsProps} />
     </div>
   );
 };
