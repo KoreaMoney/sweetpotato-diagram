@@ -1,7 +1,7 @@
 // CSS 스타일을 import하여 라이브러리에 포함
-import "./index.css";
+import "./index-minimal.css";
 
-// 메인 다이어그램 컴포넌트들을 export
+// 핵심 다이어그램 컴포넌트들만 export (라이브러리 최적화)
 export {
   Connector,
   Box,
@@ -10,19 +10,7 @@ export {
   Triangle,
   Valve,
   ImageBox,
-  ConnectorExamples,
-  ArrowDemo,
   DraggableBox,
-  CodeEditor,
   DiagramProvider,
   useDiagram,
 } from "./components/DiagramComponents";
-
-// Documentation 컴포넌트도 export
-export { default as Documentation } from "./components/Documentation";
-
-// MouseTracker 컴포넌트 export
-export { default as MouseTracker } from "./components/MouseTracker";
-
-// 메인 App 컴포넌트를 SweetDiagram으로 export
-export { default as SweetDiagram } from "./App";

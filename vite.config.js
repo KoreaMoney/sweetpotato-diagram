@@ -89,12 +89,26 @@ export default defineConfig(({ mode }) => {
         fileName: (format) => `sweet-diagram.${format}.js`,
       },
       rollupOptions: {
-        external: ["react", "react-dom", "react/jsx-runtime"],
+        external: [
+          "react",
+          "react-dom",
+          "react/jsx-runtime",
+          "three",
+          "@react-three/fiber",
+          "@react-three/drei",
+          "lucide-react",
+          "zustand",
+        ],
         output: {
           globals: {
             react: "React",
             "react-dom": "ReactDOM",
             "react/jsx-runtime": "jsxRuntime",
+            three: "THREE",
+            "@react-three/fiber": "ReactThreeFiber",
+            "@react-three/drei": "ReactThreeDrei",
+            "lucide-react": "LucideReact",
+            "zustand": "Zustand",
           },
           assetFileNames: (assetInfo) => {
             if (assetInfo.name === "style.css") return "sweet-diagram.css";
@@ -112,7 +126,22 @@ export default defineConfig(({ mode }) => {
         compress: {
           drop_console: true,
           drop_debugger: true,
-          pure_funcs: ["console.log"],
+          pure_funcs: ["console.log", "console.warn", "console.error"],
+          dead_code: true,
+          unused: true,
+          reduce_vars: true,
+          collapse_vars: true,
+          booleans: true,
+          loops: true,
+          if_return: true,
+          join_vars: true,
+          pure_getters: true,
+        },
+        mangle: {
+          safari10: true,
+        },
+        format: {
+          comments: false,
         },
       },
     };
