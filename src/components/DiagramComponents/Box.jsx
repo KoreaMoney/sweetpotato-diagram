@@ -19,6 +19,8 @@ const Box = ({
   shadowClassName = "", // 그림자 추가 스타일
   opacity = 1,
   zIndex = 10, // z-index 제어
+  priority = null, // 우선순위 (높을수록 위에 표시, null이면 zIndex 사용)
+  maintainPriority = false, // true면 클릭해도 우선순위 변경 안됨
   onClick = null,
   enableAutoConnect = true, // 자동 연결 기능 활성화 여부
   // 3D 효과 관련 props
@@ -33,9 +35,18 @@ const Box = ({
   // 🔧 무한 루프 방지를 위한 ref 추가
   const previousPositionRef = useRef({ x, y });
   const isUpdatingFromContextRef = useRef(false);
+  const initialZIndexSetRef = useRef(false);
 
   // Use DiagramContext optionally
-  let registerBox, unregisterBox, startAutoConnect, isAutoConnectMode, autoConnectStartBox, boxes;
+  let registerBox,
+    unregisterBox,
+    startAutoConnect,
+    isAutoConnectMode,
+    autoConnectStartBox,
+    boxes,
+    getBoxZIndex,
+    bringBoxToFront,
+    setBoxZIndex;
   try {
     const context = useDiagram();
     registerBox = context.registerBox;
@@ -44,6 +55,9 @@ const Box = ({
     isAutoConnectMode = context.isAutoConnectMode;
     autoConnectStartBox = context.autoConnectStartBox;
     boxes = context.boxes;
+    getBoxZIndex = context.getBoxZIndex;
+    bringBoxToFront = context.bringBoxToFront;
+    setBoxZIndex = context.setBoxZIndex;
   } catch {
     // Don't use context functionality if DiagramProvider is not available
     registerBox = null;
@@ -52,10 +66,30 @@ const Box = ({
     isAutoConnectMode = false;
     autoConnectStartBox = null;
     boxes = null;
+    getBoxZIndex = null;
+    bringBoxToFront = null;
+    setBoxZIndex = null;
   }
 
   // Use GroupProvider context optionally
   const groupContext = useGroup();
+
+  // 🆕 초기 zIndex/priority 설정
+  useEffect(() => {
+    if (id && setBoxZIndex && !initialZIndexSetRef.current) {
+      const initialZIndexValue = priority !== null ? priority : zIndex;
+      setBoxZIndex(id, initialZIndexValue);
+      initialZIndexSetRef.current = true;
+    }
+  }, [id, priority, zIndex, setBoxZIndex]);
+
+  // 🆕 priority나 zIndex props가 변경되면 DiagramContext에 반영
+  useEffect(() => {
+    if (id && setBoxZIndex && initialZIndexSetRef.current) {
+      const newZIndexValue = priority !== null ? priority : zIndex;
+      setBoxZIndex(id, newZIndexValue);
+    }
+  }, [priority, zIndex, id, setBoxZIndex]);
 
   // Props로 받은 초기 위치가 변경되면 내부 상태도 업데이트
   useEffect(() => {
@@ -136,9 +170,24 @@ const Box = ({
   }, [id]); // unregisterBox와 groupContext 의존성 제거
 
   const handleClick = (event) => {
+    // 🆕 maintainPriority가 true가 아닐 때만 박스를 앞으로 가져오기
+    if (id && bringBoxToFront && !maintainPriority) {
+      bringBoxToFront(id);
+    }
+
     // 기본 onClick 핸들러 실행
     if (onClick) {
-      onClick(event, { id, x: position.x, y: position.y, width, height, groupId: groupContext?.groupId });
+      onClick(event, {
+        id,
+        x: position.x,
+        y: position.y,
+        width,
+        height,
+        groupId: groupContext?.groupId,
+        currentZIndex: getBoxZIndex ? getBoxZIndex(id) : priority !== null ? priority : zIndex,
+        priority,
+        maintainPriority,
+      });
     }
 
     // 자동 연결 기능 처리 (Shift + 클릭으로 활성화)
@@ -257,6 +306,9 @@ const Box = ({
   const { additionalClasses, additionalStyles } = getBoxStyles();
   const { threeDElements, mainBoxOffset } = get3DStyles();
 
+  // 🆕 현재 z-index 값 가져오기 (우선순위: DiagramContext > priority prop > zIndex prop)
+  const currentZIndex = getBoxZIndex ? getBoxZIndex(id) : priority !== null ? priority : zIndex;
+
   return (
     <div
       className={`absolute ${className}${additionalClasses} ${containerClassName} ${shadowClassName}`}
@@ -265,7 +317,7 @@ const Box = ({
         top: `${position.y}px`, // 동적 위치 사용
         width: `${width}px`,
         height: `${height}px`,
-        zIndex: zIndex,
+        zIndex: currentZIndex,
         transform: "translate3d(0,0,0)", // Utilize GPU acceleration
         ...additionalStyles,
       }}

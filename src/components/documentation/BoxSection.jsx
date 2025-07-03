@@ -605,7 +605,7 @@ const BoxSection = () => {
                   y={boxPositions["vue-demo"].y}
                   width={90}
                   height={50}
-                  className="bg-green-500 text-white border-green-600 border-2 rounded-lg text-sm font-semibold"
+                  className="bg-green-500 text-white border-violet-600 border-2 rounded-lg text-sm font-semibold"
                   onClick={() => addToast("Vue.js 클릭! 💚", "success")}
                 />
 
