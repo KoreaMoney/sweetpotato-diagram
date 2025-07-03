@@ -1,11 +1,21 @@
-# 📚 Sweet Diagram API Documentation
+# 📚 Sweet Diagram v0.4.2 API Documentation
+
+[![npm version](https://badge.fury.io/js/sweet-diagram.svg)](https://badge.fury.io/js/sweet-diagram)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![React](https://img.shields.io/badge/React-18%2B-blue.svg)](https://reactjs.org/)
+
+🌐 **Demo**: [https://sweetpotato-diagram.vercel.app](https://sweetpotato-diagram.vercel.app)
 
 ## 🚀 Getting Started
 
 ### Installation
 
 ```bash
-npm install sweet-diagram
+npm install sweet-diagram@latest
+# or
+yarn add sweet-diagram@latest
+# or
+pnpm add sweet-diagram@latest
 ```
 
 ### TailwindCSS v4 Setup (Required)

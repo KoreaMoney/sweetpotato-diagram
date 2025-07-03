@@ -1,30 +1,44 @@
-# Sweet Diagram - NPM 패키지 사용 가이드
+# Sweet Diagram v0.4.2 - NPM 패키지 사용 가이드
 
-## ✨ 새로운 기능들
+[![npm version](https://badge.fury.io/js/sweet-diagram.svg)](https://badge.fury.io/js/sweet-diagram)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-### 🔗 AutoConnect (자동 연결)
+## ✨ 새로운 기능들 (v0.4.2)
+
+### 🔗 Advanced AutoConnect (고급 자동 연결)
 
 - **Shift + 박스 클릭**으로 자동 연결 모드 시작
 - 다른 지점 클릭으로 자동 연결선 생성
 - 스마트한 연결점 계산 및 다양한 연결 스타일
 - 실시간 설정 변경 UI
+- 향상된 연결 알고리즘과 충돌 방지 기능
 
 ### 📊 Enhanced Box Component
 
-- **세로 텍스트** 지원 (LR, RL 방향)
-- 개선된 텍스트 방향 제어
+- **세로 텍스트** 완전 지원 (LR, RL 방향)
+- 개선된 텍스트 방향 제어 및 렌더링
+- 성능 최적화된 렌더링
 
-### 🎬 Animation Features
+### 🎬 Advanced Animation Features
 
-- 연결선 애니메이션 효과
-- 부드러운 전환 애니메이션
+- 연결선 애니메이션 효과 (부드럽고 자연스러운 흐름)
+- 부드러운 전환 애니메이션 및 상태 변화
+- 성능 최적화된 애니메이션 엔진
+
+### 🛠 Component Library Expansion
+
+- 포괄적인 다이어그램 컴포넌트 라이브러리
+- TypeScript 완전 지원
+- 모던한 UI/UX 디자인
 
 ## 설치
 
 ```bash
-npm install sweet-diagram
+npm install sweet-diagram@latest
 # 또는
-yarn add sweet-diagram
+yarn add sweet-diagram@latest
+# 또는
+pnpm add sweet-diagram@latest
 ```
 
 ### TailwindCSS v4 설치 (필수)
@@ -421,59 +435,5 @@ import { Box, Connector, DiagramProvider } from "sweet-diagram";
 
 #### 📊 Enhanced Box Component
 
-- **세로 텍스트** 지원 (`textDirection="vertical"`)
-- **방향 제어** (`verticalDirection="lr|rl"`)
-- 더 유연한 텍스트 배치
-
-#### 🎬 Animation Features
-
-- **연결선 애니메이션** (`animated={true}`)
-- 부드러운 전환 효과
-- 커스터마이징 가능한 애니메이션 설정
-
-### 🛠️ 사용법
-
-```javascript
-import { DiagramProvider, AutoConnectManager, Box, Connector } from "sweet-diagram";
-
-function MyDiagram() {
-  return (
-    <DiagramProvider>
-      <AutoConnectManager showSettingsButton={true}>
-        {/* 세로 텍스트 박스 */}
-        <Box
-          id="vertical"
-          x={100}
-          y={100}
-          width={60}
-          height={120}
-          text="세로텍스트"
-          textDirection="vertical"
-          verticalDirection="lr"
-        />
-
-        {/* 애니메이션 연결선 */}
-        <Connector
-          fromBox={{ id: "box1", position: "right" }}
-          toBox={{ id: "box2", position: "left" }}
-          animated={true}
-        />
-      </AutoConnectManager>
-    </DiagramProvider>
-  );
-}
-```
-
-### 🎯 마이그레이션 가이드
-
-기존 v0.4.x에서 v0.9.0으로 업그레이드 시:
-
-1. **AutoConnect 사용**을 위해 `AutoConnectManager`로 감싸기
-2. **애니메이션 효과** 원할 시 `animated={true}` 추가
-3. **세로 텍스트** 필요시 관련 props 추가
-
-**기존 코드는 호환성을 유지**하므로 점진적 마이그레이션 가능합니다.
-
-## 예제 프로젝트
-
-더 많은 예제는 [공식 문서](https://sweetpotato-diagram.vercel.app)에서 확인할 수 있습니다.
+- **세로 텍스트** 필요시 관련 props 추가
+- **방향 제어** (`
