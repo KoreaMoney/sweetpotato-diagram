@@ -1,0 +1,229 @@
+/* 라이브러리 전용 최소화된 CSS */
+
+/* CSS 변수 */
+:root {
+  --primary-blue: #0066ff;
+  --primary-blue-dark: #0052cc;
+  --primary-blue-light: #3388ff;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-dark: #000000;
+  --border-color: #e2e8f0;
+  --text-primary: #1a202c;
+  --text-secondary: #718096;
+}
+
+/* 기본 리셋 */
+* {
+  box-sizing: border-box;
+}
+
+/* 다이어그램 컴포넌트 필수 스타일 */
+.sweet-diagram-provider,
+.diagram-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.diagram-box,
+.diagram-component {
+  position: absolute;
+  user-select: none;
+}
+
+.connection-point {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  cursor: crosshair;
+}
+
+/* 필수 유틸리티 클래스들 */
+.absolute {
+  position: absolute;
+}
+.relative {
+  position: relative;
+}
+.w-full {
+  width: 100%;
+}
+.h-full {
+  height: 100%;
+}
+.flex {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.items-center {
+  align-items: center;
+}
+.justify-center {
+  justify-content: center;
+}
+.text-center {
+  text-align: center;
+}
+.opacity-0 {
+  opacity: 0;
+}
+.opacity-50 {
+  opacity: 0.5;
+}
+.opacity-100 {
+  opacity: 1;
+}
+.transition-all {
+  transition: all 0.2s;
+}
+.transition-opacity {
+  transition: opacity 0.2s;
+}
+.transition-colors {
+  transition: color 0.2s, background-color 0.2s;
+}
+.duration-200 {
+  transition-duration: 0.2s;
+}
+.duration-300 {
+  transition-duration: 0.3s;
+}
+.hover\:opacity-100:hover {
+  opacity: 1;
+}
+.hover\:scale-150:hover {
+  transform: scale(1.5);
+}
+.hover\:scale-125:hover {
+  transform: scale(1.25);
+}
+.rounded-full {
+  border-radius: 50%;
+}
+.transform {
+  transform: translateZ(0);
+}
+.-translate-x-1\/2 {
+  transform: translateX(-50%);
+}
+.-translate-y-1\/2 {
+  transform: translateY(-50%);
+}
+.bg-blue-500 {
+  background-color: #3b82f6;
+}
+.bg-blue-600 {
+  background-color: #2563eb;
+}
+.bg-gray-400 {
+  background-color: #9ca3af;
+}
+.bg-gray-500 {
+  background-color: #6b7280;
+}
+.bg-gray-600 {
+  background-color: #4b5563;
+}
+.bg-emerald-500 {
+  background-color: #10b981;
+}
+.bg-emerald-600 {
+  background-color: #059669;
+}
+.bg-red-500 {
+  background-color: #ef4444;
+}
+.bg-amber-500 {
+  background-color: #f59e0b;
+}
+.bg-amber-600 {
+  background-color: #d97706;
+}
+.bg-cyan-500 {
+  background-color: #06b6d4;
+}
+.bg-cyan-600 {
+  background-color: #0891b2;
+}
+.bg-purple-500 {
+  background-color: #8b5cf6;
+}
+.bg-purple-600 {
+  background-color: #7c3aed;
+}
+.text-white {
+  color: #ffffff;
+}
+.stroke-current {
+  stroke: currentColor;
+}
+.stroke-2 {
+  stroke-width: 2;
+}
+.fill-current {
+  fill: currentColor;
+}
+.fill-none {
+  fill: none;
+}
+.cursor-crosshair {
+  cursor: crosshair;
+}
+.pointer-events-none {
+  pointer-events: none;
+}
+
+/* 커넥터 애니메이션 */
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 24;
+  }
+}
+
+.connector-animated {
+  stroke-dasharray: 6 6;
+  animation: dash 2s linear infinite;
+}
+
+/* 연결점 스타일 */
+.connection-point {
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.connection-point:hover {
+  transform: scale(1.5);
+  z-index: 20;
+}
+
+/* 드래그 상태 */
+.dragging {
+  z-index: 1000;
+  pointer-events: none;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .connection-point {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

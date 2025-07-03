@@ -1,6 +1,6 @@
 {
   "name": "sweet-diagram",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "type": "module",
   "author": "KimDowon",
   "license": "MIT",
@@ -35,9 +35,7 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE",
-    "PACKAGE_USAGE.md",
-    "API_DOCUMENTATION.md"
+    "LICENSE"
   ],
   "exports": {
     ".": {
@@ -79,15 +77,14 @@
   },
   "peerDependencies": {
     "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
-  },
-  "dependencies": {
+    "react-dom": ">=16.8.0",
     "@react-three/drei": "^10.3.0",
     "@react-three/fiber": "^9.1.2",
-    "lucide-react": "^0.511.0",
     "three": "^0.176.0",
+    "lucide-react": "^0.511.0",
     "zustand": "^5.0.5"
   },
+  "dependencies": {},
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@playwright/test": "^1.52.0",
