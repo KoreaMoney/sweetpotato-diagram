@@ -1,4 +1,5 @@
-import { Box, Connector, Valve } from "../DiagramComponents";
+import { Box, Connector, Valve, ImageBox, Triangle } from "../DiagramComponents";
+import { DiagramProvider } from "../DiagramComponents";
 import { useToast } from "../ToastSystem";
 
 const OverviewSection = ({ setActiveSection }) => {
@@ -143,13 +144,8 @@ pnpm add sweet-diagram`}
           <h3 className="text-white text-lg font-semibold mb-3">2. Basic Usage Example</h3>
           <pre className="text-sm overflow-x-auto">
             {`function MyDiagram() {
-  const boxes = [
-    { id: "tank", x: 50, y: 50, width: 80, height: 40 },
-    { id: "pump", x: 200, y: 50, width: 80, height: 40 }
-  ];
-
   return (
-    <div className="relative w-full h-64 bg-gray-50">
+    <DiagramProvider width={400} height={120}>
       <Box
         id="tank"
         x={50}
@@ -175,7 +171,6 @@ pnpm add sweet-diagram`}
       <Connector
         fromBox={{ id: "tank", position: "right" }}
         toBox={{ id: "pump", position: "left" }}
-        boxes={boxes}
         connectionType="straight"
         className="text-blue-600"
         showArrow={true}
@@ -189,7 +184,7 @@ pnpm add sweet-diagram`}
         isOpen={true}
         className="text-gray-600"
       />
-    </div>
+    </DiagramProvider>
   );
 }`}
           </pre>
@@ -198,39 +193,37 @@ pnpm add sweet-diagram`}
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3">🎯 Preview Result</h3>
           <div className="relative w-full h-32 bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <Box
-              id="quick-tank"
-              x={50}
-              y={50}
-              width={80}
-              height={40}
-              text="H2 Tank"
-              className="bg-blue-500 text-white border-2 border-blue-700 rounded text-xs"
-            />
+            <DiagramProvider width={400} height={120}>
+              <Box
+                id="quick-tank"
+                x={50}
+                y={50}
+                width={80}
+                height={40}
+                text="H2 Tank"
+                className="bg-blue-500 text-white border-2 border-blue-700 rounded text-xs"
+              />
 
-            <Box
-              id="quick-pump"
-              x={200}
-              y={50}
-              width={80}
-              height={40}
-              text="Pump"
-              className="bg-emerald-500 text-white border-2 border-emerald-700 rounded text-xs"
-            />
+              <Box
+                id="quick-pump"
+                x={200}
+                y={50}
+                width={80}
+                height={40}
+                text="Pump"
+                className="bg-emerald-500 text-white border-2 border-emerald-700 rounded text-xs"
+              />
 
-            <Connector
-              fromBox={{ id: "quick-tank", position: "right" }}
-              toBox={{ id: "quick-pump", position: "left" }}
-              boxes={[
-                { id: "quick-tank", x: 50, y: 50, width: 80, height: 40 },
-                { id: "quick-pump", x: 200, y: 50, width: 80, height: 40 },
-              ]}
-              connectionType="straight"
-              className="text-blue-600"
-              showArrow={true}
-            />
+              <Connector
+                fromBox={{ id: "quick-tank", position: "right" }}
+                toBox={{ id: "quick-pump", position: "left" }}
+                connectionType="straight"
+                className="text-blue-600"
+                showArrow={true}
+              />
 
-            <Valve x={165} y={62} size={15} type="gate" isOpen={true} className="text-gray-600" />
+              <Valve x={165} y={62} size={15} type="gate" isOpen={true} className="text-gray-600" />
+            </DiagramProvider>
           </div>
         </div>
 

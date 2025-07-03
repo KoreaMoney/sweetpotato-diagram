@@ -701,4 +701,43 @@ export const gridExamples = [
     },
     description: 'arrowDirection="both"',
   },
+  {
+    id: "text-label",
+    title: "10. 텍스트 라벨",
+    boxes: [
+      {
+        id: "power",
+        x: 10,
+        y: 40,
+        width: 70,
+        height: 25,
+        text: "Power",
+        className:
+          "bg-red-600 text-white border-red-800 border-2 rounded-lg text-xs hover:shadow-lg transition-all duration-300",
+      },
+      {
+        id: "device",
+        x: 160,
+        y: 40,
+        width: 70,
+        height: 25,
+        text: "Device",
+        className:
+          "bg-blue-600 text-white border-blue-800 border-2 rounded-lg text-xs hover:shadow-lg transition-all duration-300",
+      },
+    ],
+    connector: {
+      fromBox: { id: "power", position: "right" },
+      toBox: { id: "device", position: "left" },
+      connectionType: "straight",
+      text: "5V",
+      textClassName: "text-red-600 font-semibold text-xs",
+      showTextBackground: true,
+      textBackgroundClassName: "bg-white/90 rounded px-1 py-0.5 shadow-sm border border-red-200",
+      className: "text-red-500 hover:text-red-600 transition-colors duration-200",
+      showArrow: true,
+      strokeWidth: 2,
+    },
+    description: 'text="5V" (연결선에 텍스트 라벨 표시)',
+  },
 ];

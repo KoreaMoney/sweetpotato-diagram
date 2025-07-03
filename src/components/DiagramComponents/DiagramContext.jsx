@@ -43,6 +43,10 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
     maxConnections: 20,
     smartSnap: true,
   });
+
+  // 그룹 관리 상태
+  const [groups, setGroups] = useState(new Map());
+
   const containerRef = useRef(null);
 
   // Box 등록 - 위치 정보 포함
@@ -101,8 +105,43 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
       return newDynamicBoxes;
     });
 
-    // 관련 정보도 모두 제거
-    unregisterBox(id);
+    // 관련 정보도 모두 제거 (unregisterBox의 로직을 직접 구현)
+    setBoxes((prev) => {
+      const newBoxes = new Map(prev);
+      newBoxes.delete(id);
+      return newBoxes;
+    });
+
+    // 해당 박스와 연결된 connections도 제거
+    setConnections((prev) => prev.filter((conn) => conn.fromBox?.id !== id && conn.toBox?.id !== id));
+
+    // 선택된 박스에서도 제거
+    setSelectedBoxes((prev) => {
+      const newSelected = new Set(prev);
+      newSelected.delete(id);
+      return newSelected;
+    });
+
+    // 그룹에서도 박스 제거
+    setGroups((prev) => {
+      const newGroups = new Map(prev);
+      for (const [groupId, group] of newGroups.entries()) {
+        if (group.boxIds.includes(id)) {
+          const updatedBoxIds = group.boxIds.filter((boxId) => boxId !== id);
+          if (updatedBoxIds.length === 0) {
+            // 그룹에 박스가 없으면 그룹 삭제
+            newGroups.delete(groupId);
+          } else {
+            newGroups.set(groupId, {
+              ...group,
+              boxIds: updatedBoxIds,
+              updatedAt: new Date().toISOString(),
+            });
+          }
+        }
+      }
+      return newGroups;
+    });
   }, []);
 
   // Box 위치 업데이트
@@ -115,21 +154,25 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
         if (box.x !== newPosition.x || box.y !== newPosition.y) {
           const updatedBox = { ...box, ...newPosition };
           newBoxes.set(id, updatedBox);
-
-          // 동적 박스도 업데이트
-          setDynamicBoxes((prevDynamic) => {
-            const newDynamicBoxes = new Map(prevDynamic);
-            if (newDynamicBoxes.has(id)) {
-              newDynamicBoxes.set(id, updatedBox);
-            }
-            return newDynamicBoxes;
-          });
-
           return newBoxes;
         }
       }
       // 변경사항이 없으면 기존 Map 반환 (리렌더링 방지)
       return prev;
+    });
+
+    // 동적 박스도 별도로 업데이트 (setState 중첩 방지)
+    setDynamicBoxes((prevDynamic) => {
+      const newDynamicBoxes = new Map(prevDynamic);
+      if (newDynamicBoxes.has(id)) {
+        const box = newDynamicBoxes.get(id);
+        if (box && (box.x !== newPosition.x || box.y !== newPosition.y)) {
+          const updatedBox = { ...box, ...newPosition };
+          newDynamicBoxes.set(id, updatedBox);
+          return newDynamicBoxes;
+        }
+      }
+      return prevDynamic;
     });
   }, []);
 
@@ -147,6 +190,27 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
       const newSelected = new Set(prev);
       newSelected.delete(id);
       return newSelected;
+    });
+
+    // 그룹에서도 박스 제거
+    setGroups((prev) => {
+      const newGroups = new Map(prev);
+      for (const [groupId, group] of newGroups.entries()) {
+        if (group.boxIds.includes(id)) {
+          const updatedBoxIds = group.boxIds.filter((boxId) => boxId !== id);
+          if (updatedBoxIds.length === 0) {
+            // 그룹에 박스가 없으면 그룹 삭제
+            newGroups.delete(groupId);
+          } else {
+            newGroups.set(groupId, {
+              ...group,
+              boxIds: updatedBoxIds,
+              updatedAt: new Date().toISOString(),
+            });
+          }
+        }
+      }
+      return newGroups;
     });
   }, []);
 
@@ -268,14 +332,14 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
 
   // 히스토리 관리
   const saveState = useCallback(() => {
-    const currentState = {
-      boxes: new Map(boxes),
-      connections: [...connections],
-      dynamicBoxes: new Map(dynamicBoxes),
-      timestamp: Date.now(),
-    };
-
     setDiagramHistory((prev) => {
+      const currentState = {
+        boxes: new Map(boxes),
+        connections: [...connections],
+        dynamicBoxes: new Map(dynamicBoxes),
+        timestamp: Date.now(),
+      };
+
       const newHistory = prev.slice(0, historyIndex + 1);
       newHistory.push(currentState);
       return newHistory.slice(-50); // 최대 50개 상태 유지
@@ -313,8 +377,23 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
     setDynamicBoxes(new Map());
     setSelectedBoxes(new Set());
     setSelectedConnection(null);
-    saveState();
-  }, [saveState]);
+
+    // saveState를 직접 호출하지 않고 상태를 저장
+    const currentState = {
+      boxes: new Map(),
+      connections: [],
+      dynamicBoxes: new Map(),
+      timestamp: Date.now(),
+    };
+
+    setDiagramHistory((prev) => {
+      const newHistory = prev.slice(0, historyIndex + 1);
+      newHistory.push(currentState);
+      return newHistory.slice(-50);
+    });
+
+    setHistoryIndex((prev) => Math.min(prev + 1, 49));
+  }, [historyIndex]);
 
   // 줌 기능
   const zoomIn = useCallback(() => {
@@ -466,8 +545,22 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
       return newDynamicBoxes;
     });
 
-    saveState();
-  }, [boxes, connections, saveState]);
+    // saveState를 직접 호출하지 않고 상태를 저장
+    const currentState = {
+      boxes: new Map(updatedBoxes),
+      connections: [...connections],
+      dynamicBoxes: new Map(dynamicBoxes),
+      timestamp: Date.now(),
+    };
+
+    setDiagramHistory((prev) => {
+      const newHistory = prev.slice(0, historyIndex + 1);
+      newHistory.push(currentState);
+      return newHistory.slice(-50);
+    });
+
+    setHistoryIndex((prev) => Math.min(prev + 1, 49));
+  }, [boxes, connections, dynamicBoxes, historyIndex]);
 
   // 자동 연결 관련 함수들
   const startAutoConnect = useCallback((boxId, clickPoint = null) => {
@@ -535,6 +628,154 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
     });
   }, []);
 
+  // 그룹 관리 함수들
+  const registerGroup = useCallback((groupId, groupInfo) => {
+    setGroups((prev) => {
+      const newGroups = new Map(prev);
+      const existingGroup = newGroups.get(groupId);
+
+      if (existingGroup) {
+        // 기존 그룹에 박스 ID 추가
+        const updatedBoxIds = new Set([...existingGroup.boxIds, ...groupInfo.boxIds]);
+        newGroups.set(groupId, {
+          ...existingGroup,
+          ...groupInfo,
+          boxIds: Array.from(updatedBoxIds),
+        });
+      } else {
+        // 새로운 그룹 생성
+        newGroups.set(groupId, {
+          id: groupId,
+          label: groupInfo.label || groupId,
+          style: groupInfo.style || {},
+          boxIds: groupInfo.boxIds || [],
+          createdAt: new Date().toISOString(),
+          ...groupInfo,
+        });
+      }
+
+      return newGroups;
+    });
+  }, []);
+
+  const unregisterGroup = useCallback((groupId) => {
+    setGroups((prev) => {
+      const newGroups = new Map(prev);
+      newGroups.delete(groupId);
+      return newGroups;
+    });
+  }, []);
+
+  const getGroup = useCallback(
+    (groupId) => {
+      return groups.get(groupId);
+    },
+    [groups]
+  );
+
+  const getAllGroups = useCallback(() => {
+    return Array.from(groups.values());
+  }, [groups]);
+
+  const getGroupBoxes = useCallback(
+    (groupId) => {
+      const group = groups.get(groupId);
+      if (!group) return [];
+
+      return group.boxIds.map((boxId) => boxes.get(boxId)).filter(Boolean);
+    },
+    [groups, boxes]
+  );
+
+  const updateGroupInfo = useCallback((groupId, updates) => {
+    setGroups((prev) => {
+      const newGroups = new Map(prev);
+      const existingGroup = newGroups.get(groupId);
+
+      if (existingGroup) {
+        newGroups.set(groupId, {
+          ...existingGroup,
+          ...updates,
+          updatedAt: new Date().toISOString(),
+        });
+      }
+
+      return newGroups;
+    });
+  }, []);
+
+  const addBoxToGroup = useCallback((groupId, boxId) => {
+    setGroups((prev) => {
+      const newGroups = new Map(prev);
+      const group = newGroups.get(groupId);
+
+      if (group && !group.boxIds.includes(boxId)) {
+        newGroups.set(groupId, {
+          ...group,
+          boxIds: [...group.boxIds, boxId],
+          updatedAt: new Date().toISOString(),
+        });
+      }
+
+      return newGroups;
+    });
+  }, []);
+
+  const removeBoxFromGroup = useCallback((groupId, boxId) => {
+    setGroups((prev) => {
+      const newGroups = new Map(prev);
+      const group = newGroups.get(groupId);
+
+      if (group) {
+        const updatedBoxIds = group.boxIds.filter((id) => id !== boxId);
+
+        if (updatedBoxIds.length === 0) {
+          // 그룹에 박스가 없으면 그룹 삭제
+          newGroups.delete(groupId);
+        } else {
+          newGroups.set(groupId, {
+            ...group,
+            boxIds: updatedBoxIds,
+            updatedAt: new Date().toISOString(),
+          });
+        }
+      }
+
+      return newGroups;
+    });
+  }, []);
+
+  const getBoxGroup = useCallback(
+    (boxId) => {
+      for (const group of groups.values()) {
+        if (group.boxIds.includes(boxId)) {
+          return group;
+        }
+      }
+      return null;
+    },
+    [groups]
+  );
+
+  const moveGroup = useCallback(
+    (groupId, deltaX, deltaY) => {
+      const group = groups.get(groupId);
+      if (!group) return;
+
+      // 그룹 내 모든 박스 이동 - updateBoxPosition 사용하여 일관성 유지
+      group.boxIds.forEach((boxId) => {
+        const box = boxes.get(boxId);
+        if (box) {
+          updateBoxPosition(boxId, {
+            x: box.x + deltaX,
+            y: box.y + deltaY,
+          });
+        }
+      });
+    },
+    [groups, boxes, updateBoxPosition]
+  );
+
   const value = {
     // 박스 관리
     boxes,
@@ -600,6 +841,19 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
     autoConnectSettings,
     updateAutoConnectSettings,
     resetAutoConnectSettings,
+
+    // 그룹 관리
+    groups,
+    registerGroup,
+    unregisterGroup,
+    getGroup,
+    getAllGroups,
+    getGroupBoxes,
+    updateGroupInfo,
+    addBoxToGroup,
+    removeBoxFromGroup,
+    getBoxGroup,
+    moveGroup,
 
     // 컨테이너 관련
     containerRef,

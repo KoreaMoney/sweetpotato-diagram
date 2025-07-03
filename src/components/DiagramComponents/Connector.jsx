@@ -242,6 +242,9 @@ const Connector = ({
   arrowDirection = "forward", // 'forward', 'backward', 'both', 'none'
   arrowColor = "current", // 'current', 'red', 'blue', etc.
   arrowShape = "triangle", // 'triangle', 'diamond', 'circle', 'square'
+  // 백워드 호환성을 위한 추가 props
+  showArrow = null, // true | false - showArrow={true}는 arrowDirection="forward"와 동일
+  showStartArrow = null, // true | false - showStartArrow={true}는 양방향 화살표를 의미
   bendPoints, // 중간 꺾임점들 [{ x: 150, y: 100 }, { x: 150, y: 200 }] - 기본값 제거
   cornerRadius = 0, // 모서리 둥글기
   orthogonalDirection = "auto", // 'horizontal-first', 'vertical-first', 'auto'
@@ -260,12 +263,40 @@ const Connector = ({
   // bendPoints를 안전하게 처리 - undefined는 그대로 유지
   const safeBendPoints = Array.isArray(bendPoints) ? bendPoints : undefined;
 
+  // 백워드 호환성을 위한 arrowDirection 계산
+  const getEffectiveArrowDirection = () => {
+    // showArrow나 showStartArrow가 명시적으로 설정된 경우 우선 처리
+    if (showArrow !== null || showStartArrow !== null) {
+      const endArrow = showArrow !== null ? showArrow : true; // 기본값은 true
+      const startArrow = showStartArrow !== null ? showStartArrow : false; // 기본값은 false
+
+      if (endArrow && startArrow) {
+        return "both";
+      } else if (endArrow && !startArrow) {
+        return "forward";
+      } else if (!endArrow && startArrow) {
+        return "backward";
+      } else {
+        return "none";
+      }
+    }
+
+    // showArrow/showStartArrow가 설정되지 않은 경우 기존 arrowDirection 사용
+    return arrowDirection;
+  };
+
+  const effectiveArrowDirection = getEffectiveArrowDirection();
+
   // arrowDirection에 따른 화살표 표시 설정
   const shouldShowEndArrow =
-    arrowDirection === "none" ? false : arrowDirection === "forward" || arrowDirection === "both";
+    effectiveArrowDirection === "none"
+      ? false
+      : effectiveArrowDirection === "forward" || effectiveArrowDirection === "both";
 
   const shouldShowStartArrow =
-    arrowDirection === "none" ? false : arrowDirection === "backward" || arrowDirection === "both";
+    effectiveArrowDirection === "none"
+      ? false
+      : effectiveArrowDirection === "backward" || effectiveArrowDirection === "both";
 
   // 화살표 색상 클래스 생성
   const getArrowColorClass = () => {

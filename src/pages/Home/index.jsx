@@ -1,38 +1,102 @@
 import React from "react";
 import { TABS, TAB_DESCRIPTIONS } from "../../shared/constants/tabs";
 
-const Home = ({ onTabChange }) => {
-  const installCode = `npm install sweet-diagram
+// 재사용 가능한 컴포넌트들
+const CodeSection = ({ title, code, description, additionalSections = [] }) => (
+  <div className="bg-black bg-opacity-20 rounded-lg p-6">
+    <h3 className="text-xl font-semibold mb-4 text-left">{title}</h3>
+    <pre className="bg-gray-900 text-green-400 p-4 rounded text-left overflow-x-auto">
+      <code>{code}</code>
+    </pre>
+    {description && <p className="text-sm text-gray-300 mt-2">{description}</p>}
+    {additionalSections.map((section, index) => (
+      <div key={index} className="mt-4">
+        {section.description && <p className="text-sm text-gray-300 mb-2">{section.description}</p>}
+        <pre className="bg-gray-900 text-green-400 p-4 rounded text-left overflow-x-auto">
+          <code>{section.code}</code>
+        </pre>
+      </div>
+    ))}
+  </div>
+);
+
+const FeatureCard = ({ icon, title, description }) => (
+  <div className="bg-white bg-opacity-20 rounded-lg p-6 text-center">
+    <div className="text-3xl mb-3">{icon}</div>
+    <h3 className="text-lg font-semibold mb-2">{title}</h3>
+    <p className="text-sm opacity-90">{description}</p>
+  </div>
+);
+
+const TabCard = ({ tab, onTabChange }) => (
+  <button
+    onClick={() => onTabChange(tab.id)}
+    className="group p-6 bg-white rounded-lg shadow-lg border border-gray-200 
+               transition-all duration-300 ease-in-out transform
+               hover:scale-105 hover:shadow-2xl hover:-translate-y-2
+               hover:bg-gradient-to-br hover:from-blue-50 hover:to-purple-50
+               hover:border-blue-300 hover:shadow-blue-200/50
+               active:scale-95"
+  >
+    <div className="text-4xl mb-3 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+      {tab.icon}
+    </div>
+    <h3 className="text-lg font-semibold text-gray-800 mb-2 transition-colors duration-300 group-hover:text-blue-600">
+      {tab.label}
+    </h3>
+    <p className="text-sm text-gray-600 transition-colors duration-300 group-hover:text-gray-700">
+      {TAB_DESCRIPTIONS[tab.id]}
+    </p>
+  </button>
+);
+
+// 코드 데이터 상수
+const CODE_SECTIONS = {
+  install: {
+    title: "📦 설치",
+    code: `npm install sweet-diagram
 # 또는
 yarn add sweet-diagram
 # 또는
-pnpm add sweet-diagram`;
-
-  const tailwindInstallCode = `# TailwindCSS v4 설치 (필수)
-npm install tailwindcss@latest @tailwindcss/postcss`;
-
-  const postcssConfigCode = `// postcss.config.js
+pnpm add sweet-diagram`,
+  },
+  tailwind: {
+    title: "🎨 TailwindCSS v4 설치 (필수)",
+    code: `# TailwindCSS v4 설치 (필수)
+npm install tailwindcss@latest @tailwindcss/postcss`,
+    additionalSections: [
+      {
+        description: "PostCSS 설정:",
+        code: `// postcss.config.js
 export default {
   plugins: ["@tailwindcss/postcss"],
-};`;
-
-  const viteConfigCode = `// vite.config.js
+};`,
+      },
+      {
+        description: "또는 Vite 사용시:",
+        code: `// vite.config.js
 import tailwindcss from "@tailwindcss/vite";
 
 export default {
   plugins: [tailwindcss()],
-};`;
-
-  const cssImportCode = `/* CSS 파일에 Tailwind 임포트 */
+};`,
+      },
+      {
+        description: null,
+        code: `/* CSS 파일에 Tailwind 임포트 */
 @import "tailwindcss";
 
 /* 커스텀 테마 설정 (선택사항) */
 @theme {
   --color-brand: #b4d455;
   --font-display: "Inter", sans-serif;
-}`;
-
-  const basicUsageCode = `import React from "react";
+}`,
+      },
+    ],
+  },
+  basicUsage: {
+    title: "✨ 기본 사용법",
+    code: `import React from "react";
 import {
   DiagramProvider,
   Box,
@@ -114,9 +178,11 @@ function MyDiagram() {
   );
 }
 
-export default MyDiagram;`;
-
-  const hooksUsageCode = `import { DiagramProvider, useDiagram, Box } from "sweet-diagram";
+export default MyDiagram;`,
+  },
+  hooksUsage: {
+    title: "🪝 Hooks 사용법",
+    code: `import { DiagramProvider, useDiagram, Box } from "sweet-diagram";
 
 function DiagramControls() {
   const { boxes, addBox, removeBox, updateBox } = useDiagram();
@@ -145,11 +211,34 @@ function App() {
       <DiagramControls />
     </DiagramProvider>
   );
-}`;
+}`,
+  },
+};
 
+// AutoConnect 특징 데이터
+const AUTOCONNECT_FEATURES = [
+  {
+    icon: "🎯",
+    title: "직관적인 UI",
+    description: "Shift + 클릭만으로 연결 모드 시작",
+  },
+  {
+    icon: "🎨",
+    title: "풍부한 커스터마이징",
+    description: "8가지 색상, 5가지 연결 타입, 4가지 애니메이션",
+  },
+  {
+    icon: "⚡",
+    title: "고성능",
+    description: "스마트 경로 계산과 GPU 가속 애니메이션",
+  },
+];
+
+const Home = ({ onTabChange }) => {
   return (
     <div className="p-8 text-center">
       <div className="max-w-6xl mx-auto">
+        {/* 헤더 섹션 */}
         <div className="mb-8">
           <h1 className="text-5xl font-bold text-gray-800 mb-4 flex items-center justify-center">Sweet-Diagram</h1>
           <p className="text-xl text-gray-600 mb-8">
@@ -158,28 +247,10 @@ function App() {
           </p>
         </div>
 
+        {/* 탭 카드 그리드 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {TABS.slice(1).map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => onTabChange(tab.id)}
-              className="group p-6 bg-white rounded-lg shadow-lg border border-gray-200 
-                         transition-all duration-300 ease-in-out transform
-                         hover:scale-105 hover:shadow-2xl hover:-translate-y-2
-                         hover:bg-gradient-to-br hover:from-blue-50 hover:to-purple-50
-                         hover:border-blue-300 hover:shadow-blue-200/50
-                         active:scale-95"
-            >
-              <div className="text-4xl mb-3 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-                {tab.icon}
-              </div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2 transition-colors duration-300 group-hover:text-blue-600">
-                {tab.label}
-              </h3>
-              <p className="text-sm text-gray-600 transition-colors duration-300 group-hover:text-gray-700">
-                {TAB_DESCRIPTIONS[tab.id]}
-              </p>
-            </button>
+            <TabCard key={tab.id} tab={tab} onTabChange={onTabChange} />
           ))}
         </div>
 
@@ -191,22 +262,11 @@ function App() {
           </div>
 
           <div className="grid text-black grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white bg-opacity-20 rounded-lg p-6 text-center">
-              <div className="text-3xl mb-3">🎯</div>
-              <h3 className="text-lg font-semibold mb-2">직관적인 UI</h3>
-              <p className="text-sm opacity-90">Shift + 클릭만으로 연결 모드 시작</p>
-            </div>
-            <div className="bg-white bg-opacity-20 rounded-lg p-6 text-center">
-              <div className="text-3xl mb-3">🎨</div>
-              <h3 className="text-lg font-semibold mb-2">풍부한 커스터마이징</h3>
-              <p className="text-sm opacity-90">8가지 색상, 5가지 연결 타입, 4가지 애니메이션</p>
-            </div>
-            <div className="bg-white bg-opacity-20 rounded-lg p-6 text-center">
-              <div className="text-3xl mb-3">⚡</div>
-              <h3 className="text-lg font-semibold mb-2">고성능</h3>
-              <p className="text-sm opacity-90">스마트 경로 계산과 GPU 가속 애니메이션</p>
-            </div>
+            {AUTOCONNECT_FEATURES.map((feature, index) => (
+              <FeatureCard key={index} {...feature} />
+            ))}
           </div>
+
           <div className="text-center">
             <button
               onClick={() => onTabChange("test")}
@@ -218,58 +278,14 @@ function App() {
           </div>
         </div>
 
+        {/* Quick Start 섹션 */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-8 text-white">
           <h2 className="text-3xl font-bold mb-6">🚀 Quick Start</h2>
 
           <div className="space-y-8">
-            {/* 설치 */}
-            <div className="bg-black bg-opacity-20 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-left">📦 설치</h3>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded text-left overflow-x-auto">
-                <code>{installCode}</code>
-              </pre>
-            </div>
-
-            {/* TailwindCSS 설치 */}
-            <div className="bg-black bg-opacity-20 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-left">🎨 TailwindCSS v4 설치 (필수)</h3>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded text-left overflow-x-auto">
-                <code>{tailwindInstallCode}</code>
-              </pre>
-              <div className="mt-4">
-                <p className="text-sm text-gray-300 mb-2">PostCSS 설정:</p>
-                <pre className="bg-gray-900 text-green-400 p-4 rounded text-left overflow-x-auto">
-                  <code>{postcssConfigCode}</code>
-                </pre>
-              </div>
-              <div className="mt-4">
-                <p className="text-sm text-gray-300 mb-2">또는 Vite 사용시:</p>
-                <pre className="bg-gray-900 text-green-400 p-4 rounded text-left overflow-x-auto">
-                  <code>{viteConfigCode}</code>
-                </pre>
-              </div>
-              <div className="mt-4">
-                <pre className="bg-gray-900 text-green-400 p-4 rounded text-left overflow-x-auto">
-                  <code>{cssImportCode}</code>
-                </pre>
-              </div>
-            </div>
-
-            {/* 기본 사용법 */}
-            <div className="bg-black bg-opacity-20 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-left">✨ 기본 사용법</h3>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded text-left overflow-x-auto">
-                <code>{basicUsageCode}</code>
-              </pre>
-            </div>
-
-            {/* Hooks 사용법 */}
-            <div className="bg-black bg-opacity-20 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-left">🪝 Hooks 사용법</h3>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded text-left overflow-x-auto">
-                <code>{hooksUsageCode}</code>
-              </pre>
-            </div>
+            {Object.values(CODE_SECTIONS).map((section, index) => (
+              <CodeSection key={index} {...section} />
+            ))}
           </div>
 
           <div className="mt-8 p-4 bg-yellow-500 bg-opacity-20 rounded-lg border border-yellow-400">

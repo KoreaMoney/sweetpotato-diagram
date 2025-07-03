@@ -16,37 +16,39 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       tailwindcss(),
-      // HTML 최적화 플러그인
-      createHtmlPlugin({
-        inject: {
-          data: {
-            title: "Sweet Diagram - Modern React Diagram Editor",
-            description:
-              "A modern and intuitive diagram editor component for React applications with auto-connect features, vertical text support, and animation effects",
-            keywords:
-              "react,diagram,editor,visualization,sweet-diagram,javascript,auto-connect,animation,vertical-text,drag-drop",
-            author: "KimDowon",
-            siteUrl: siteUrl,
-            twitterHandle: "@sweetdiagram",
-            ogImage: `${siteUrl}/main.png`,
+      // HTML 최적화 플러그인 (라이브러리 모드가 아닐 때만 사용)
+      !isLibrary &&
+        createHtmlPlugin({
+          inject: {
+            data: {
+              title: "Sweet Diagram - Modern React Diagram Editor",
+              description:
+                "A modern and intuitive diagram editor component for React applications with auto-connect features, vertical text support, and animation effects",
+              keywords:
+                "react,diagram,editor,visualization,sweet-diagram,javascript,auto-connect,animation,vertical-text,drag-drop",
+              author: "KimDowon",
+              siteUrl: siteUrl,
+              twitterHandle: "@sweetdiagram",
+              ogImage: `${siteUrl}/main.png`,
+            },
           },
-        },
-      }),
-      // 사이트맵 생성 플러그인
-      sitemap({
-        hostname: siteUrl,
-        urls: ["/", "/components", "/documentation", "/examples", "/hooks"],
-        lastmod: new Date().toISOString(),
-        changefreq: "weekly",
-        priority: {
-          "/": 1.0,
-          "/components": 0.8,
-          "/documentation": 0.8,
-          "/examples": 0.7,
-          "/hooks": 0.6,
-        },
-      }),
-    ],
+        }),
+      // 사이트맵 생성 플러그인 (라이브러리 모드가 아닐 때만 사용)
+      !isLibrary &&
+        sitemap({
+          hostname: siteUrl,
+          urls: ["/", "/components", "/documentation", "/examples", "/hooks"],
+          lastmod: new Date().toISOString(),
+          changefreq: "weekly",
+          priority: {
+            "/": 1.0,
+            "/components": 0.8,
+            "/documentation": 0.8,
+            "/examples": 0.7,
+            "/hooks": 0.6,
+          },
+        }),
+    ].filter(Boolean),
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
@@ -78,6 +80,7 @@ export default defineConfig(({ mode }) => {
   };
 
   if (isLibrary) {
+    config.publicDir = false; // 라이브러리 빌드 시 public 폴더 복사 비활성화
     config.build = {
       lib: {
         entry: path.resolve(__dirname, "src/index.js"),
@@ -98,8 +101,20 @@ export default defineConfig(({ mode }) => {
             return assetInfo.name;
           },
         },
+        treeshake: {
+          moduleSideEffects: false,
+        },
       },
       cssCodeSplit: false,
+      // 번들 크기 최적화
+      minify: "terser",
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+          pure_funcs: ["console.log"],
+        },
+      },
     };
   }
 

@@ -1,4 +1,5 @@
 import { ImageBox } from "../DiagramComponents";
+import { DiagramProvider } from "../DiagramComponents";
 import { useToast } from "../ToastSystem";
 
 // 🎨 SVG 아이콘 상수 분리
@@ -456,7 +457,11 @@ const USAGE_TIPS = [
 const ExampleContainer = ({ title, height = "h-80", children, tip }) => (
   <div className="mb-6">
     <h3 className="text-lg font-semibold mb-3">{title}</h3>
-    <div className={`relative w-full ${height} border border-gray-200 rounded bg-gray-50 p-8`}>{children}</div>
+    <div className={`relative w-full ${height} border border-gray-200 rounded bg-gray-50 p-8`}>
+      <DiagramProvider width={800} height={300}>
+        {children}
+      </DiagramProvider>
+    </div>
     {tip && <p className="text-sm text-gray-600 mt-2">{tip}</p>}
   </div>
 );

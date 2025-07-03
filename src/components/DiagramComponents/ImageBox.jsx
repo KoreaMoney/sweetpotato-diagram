@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDiagram } from "./DiagramContext";
+import { useGroup } from "./GroupProvider";
 import baseImage from "@/assets/logo.png";
 
 const ImageBox = ({
@@ -33,48 +34,93 @@ const ImageBox = ({
   className = "bg-gray-100 text-gray-700 border-gray-300 border-2 rounded-lg text-xs hover:shadow-lg hover:scale-105 transition-all duration-200",
   onClick = null,
 }) => {
-  // 🆕 드래그 상태 관리
+  // 🆕 드래그 상태 관리 (동적 위치로 변경)
   const [position, setPosition] = useState({ x: initialX, y: initialY });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const boxRef = useRef(null);
 
-  // 현재 위치 (드래그 중이면 position, 아니면 초기값)
+  // 현재 위치 (동적 위치 사용)
   const currentX = position.x;
   const currentY = position.y;
 
-  // DiagramContext를 optional하게 사용
-  let registerBox, unregisterBox;
+  // DiagramContext를 optional하게 사용 (에러 로깅 제거)
+  let registerBox, unregisterBox, boxes;
   try {
     const context = useDiagram();
     registerBox = context.registerBox;
     unregisterBox = context.unregisterBox;
+    boxes = context.boxes;
   } catch (error) {
-    console.error("DiagramContext 사용 중 오류:", error);
-    // DiagramProvider가 없으면 context 기능을 사용하지 않음
+    // DiagramProvider가 없으면 context 기능을 사용하지 않음 (에러 로깅 제거)
     registerBox = null;
     unregisterBox = null;
+    boxes = null;
   }
 
-  // ImageBox 정보를 Context에 등록/업데이트 (Context가 있을 때만)
+  // 🆕 GroupProvider 컨텍스트 사용
+  const groupContext = useGroup();
+
+  // Props로 받은 초기 위치가 변경되면 내부 상태도 업데이트
+  useEffect(() => {
+    setPosition({ x: initialX, y: initialY });
+  }, [initialX, initialY]);
+
+  // DiagramContext에서 위치 변화를 감지하고 내부 상태 업데이트 (의존성 최적화)
+  useEffect(() => {
+    if (boxes && id) {
+      const boxFromContext = boxes.get(id);
+      if (boxFromContext && (boxFromContext.x !== position.x || boxFromContext.y !== position.y)) {
+        setPosition({ x: boxFromContext.x, y: boxFromContext.y });
+      }
+    }
+  }, [boxes, id]); // position 의존성 제거하여 무한 루프 방지
+
+  // ImageBox 정보를 DiagramContext에 등록/업데이트 (마운트 시에만)
   useEffect(() => {
     if (id && registerBox) {
-      registerBox(id, { x: currentX, y: currentY, width, height });
+      const boxInfo = {
+        id,
+        x: currentX,
+        y: currentY,
+        width,
+        height,
+        groupId: groupContext?.groupId || null,
+      };
+      registerBox(id, boxInfo);
     }
-  }, [id, currentX, currentY, width, height, registerBox]);
+  }, [id]); // 마운트 시에만 실행하여 무한 렌더링 방지
 
-  // 컴포넌트 언마운트 시 등록 해제 (Context가 있을 때만)
+  // 🆕 ImageBox를 GroupProvider에 등록 (마운트 시에만)
+  useEffect(() => {
+    if (id && groupContext?.registerBox) {
+      const boxInfo = {
+        id,
+        x: currentX,
+        y: currentY,
+        width,
+        height,
+      };
+      groupContext.registerBox(boxInfo);
+    }
+  }, [id]); // 마운트 시에만 실행하여 무한 렌더링 방지
+
+  // 컴포넌트 언마운트 시 등록 해제
   useEffect(() => {
     return () => {
       if (id && unregisterBox) {
         unregisterBox(id);
       }
+      if (id && groupContext?.unregisterBox) {
+        groupContext.unregisterBox(id);
+      }
     };
-  }, [id, unregisterBox]);
+  }, [id]); // 마운트 시에만 실행하여 무한 렌더링 방지
 
-  // 🆕 드래그 이벤트 핸들러들
+  // 🆕 드래그 이벤트 핸들러들 - 그룹 드래그와 분리
   const handleMouseDown = (event) => {
-    if (!draggable) return;
+    // 그룹 드래그 중이면 개별 드래그 비활성화
+    if (!draggable || groupContext?.isDragging) return;
 
     event.preventDefault();
     setIsDragging(true);
@@ -85,7 +131,7 @@ const ImageBox = ({
   };
 
   const handleMouseMove = (event) => {
-    if (!isDragging || !draggable) return;
+    if (!isDragging || !draggable || groupContext?.isDragging) return;
 
     event.preventDefault();
     const newPosition = {
@@ -110,7 +156,7 @@ const ImageBox = ({
     }
   };
 
-  // 전역 마우스 이벤트 리스너 등록
+  // 전역 마우스 이벤트 리스너 등록 (의존성 최적화)
   useEffect(() => {
     if (isDragging) {
       document.addEventListener("mousemove", handleMouseMove);
@@ -120,11 +166,18 @@ const ImageBox = ({
         document.removeEventListener("mouseup", handleMouseUp);
       };
     }
-  }, [isDragging, dragStart, currentX, currentY, onDrag, onDragEnd]);
+  }, [isDragging]); // 불안정한 의존성들 제거하여 무한 렌더링 방지
 
   const handleClick = (event) => {
     if (onClick && !isDragging) {
-      onClick(event, { id, x: currentX, y: currentY, width, height });
+      onClick(event, {
+        id,
+        x: currentX,
+        y: currentY,
+        width,
+        height,
+        groupId: groupContext?.groupId,
+      });
     }
   };
 
@@ -183,6 +236,27 @@ const ImageBox = ({
       maxHeight: `${containerHeight}px`,
     };
   };
+
+  // 🆕 그룹 상태에 따른 스타일 계산
+  const getImageBoxStyles = () => {
+    let additionalClasses = "";
+    let additionalStyles = {};
+
+    // 그룹에 속한 ImageBox의 경우 추가 스타일
+    if (groupContext?.groupId) {
+      additionalClasses += " group-member";
+
+      // 그룹이 드래그 중일 때 추가 스타일
+      if (groupContext?.isDragging) {
+        additionalClasses += " transition-transform duration-75";
+        additionalStyles.pointerEvents = "none"; // 드래그 중 클릭 방지
+      }
+    }
+
+    return { additionalClasses, additionalStyles };
+  };
+
+  const { additionalClasses, additionalStyles } = getImageBoxStyles();
 
   // 🆕 개선된 텍스트 위치 및 스타일 계산 함수
   const getTextPositionStyles = () => {
@@ -332,10 +406,13 @@ const ImageBox = ({
   return (
     <div
       ref={boxRef}
-      className={`absolute ${isDragging ? "z-50" : "z-10"} ${draggable ? "cursor-move" : "cursor-pointer"}`}
+      className={`absolute ${isDragging ? "z-50" : "z-10"} ${
+        draggable ? "cursor-move" : "cursor-pointer"
+      } ${additionalClasses}`}
       style={{
         left: `${currentX}px`,
         top: `${currentY}px`,
+        ...additionalStyles,
       }}
       data-box-id={id}
       onMouseDown={handleMouseDown}

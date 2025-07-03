@@ -1,4 +1,4 @@
-import { Box, Connector } from "../DiagramComponents";
+import { Box, Connector, DiagramProvider } from "../DiagramComponents";
 import { useToast } from "../ToastSystem";
 
 const ConnectorSection = () => {
@@ -13,20 +13,38 @@ const ConnectorSection = () => {
         <div className="bg-gray-900 text-green-400 p-4 rounded-lg mb-6">
           <h3 className="text-white text-lg font-semibold mb-3">기본 사용법</h3>
           <pre className="text-sm overflow-x-auto">
-            {`<Connector
-  fromBox={{ id: "box1", position: "right" }}
-  toBox={{ id: "box2", position: "left" }}
-  boxes={[
-    { id: "box1", x: 50, y: 50, width: 80, height: 30 },
-    { id: "box2", x: 200, y: 100, width: 80, height: 30 }
-  ]}
-  connectionType="straight"
-  className="text-blue-600"
-  showArrow={true}
-  showStartArrow={false}
-  arrowSize={8}
-  strokeWidth={2}
-/>`}
+            {`<DiagramProvider>
+  <Box
+    id="box1"
+    x={50}
+    y={50}
+    width={80}
+    height={30}
+    text="시작"
+    className="bg-blue-500 text-white"
+  />
+  
+  <Box
+    id="box2"
+    x={200}
+    y={100}
+    width={80}
+    height={30}
+    text="끝"
+    className="bg-green-500 text-white"
+  />
+  
+  <Connector
+    fromBox={{ id: "box1", position: "right" }}
+    toBox={{ id: "box2", position: "left" }}
+    connectionType="straight"
+    className="text-blue-600"
+    showArrow={true}
+    showStartArrow={false}
+    arrowSize={8}
+    strokeWidth={2}
+  />
+</DiagramProvider>`}
           </pre>
         </div>
 
@@ -207,58 +225,60 @@ const ConnectorSection = () => {
           <div className="bg-white p-4 rounded-lg mb-4">
             <h4 className="font-semibold text-gray-800 mb-3">라이브 예제</h4>
             <div className="relative w-full h-48 border border-gray-200 rounded bg-gray-50">
-              <Box
-                id="custom-demo-start"
-                x={20}
-                y={50}
-                width={60}
-                height={25}
-                text="시작점"
-                className="bg-cyan-600 text-white border-cyan-800 border-2 rounded-lg text-xs"
-                onClick={() => addToast("시작점: 커스텀 경로 시작! 🚀", "info")}
-              />
+              <DiagramProvider width={400} height={200}>
+                <Box
+                  id="custom-demo-start"
+                  x={20}
+                  y={50}
+                  width={60}
+                  height={25}
+                  text="시작점"
+                  className="bg-cyan-600 text-white border-cyan-800 border-2 rounded-lg text-xs"
+                  onClick={() => addToast("시작점: 커스텀 경로 시작! 🚀", "info")}
+                />
 
-              <Box
-                id="obstacle"
-                x={120}
-                y={60}
-                width={80}
-                height={40}
-                text="장애물"
-                className="bg-red-500 text-white border-red-700 border-2 rounded-lg text-xs opacity-70"
-              />
+                <Box
+                  id="obstacle"
+                  x={120}
+                  y={60}
+                  width={80}
+                  height={40}
+                  text="장애물"
+                  className="bg-red-500 text-white border-red-700 border-2 rounded-lg text-xs opacity-70"
+                />
 
-              <Box
-                id="custom-demo-end"
-                x={280}
-                y={120}
-                width={60}
-                height={25}
-                text="도착점"
-                className="bg-emerald-600 text-white border-emerald-800 border-2 rounded-lg text-xs"
-                onClick={() => addToast("도착점: 커스텀 경로 완료! 🎯", "success")}
-              />
+                <Box
+                  id="custom-demo-end"
+                  x={280}
+                  y={120}
+                  width={60}
+                  height={25}
+                  text="도착점"
+                  className="bg-emerald-600 text-white border-emerald-800 border-2 rounded-lg text-xs"
+                  onClick={() => addToast("도착점: 커스텀 경로 완료! 🎯", "success")}
+                />
 
-              <Connector
-                fromBox={{ id: "custom-demo-start", position: "right" }}
-                toBox={{ id: "custom-demo-end", position: "left" }}
-                connectionType="custom"
-                bendPoints={[
-                  { x: 100, y: 60 },
-                  { x: 100, y: 40 },
-                  { x: 220, y: 40 },
-                  { x: 220, y: 132 },
-                  { x: 280, y: 132 },
-                ]}
-                className="text-cyan-500"
-                showArrow={true}
-                strokeWidth={3}
-                animated={true}
-              />
+                <Connector
+                  fromBox={{ id: "custom-demo-start", position: "right" }}
+                  toBox={{ id: "custom-demo-end", position: "left" }}
+                  connectionType="custom"
+                  bendPoints={[
+                    { x: 100, y: 60 },
+                    { x: 100, y: 40 },
+                    { x: 220, y: 40 },
+                    { x: 220, y: 132 },
+                    { x: 280, y: 132 },
+                  ]}
+                  className="text-cyan-500"
+                  showArrow={true}
+                  strokeWidth={3}
+                  animated={true}
+                />
 
-              <div className="absolute top-1 left-1 text-xs text-gray-600 bg-white px-2 py-1 rounded shadow">
-                💡 장애물을 피하는 커스텀 경로
-              </div>
+                <div className="absolute top-1 left-1 text-xs text-gray-600 bg-white px-2 py-1 rounded shadow">
+                  💡 장애물을 피하는 커스텀 경로
+                </div>
+              </DiagramProvider>
             </div>
           </div>
 
@@ -324,81 +344,75 @@ const boxes = [
           <div className="bg-white p-4 rounded-lg mb-4">
             <h4 className="font-semibold text-gray-800 mb-3">양방향 화살표 및 크기별 라이브 예제</h4>
             <div className="relative w-full h-32 border border-gray-200 rounded bg-gray-50">
-              <div className="absolute top-2 left-2 text-xs text-gray-600 bg-white px-2 py-1 rounded shadow">
-                💡 양방향 통신과 다양한 화살표 크기
-              </div>
+              <DiagramProvider width={400} height={120}>
+                <div className="absolute top-2 left-2 text-xs text-gray-600 bg-white px-2 py-1 rounded shadow">
+                  💡 양방향 통신과 다양한 화살표 크기
+                </div>
 
-              {/* 기본 단방향 화살표 */}
-              <Box
-                id="uni-start"
-                x={30}
-                y={40}
-                width={60}
-                height={25}
-                text="송신기"
-                className="bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-xs"
-                onClick={() => addToast("송신기: 데이터 전송 📡", "info")}
-              />
-              <Box
-                id="uni-end"
-                x={150}
-                y={40}
-                width={60}
-                height={25}
-                text="수신기"
-                className="bg-green-600 text-white border-green-800 border-2 rounded-lg text-xs"
-                onClick={() => addToast("수신기: 데이터 수신 📨", "success")}
-              />
-              <Connector
-                fromBox={{ id: "uni-start", position: "right" }}
-                toBox={{ id: "uni-end", position: "left" }}
-                connectionType="straight"
-                className="text-blue-600"
-                showArrow={true}
-                showStartArrow={false}
-                arrowSize={8}
-                strokeWidth={2}
-              />
+                {/* 기본 단방향 화살표 */}
+                <Box
+                  id="uni-start"
+                  x={30}
+                  y={40}
+                  width={60}
+                  height={25}
+                  text="송신기"
+                  className="bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-xs"
+                  onClick={() => addToast("송신기: 데이터 전송 📡", "info")}
+                />
+                <Box
+                  id="uni-end"
+                  x={150}
+                  y={40}
+                  width={60}
+                  height={25}
+                  text="수신기"
+                  className="bg-green-600 text-white border-green-800 border-2 rounded-lg text-xs"
+                  onClick={() => addToast("수신기: 데이터 수신 📨", "success")}
+                />
+                <Connector
+                  fromBox={{ id: "uni-start", position: "right" }}
+                  toBox={{ id: "uni-end", position: "left" }}
+                  connectionType="straight"
+                  className="text-blue-600"
+                  showArrow={true}
+                  showStartArrow={false}
+                  arrowSize={8}
+                  strokeWidth={2}
+                />
 
-              {/* 양방향 화살표 - 기본 크기 */}
-              <Box
-                id="bi-server"
-                x={280}
-                y={40}
-                width={60}
-                height={25}
-                text="서버"
-                className="bg-purple-600 text-white border-purple-800 border-2 rounded-lg text-xs"
-                onClick={() => addToast("서버: 양방향 통신 🖥️", "info")}
-              />
-              <Box
-                id="bi-client"
-                x={400}
-                y={40}
-                width={60}
-                height={25}
-                text="클라이언트"
-                className="bg-orange-600 text-white border-orange-800 border-2 rounded-lg text-xs"
-                onClick={() => addToast("클라이언트: 양방향 통신 💻", "warning")}
-              />
-              <Connector
-                fromBox={{ id: "bi-server", position: "right" }}
-                toBox={{ id: "bi-client", position: "left" }}
-                connectionType="straight"
-                className="text-purple-600"
-                showArrow={true}
-                showStartArrow={true}
-                arrowSize={8}
-                strokeWidth={3}
-              />
-
-              {/* 라벨들 */}
-              <div className="absolute left-[100px] top-[30px]">
-                <span className="text-xs text-blue-600 font-medium">단방향</span>
-              </div>
-              <div className="absolute left-[355px] top-[30px]">
-                <span className="text-xs text-purple-600 font-medium">양방향</span>
-              </div>
+                {/* 양방향 화살표 - 기본 크기 */}
+                <Box
+                  id="bi-server"
+                  x={280}
+                  y={40}
+                  width={60}
+                  height={25}
+                  text="서버"
+                  className="bg-purple-600 text-white border-purple-800 border-2 rounded-lg text-xs"
+                  onClick={() => addToast("서버: 양방향 통신 🖥️", "info")}
+                />
+                <Box
+                  id="bi-client"
+                  x={400}
+                  y={40}
+                  width={60}
+                  height={25}
+                  text="클라이언트"
+                  className="bg-orange-600 text-white border-orange-800 border-2 rounded-lg text-xs"
+                  onClick={() => addToast("클라이언트: 양방향 통신 💻", "warning")}
+                />
+                <Connector
+                  fromBox={{ id: "bi-server", position: "right" }}
+                  toBox={{ id: "bi-client", position: "left" }}
+                  connectionType="straight"
+                  className="text-purple-600"
+                  showArrow={true}
+                  showStartArrow={true}
+                  arrowSize={8}
+                  strokeWidth={3}
+                />
+              </DiagramProvider>
             </div>
           </div>
 
@@ -552,61 +566,63 @@ const boxes = [
             <div className="bg-white p-4 rounded-lg border border-emerald-200">
               <h4 className="font-semibold text-emerald-800 mb-3">🔄 화살표 방향 (arrowDirection)</h4>
               <div className="relative w-full h-64 bg-gray-50 border border-gray-200 rounded">
-                {/* Forward 화살표 */}
-                <Connector
-                  startPoint={{ x: 50, y: 50 }}
-                  endPoint={{ x: 200, y: 50 }}
-                  arrowDirection="forward"
-                  arrowShape="triangle"
-                  arrowColor="blue"
-                  arrowSize={12}
-                  strokeWidth={2}
-                />
-                <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 30 }}>
-                  forward
-                </span>
+                <DiagramProvider width={250} height={250}>
+                  {/* Forward 화살표 */}
+                  <Connector
+                    startPoint={{ x: 50, y: 50 }}
+                    endPoint={{ x: 200, y: 50 }}
+                    arrowDirection="forward"
+                    arrowShape="triangle"
+                    arrowColor="blue"
+                    arrowSize={12}
+                    strokeWidth={2}
+                  />
+                  <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 30 }}>
+                    forward
+                  </span>
 
-                {/* Backward 화살표 */}
-                <Connector
-                  startPoint={{ x: 50, y: 90 }}
-                  endPoint={{ x: 200, y: 90 }}
-                  arrowDirection="backward"
-                  arrowShape="triangle"
-                  arrowColor="green"
-                  arrowSize={12}
-                  strokeWidth={2}
-                />
-                <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 65 }}>
-                  backward
-                </span>
+                  {/* Backward 화살표 */}
+                  <Connector
+                    startPoint={{ x: 50, y: 90 }}
+                    endPoint={{ x: 200, y: 90 }}
+                    arrowDirection="backward"
+                    arrowShape="triangle"
+                    arrowColor="green"
+                    arrowSize={12}
+                    strokeWidth={2}
+                  />
+                  <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 65 }}>
+                    backward
+                  </span>
 
-                {/* Both 화살표 */}
-                <Connector
-                  startPoint={{ x: 50, y: 130 }}
-                  endPoint={{ x: 200, y: 130 }}
-                  arrowDirection="both"
-                  arrowShape="triangle"
-                  arrowColor="purple"
-                  arrowSize={12}
-                  strokeWidth={2}
-                />
-                <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 105 }}>
-                  both
-                </span>
+                  {/* Both 화살표 */}
+                  <Connector
+                    startPoint={{ x: 50, y: 130 }}
+                    endPoint={{ x: 200, y: 130 }}
+                    arrowDirection="both"
+                    arrowShape="triangle"
+                    arrowColor="purple"
+                    arrowSize={12}
+                    strokeWidth={2}
+                  />
+                  <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 105 }}>
+                    both
+                  </span>
 
-                {/* None 화살표 */}
-                <Connector
-                  startPoint={{ x: 50, y: 170 }}
-                  endPoint={{ x: 200, y: 170 }}
-                  arrowDirection="none"
-                  arrowShape="triangle"
-                  arrowColor="gray"
-                  arrowSize={12}
-                  strokeWidth={2}
-                />
-                <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 145 }}>
-                  none
-                </span>
+                  {/* None 화살표 */}
+                  <Connector
+                    startPoint={{ x: 50, y: 170 }}
+                    endPoint={{ x: 200, y: 170 }}
+                    arrowDirection="none"
+                    arrowShape="triangle"
+                    arrowColor="gray"
+                    arrowSize={12}
+                    strokeWidth={2}
+                  />
+                  <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 145 }}>
+                    none
+                  </span>
+                </DiagramProvider>
               </div>
             </div>
 
@@ -614,61 +630,63 @@ const boxes = [
             <div className="bg-white p-4 rounded-lg border border-emerald-200">
               <h4 className="font-semibold text-emerald-800 mb-3">🔺 화살표 모양 (arrowShape)</h4>
               <div className="relative w-full h-64 bg-gray-50 border border-gray-200 rounded">
-                {/* Triangle 화살표 */}
-                <Connector
-                  startPoint={{ x: 50, y: 50 }}
-                  endPoint={{ x: 200, y: 50 }}
-                  arrowDirection="forward"
-                  arrowShape="triangle"
-                  arrowColor="red"
-                  arrowSize={15}
-                  strokeWidth={2}
-                />
-                <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 30 }}>
-                  triangle
-                </span>
+                <DiagramProvider width={250} height={250}>
+                  {/* Triangle 화살표 */}
+                  <Connector
+                    startPoint={{ x: 50, y: 50 }}
+                    endPoint={{ x: 200, y: 50 }}
+                    arrowDirection="forward"
+                    arrowShape="triangle"
+                    arrowColor="red"
+                    arrowSize={15}
+                    strokeWidth={2}
+                  />
+                  <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 30 }}>
+                    triangle
+                  </span>
 
-                {/* Diamond 화살표 */}
-                <Connector
-                  startPoint={{ x: 50, y: 90 }}
-                  endPoint={{ x: 200, y: 90 }}
-                  arrowDirection="forward"
-                  arrowShape="diamond"
-                  arrowColor="blue"
-                  arrowSize={15}
-                  strokeWidth={2}
-                />
-                <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 70 }}>
-                  diamond
-                </span>
+                  {/* Diamond 화살표 */}
+                  <Connector
+                    startPoint={{ x: 50, y: 90 }}
+                    endPoint={{ x: 200, y: 90 }}
+                    arrowDirection="forward"
+                    arrowShape="diamond"
+                    arrowColor="blue"
+                    arrowSize={15}
+                    strokeWidth={2}
+                  />
+                  <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 70 }}>
+                    diamond
+                  </span>
 
-                {/* Circle 화살표 */}
-                <Connector
-                  startPoint={{ x: 50, y: 130 }}
-                  endPoint={{ x: 200, y: 130 }}
-                  arrowDirection="forward"
-                  arrowShape="circle"
-                  arrowColor="green"
-                  arrowSize={15}
-                  strokeWidth={2}
-                />
-                <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 110 }}>
-                  circle
-                </span>
+                  {/* Circle 화살표 */}
+                  <Connector
+                    startPoint={{ x: 50, y: 130 }}
+                    endPoint={{ x: 200, y: 130 }}
+                    arrowDirection="forward"
+                    arrowShape="circle"
+                    arrowColor="green"
+                    arrowSize={15}
+                    strokeWidth={2}
+                  />
+                  <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 110 }}>
+                    circle
+                  </span>
 
-                {/* Square 화살표 */}
-                <Connector
-                  startPoint={{ x: 50, y: 170 }}
-                  endPoint={{ x: 200, y: 170 }}
-                  arrowDirection="forward"
-                  arrowShape="square"
-                  arrowColor="purple"
-                  arrowSize={15}
-                  strokeWidth={2}
-                />
-                <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 150 }}>
-                  square
-                </span>
+                  {/* Square 화살표 */}
+                  <Connector
+                    startPoint={{ x: 50, y: 170 }}
+                    endPoint={{ x: 200, y: 170 }}
+                    arrowDirection="forward"
+                    arrowShape="square"
+                    arrowColor="purple"
+                    arrowSize={15}
+                    strokeWidth={2}
+                  />
+                  <span className="absolute text-xs text-gray-600" style={{ left: 50, top: 150 }}>
+                    square
+                  </span>
+                </DiagramProvider>
               </div>
             </div>
           </div>
@@ -677,89 +695,91 @@ const boxes = [
           <div className="mt-6 bg-white p-4 rounded-lg border border-emerald-200">
             <h4 className="font-semibold text-emerald-800 mb-3">🎨 화살표 색상 (arrowColor)</h4>
             <div className="relative w-full h-48 bg-gray-50 border border-gray-200 rounded">
-              <div className="grid grid-cols-2 gap-4 p-4">
-                <div>
-                  <Connector
-                    startPoint={{ x: 20, y: 30 }}
-                    endPoint={{ x: 120, y: 30 }}
-                    arrowDirection="forward"
-                    arrowShape="triangle"
-                    arrowColor="red"
-                    arrowSize={12}
-                    strokeWidth={2}
-                  />
-                  <span className="absolute text-xs text-gray-600" style={{ left: 20, top: 10 }}>
-                    red
-                  </span>
+              <DiagramProvider width={300} height={200}>
+                <div className="grid grid-cols-2 gap-4 p-4">
+                  <div>
+                    <Connector
+                      startPoint={{ x: 20, y: 30 }}
+                      endPoint={{ x: 120, y: 30 }}
+                      arrowDirection="forward"
+                      arrowShape="triangle"
+                      arrowColor="red"
+                      arrowSize={12}
+                      strokeWidth={2}
+                    />
+                    <span className="absolute text-xs text-gray-600" style={{ left: 20, top: 10 }}>
+                      red
+                    </span>
 
-                  <Connector
-                    startPoint={{ x: 20, y: 60 }}
-                    endPoint={{ x: 120, y: 60 }}
-                    arrowDirection="forward"
-                    arrowShape="diamond"
-                    arrowColor="blue"
-                    arrowSize={12}
-                    strokeWidth={2}
-                  />
-                  <span className="absolute text-xs text-gray-600" style={{ left: 20, top: 40 }}>
-                    blue
-                  </span>
+                    <Connector
+                      startPoint={{ x: 20, y: 60 }}
+                      endPoint={{ x: 120, y: 60 }}
+                      arrowDirection="forward"
+                      arrowShape="diamond"
+                      arrowColor="blue"
+                      arrowSize={12}
+                      strokeWidth={2}
+                    />
+                    <span className="absolute text-xs text-gray-600" style={{ left: 20, top: 40 }}>
+                      blue
+                    </span>
 
-                  <Connector
-                    startPoint={{ x: 20, y: 90 }}
-                    endPoint={{ x: 120, y: 90 }}
-                    arrowDirection="forward"
-                    arrowShape="circle"
-                    arrowColor="green"
-                    arrowSize={12}
-                    strokeWidth={2}
-                  />
-                  <span className="absolute text-xs text-gray-600" style={{ left: 20, top: 70 }}>
-                    green
-                  </span>
+                    <Connector
+                      startPoint={{ x: 20, y: 90 }}
+                      endPoint={{ x: 120, y: 90 }}
+                      arrowDirection="forward"
+                      arrowShape="circle"
+                      arrowColor="green"
+                      arrowSize={12}
+                      strokeWidth={2}
+                    />
+                    <span className="absolute text-xs text-gray-600" style={{ left: 20, top: 70 }}>
+                      green
+                    </span>
+                  </div>
+
+                  <div>
+                    <Connector
+                      startPoint={{ x: 160, y: 30 }}
+                      endPoint={{ x: 260, y: 30 }}
+                      arrowDirection="forward"
+                      arrowShape="square"
+                      arrowColor="purple"
+                      arrowSize={12}
+                      strokeWidth={2}
+                    />
+                    <span className="absolute text-xs text-gray-600" style={{ left: 160, top: 10 }}>
+                      purple
+                    </span>
+
+                    <Connector
+                      startPoint={{ x: 160, y: 60 }}
+                      endPoint={{ x: 260, y: 60 }}
+                      arrowDirection="forward"
+                      arrowShape="triangle"
+                      arrowColor="yellow"
+                      arrowSize={12}
+                      strokeWidth={2}
+                    />
+                    <span className="absolute text-xs text-gray-600" style={{ left: 160, top: 40 }}>
+                      yellow
+                    </span>
+
+                    <Connector
+                      startPoint={{ x: 160, y: 90 }}
+                      endPoint={{ x: 260, y: 90 }}
+                      arrowDirection="forward"
+                      arrowShape="diamond"
+                      arrowColor="pink"
+                      arrowSize={12}
+                      strokeWidth={2}
+                    />
+                    <span className="absolute text-xs text-gray-600" style={{ left: 160, top: 70 }}>
+                      pink
+                    </span>
+                  </div>
                 </div>
-
-                <div>
-                  <Connector
-                    startPoint={{ x: 160, y: 30 }}
-                    endPoint={{ x: 260, y: 30 }}
-                    arrowDirection="forward"
-                    arrowShape="square"
-                    arrowColor="purple"
-                    arrowSize={12}
-                    strokeWidth={2}
-                  />
-                  <span className="absolute text-xs text-gray-600" style={{ left: 160, top: 10 }}>
-                    purple
-                  </span>
-
-                  <Connector
-                    startPoint={{ x: 160, y: 60 }}
-                    endPoint={{ x: 260, y: 60 }}
-                    arrowDirection="forward"
-                    arrowShape="triangle"
-                    arrowColor="yellow"
-                    arrowSize={12}
-                    strokeWidth={2}
-                  />
-                  <span className="absolute text-xs text-gray-600" style={{ left: 160, top: 40 }}>
-                    yellow
-                  </span>
-
-                  <Connector
-                    startPoint={{ x: 160, y: 90 }}
-                    endPoint={{ x: 260, y: 90 }}
-                    arrowDirection="forward"
-                    arrowShape="diamond"
-                    arrowColor="pink"
-                    arrowSize={12}
-                    strokeWidth={2}
-                  />
-                  <span className="absolute text-xs text-gray-600" style={{ left: 160, top: 70 }}>
-                    pink
-                  </span>
-                </div>
-              </div>
+              </DiagramProvider>
             </div>
           </div>
 
@@ -832,289 +852,291 @@ const boxes = [
           <div className="bg-white p-6 rounded-lg border border-slate-200 mb-6">
             <h4 className="font-semibold text-slate-800 mb-4">🔌 복합 반도체 시스템 아키텍처</h4>
             <div className="relative w-full h-96 bg-gray-50 border border-gray-200 rounded overflow-hidden">
-              {/* CPU */}
-              <Box
-                id="cpu"
-                x={50}
-                y={50}
-                width={80}
-                height={40}
-                text="CPU Core"
-                className="bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-xs font-bold"
-                onClick={() => addToast("CPU: 중앙처리장치 🧠", "info")}
-              />
+              <DiagramProvider width={450} height={380}>
+                {/* CPU */}
+                <Box
+                  id="cpu"
+                  x={50}
+                  y={50}
+                  width={80}
+                  height={40}
+                  text="CPU Core"
+                  className="bg-[#0066ff] text-white border-blue-800 border-2 rounded-lg text-xs font-bold"
+                  onClick={() => addToast("CPU: 중앙처리장치 🧠", "info")}
+                />
 
-              {/* 메모리 컨트롤러 */}
-              <Box
-                id="memory-controller"
-                x={200}
-                y={30}
-                width={90}
-                height={35}
-                text="Memory Controller"
-                className="bg-green-600 text-white border-green-800 border-2 rounded-lg text-xs font-bold"
-                onClick={() => addToast("메모리 컨트롤러: 메모리 액세스 제어 🎛️", "success")}
-              />
+                {/* 메모리 컨트롤러 */}
+                <Box
+                  id="memory-controller"
+                  x={200}
+                  y={30}
+                  width={90}
+                  height={35}
+                  text="Memory Controller"
+                  className="bg-green-600 text-white border-green-800 border-2 rounded-lg text-xs font-bold"
+                  onClick={() => addToast("메모리 컨트롤러: 메모리 액세스 제어 🎛️", "success")}
+                />
 
-              {/* DDR5 메모리 */}
-              <Box
-                id="ddr5"
-                x={350}
-                y={20}
-                width={70}
-                height={30}
-                text="DDR5 RAM"
-                className="bg-purple-600 text-white border-purple-800 border-2 rounded-lg text-xs font-bold"
-                onClick={() => addToast("DDR5: 고속 시스템 메모리 ⚡", "info")}
-              />
+                {/* DDR5 메모리 */}
+                <Box
+                  id="ddr5"
+                  x={350}
+                  y={20}
+                  width={70}
+                  height={30}
+                  text="DDR5 RAM"
+                  className="bg-purple-600 text-white border-purple-800 border-2 rounded-lg text-xs font-bold"
+                  onClick={() => addToast("DDR5: 고속 시스템 메모리 ⚡", "info")}
+                />
 
-              {/* L3 캐시 */}
-              <Box
-                id="l3-cache"
-                x={350}
-                y={70}
-                width={70}
-                height={25}
-                text="L3 Cache"
-                className="bg-indigo-600 text-white border-indigo-800 border-2 rounded-lg text-xs font-bold"
-                onClick={() => addToast("L3 캐시: 공유 캐시 메모리 💾", "info")}
-              />
+                {/* L3 캐시 */}
+                <Box
+                  id="l3-cache"
+                  x={350}
+                  y={70}
+                  width={70}
+                  height={25}
+                  text="L3 Cache"
+                  className="bg-indigo-600 text-white border-indigo-800 border-2 rounded-lg text-xs font-bold"
+                  onClick={() => addToast("L3 캐시: 공유 캐시 메모리 💾", "info")}
+                />
 
-              {/* PCIe 컨트롤러 */}
-              <Box
-                id="pcie-controller"
-                x={50}
-                y={130}
-                width={80}
-                height={30}
-                text="PCIe 5.0"
-                className="bg-orange-600 text-white border-orange-800 border-2 rounded-lg text-xs font-bold"
-                onClick={() => addToast("PCIe: 고속 확장 버스 🚄", "warning")}
-              />
+                {/* PCIe 컨트롤러 */}
+                <Box
+                  id="pcie-controller"
+                  x={50}
+                  y={130}
+                  width={80}
+                  height={30}
+                  text="PCIe 5.0"
+                  className="bg-orange-600 text-white border-orange-800 border-2 rounded-lg text-xs font-bold"
+                  onClick={() => addToast("PCIe: 고속 확장 버스 🚄", "warning")}
+                />
 
-              {/* GPU */}
-              <Box
-                id="gpu"
-                x={200}
-                y={110}
-                width={70}
-                height={35}
-                text="GPU"
-                className="bg-red-600 text-white border-red-800 border-2 rounded-lg text-xs font-bold"
-                onClick={() => addToast("GPU: 그래픽 처리 장치 🎮", "error")}
-              />
+                {/* GPU */}
+                <Box
+                  id="gpu"
+                  x={200}
+                  y={110}
+                  width={70}
+                  height={35}
+                  text="GPU"
+                  className="bg-red-600 text-white border-red-800 border-2 rounded-lg text-xs font-bold"
+                  onClick={() => addToast("GPU: 그래픽 처리 장치 🎮", "error")}
+                />
 
-              {/* SSD 컨트롤러 */}
-              <Box
-                id="ssd-controller"
-                x={320}
-                y={130}
-                width={80}
-                height={30}
-                text="NVMe SSD"
-                className="bg-cyan-600 text-white border-cyan-800 border-2 rounded-lg text-xs font-bold"
-                onClick={() => addToast("NVMe SSD: 고속 저장장치 💽", "info")}
-              />
+                {/* SSD 컨트롤러 */}
+                <Box
+                  id="ssd-controller"
+                  x={320}
+                  y={130}
+                  width={80}
+                  height={30}
+                  text="NVMe SSD"
+                  className="bg-cyan-600 text-white border-cyan-800 border-2 rounded-lg text-xs font-bold"
+                  onClick={() => addToast("NVMe SSD: 고속 저장장치 💽", "info")}
+                />
 
-              {/* 전력 관리 */}
-              <Box
-                id="power-mgmt"
-                x={50}
-                y={200}
-                width={80}
-                height={30}
-                text="Power IC"
-                className="bg-yellow-600 text-white border-yellow-800 border-2 rounded-lg text-xs font-bold"
-                onClick={() => addToast("전력 IC: 전원 관리 🔋", "warning")}
-              />
+                {/* 전력 관리 */}
+                <Box
+                  id="power-mgmt"
+                  x={50}
+                  y={200}
+                  width={80}
+                  height={30}
+                  text="Power IC"
+                  className="bg-yellow-600 text-white border-yellow-800 border-2 rounded-lg text-xs font-bold"
+                  onClick={() => addToast("전력 IC: 전원 관리 🔋", "warning")}
+                />
 
-              {/* 클럭 생성기 */}
-              <Box
-                id="clock-gen"
-                x={200}
-                y={200}
-                width={80}
-                height={30}
-                text="Clock Gen"
-                className="bg-pink-600 text-white border-pink-800 border-2 rounded-lg text-xs font-bold"
-                onClick={() => addToast("클럭 생성기: 시스템 타이밍 ⏰", "info")}
-              />
+                {/* 클럭 생성기 */}
+                <Box
+                  id="clock-gen"
+                  x={200}
+                  y={200}
+                  width={80}
+                  height={30}
+                  text="Clock Gen"
+                  className="bg-pink-600 text-white border-pink-800 border-2 rounded-lg text-xs font-bold"
+                  onClick={() => addToast("클럭 생성기: 시스템 타이밍 ⏰", "info")}
+                />
 
-              {/* I/O 컨트롤러 */}
-              <Box
-                id="io-controller"
-                x={320}
-                y={200}
-                width={80}
-                height={30}
-                text="I/O Hub"
-                className="bg-gray-600 text-white border-gray-800 border-2 rounded-lg text-xs font-bold"
-                onClick={() => addToast("I/O Hub: 입출력 제어 🔌", "info")}
-              />
+                {/* I/O 컨트롤러 */}
+                <Box
+                  id="io-controller"
+                  x={320}
+                  y={200}
+                  width={80}
+                  height={30}
+                  text="I/O Hub"
+                  className="bg-gray-600 text-white border-gray-800 border-2 rounded-lg text-xs font-bold"
+                  onClick={() => addToast("I/O Hub: 입출력 제어 🔌", "info")}
+                />
 
-              {/* 🔥 고속 데이터 버스 (64bit) - 다이아몬드 양방향 */}
-              <Connector
-                fromBox={{ id: "cpu", position: "right" }}
-                toBox={{ id: "memory-controller", position: "left" }}
-                connectionType="straight"
-                arrowDirection="both"
-                arrowShape="diamond"
-                arrowColor="blue"
-                arrowSize={14}
-                strokeWidth={4}
-              />
+                {/* 🔥 고속 데이터 버스 (64bit) - 다이아몬드 양방향 */}
+                <Connector
+                  fromBox={{ id: "cpu", position: "right" }}
+                  toBox={{ id: "memory-controller", position: "left" }}
+                  connectionType="straight"
+                  arrowDirection="both"
+                  arrowShape="diamond"
+                  arrowColor="blue"
+                  arrowSize={14}
+                  strokeWidth={4}
+                />
 
-              {/* 🚄 DDR5 메모리 버스 - 사각형 양방향 */}
-              <Connector
-                fromBox={{ id: "memory-controller", position: "right" }}
-                toBox={{ id: "ddr5", position: "left" }}
-                connectionType="straight"
-                arrowDirection="both"
-                arrowShape="square"
-                arrowColor="purple"
-                arrowSize={16}
-                strokeWidth={5}
-              />
+                {/* 🚄 DDR5 메모리 버스 - 사각형 양방향 */}
+                <Connector
+                  fromBox={{ id: "memory-controller", position: "right" }}
+                  toBox={{ id: "ddr5", position: "left" }}
+                  connectionType="straight"
+                  arrowDirection="both"
+                  arrowShape="square"
+                  arrowColor="purple"
+                  arrowSize={16}
+                  strokeWidth={5}
+                />
 
-              {/* ⚡ L3 캐시 액세스 - 원형 양방향 */}
-              <Connector
-                fromBox={{ id: "memory-controller", position: "right" }}
-                toBox={{ id: "l3-cache", position: "left" }}
-                connectionType="curved"
-                arrowDirection="both"
-                arrowShape="circle"
-                arrowColor="indigo"
-                arrowSize={12}
-                strokeWidth={3}
-              />
+                {/* ⚡ L3 캐시 액세스 - 원형 양방향 */}
+                <Connector
+                  fromBox={{ id: "memory-controller", position: "right" }}
+                  toBox={{ id: "l3-cache", position: "left" }}
+                  connectionType="curved"
+                  arrowDirection="both"
+                  arrowShape="circle"
+                  arrowColor="indigo"
+                  arrowSize={12}
+                  strokeWidth={3}
+                />
 
-              {/* 🎮 PCIe GPU 연결 - 삼각형 양방향 */}
-              <Connector
-                fromBox={{ id: "pcie-controller", position: "right" }}
-                toBox={{ id: "gpu", position: "left" }}
-                connectionType="orthogonal"
-                arrowDirection="both"
-                arrowShape="triangle"
-                arrowColor="red"
-                arrowSize={13}
-                strokeWidth={4}
-              />
+                {/* 🎮 PCIe GPU 연결 - 삼각형 양방향 */}
+                <Connector
+                  fromBox={{ id: "pcie-controller", position: "right" }}
+                  toBox={{ id: "gpu", position: "left" }}
+                  connectionType="orthogonal"
+                  arrowDirection="both"
+                  arrowShape="triangle"
+                  arrowColor="red"
+                  arrowSize={13}
+                  strokeWidth={4}
+                />
 
-              {/* 💽 NVMe SSD 연결 - 사각형 단방향 */}
-              <Connector
-                fromBox={{ id: "pcie-controller", position: "right" }}
-                toBox={{ id: "ssd-controller", position: "left" }}
-                connectionType="custom"
-                bendPoints={[
-                  { x: 150, y: 145 },
-                  { x: 150, y: 175 },
-                  { x: 280, y: 175 },
-                  { x: 280, y: 145 },
-                ]}
-                arrowDirection="forward"
-                arrowShape="square"
-                arrowColor="cyan"
-                arrowSize={11}
-                strokeWidth={3}
-              />
+                {/* 💽 NVMe SSD 연결 - 사각형 단방향 */}
+                <Connector
+                  fromBox={{ id: "pcie-controller", position: "right" }}
+                  toBox={{ id: "ssd-controller", position: "left" }}
+                  connectionType="custom"
+                  bendPoints={[
+                    { x: 150, y: 145 },
+                    { x: 150, y: 175 },
+                    { x: 280, y: 175 },
+                    { x: 280, y: 145 },
+                  ]}
+                  arrowDirection="forward"
+                  arrowShape="square"
+                  arrowColor="cyan"
+                  arrowSize={11}
+                  strokeWidth={3}
+                />
 
-              {/* 🔋 전력 공급 라인 - 다이아몬드 단방향 */}
-              <Connector
-                fromBox={{ id: "power-mgmt", position: "up" }}
-                toBox={{ id: "cpu", position: "bottom" }}
-                connectionType="straight"
-                arrowDirection="forward"
-                arrowShape="diamond"
-                arrowColor="yellow"
-                arrowSize={10}
-                strokeWidth={2}
-              />
+                {/* 🔋 전력 공급 라인 - 다이아몬드 단방향 */}
+                <Connector
+                  fromBox={{ id: "power-mgmt", position: "up" }}
+                  toBox={{ id: "cpu", position: "bottom" }}
+                  connectionType="straight"
+                  arrowDirection="forward"
+                  arrowShape="diamond"
+                  arrowColor="yellow"
+                  arrowSize={10}
+                  strokeWidth={2}
+                />
 
-              {/* ⏰ 클럭 신호 - 원형 단방향 (애니메이션) */}
-              <Connector
-                fromBox={{ id: "clock-gen", position: "up" }}
-                toBox={{ id: "memory-controller", position: "bottom" }}
-                connectionType="straight"
-                arrowDirection="forward"
-                arrowShape="circle"
-                arrowColor="pink"
-                arrowSize={8}
-                strokeWidth={2}
-                animated={true}
-              />
+                {/* ⏰ 클럭 신호 - 원형 단방향 (애니메이션) */}
+                <Connector
+                  fromBox={{ id: "clock-gen", position: "up" }}
+                  toBox={{ id: "memory-controller", position: "bottom" }}
+                  connectionType="straight"
+                  arrowDirection="forward"
+                  arrowShape="circle"
+                  arrowColor="pink"
+                  arrowSize={8}
+                  strokeWidth={2}
+                  animated={true}
+                />
 
-              {/* 🔌 I/O 제어 신호 - 삼각형 양방향 */}
-              <Connector
-                fromBox={{ id: "io-controller", position: "left" }}
-                toBox={{ id: "ssd-controller", position: "bottom" }}
-                connectionType="straight"
-                arrowDirection="both"
-                arrowShape="triangle"
-                arrowColor="gray"
-                arrowSize={9}
-                strokeWidth={2}
-              />
+                {/* 🔌 I/O 제어 신호 - 삼각형 양방향 */}
+                <Connector
+                  fromBox={{ id: "io-controller", position: "left" }}
+                  toBox={{ id: "ssd-controller", position: "bottom" }}
+                  connectionType="straight"
+                  arrowDirection="both"
+                  arrowShape="triangle"
+                  arrowColor="gray"
+                  arrowSize={9}
+                  strokeWidth={2}
+                />
 
-              {/* 🔧 제어 버스 - 다이아몬드 역방향 */}
-              <Connector
-                fromBox={{ id: "cpu", position: "bottom" }}
-                toBox={{ id: "pcie-controller", position: "top" }}
-                connectionType="straight"
-                arrowDirection="backward"
-                arrowShape="diamond"
-                arrowColor="blue"
-                arrowSize={10}
-                strokeWidth={2}
-              />
+                {/* 🔧 제어 버스 - 다이아몬드 역방향 */}
+                <Connector
+                  fromBox={{ id: "cpu", position: "bottom" }}
+                  toBox={{ id: "pcie-controller", position: "top" }}
+                  connectionType="straight"
+                  arrowDirection="backward"
+                  arrowShape="diamond"
+                  arrowColor="blue"
+                  arrowSize={10}
+                  strokeWidth={2}
+                />
 
-              {/* 신호 타입 범례 */}
-              <div className="absolute bottom-2 left-2 bg-white p-3 rounded-lg shadow-md border border-gray-200 text-xs">
-                <h5 className="font-bold text-gray-800 mb-2">신호 타입 범례</h5>
-                <div className="space-y-1">
-                  <div className="flex items-center">
-                    <div className="w-4 h-1 bg-blue-500 mr-2"></div>
-                    <span>💎 고속 데이터 버스</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-4 h-1 bg-purple-500 mr-2"></div>
-                    <span>🟦 메모리 인터페이스</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-4 h-1 bg-red-500 mr-2"></div>
-                    <span>🔺 PCIe 연결</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-4 h-1 bg-yellow-500 mr-2"></div>
-                    <span>💎 전력 공급</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-4 h-1 bg-pink-500 mr-2"></div>
-                    <span>⭕ 클럭 신호</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 성능 지표 */}
-              <div className="absolute bottom-2 right-2 bg-white p-3 rounded-lg shadow-md border border-gray-200 text-xs">
-                <h5 className="font-bold text-gray-800 mb-2">성능 지표</h5>
-                <div className="space-y-1">
-                  <div>
-                    CPU-MEM: <span className="text-blue-600 font-bold">400GB/s</span>
-                  </div>
-                  <div>
-                    DDR5: <span className="text-purple-600 font-bold">76.8GB/s</span>
-                  </div>
-                  <div>
-                    PCIe 5.0: <span className="text-red-600 font-bold">64GB/s</span>
-                  </div>
-                  <div>
-                    NVMe: <span className="text-cyan-600 font-bold">14GB/s</span>
-                  </div>
-                  <div>
-                    Clock: <span className="text-pink-600 font-bold">3.2GHz</span>
+                {/* 신호 타입 범례 */}
+                <div className="absolute bottom-2 left-2 bg-white p-3 rounded-lg shadow-md border border-gray-200 text-xs">
+                  <h5 className="font-bold text-gray-800 mb-2">신호 타입 범례</h5>
+                  <div className="space-y-1">
+                    <div className="flex items-center">
+                      <div className="w-4 h-1 bg-blue-500 mr-2"></div>
+                      <span>💎 고속 데이터 버스</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-4 h-1 bg-purple-500 mr-2"></div>
+                      <span>🟦 메모리 인터페이스</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-4 h-1 bg-red-500 mr-2"></div>
+                      <span>🔺 PCIe 연결</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-4 h-1 bg-yellow-500 mr-2"></div>
+                      <span>💎 전력 공급</span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="w-4 h-1 bg-pink-500 mr-2"></div>
+                      <span>⭕ 클럭 신호</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+
+                {/* 성능 지표 */}
+                <div className="absolute bottom-2 right-2 bg-white p-3 rounded-lg shadow-md border border-gray-200 text-xs">
+                  <h5 className="font-bold text-gray-800 mb-2">성능 지표</h5>
+                  <div className="space-y-1">
+                    <div>
+                      CPU-MEM: <span className="text-blue-600 font-bold">400GB/s</span>
+                    </div>
+                    <div>
+                      DDR5: <span className="text-purple-600 font-bold">76.8GB/s</span>
+                    </div>
+                    <div>
+                      PCIe 5.0: <span className="text-red-600 font-bold">64GB/s</span>
+                    </div>
+                    <div>
+                      NVMe: <span className="text-cyan-600 font-bold">14GB/s</span>
+                    </div>
+                    <div>
+                      Clock: <span className="text-pink-600 font-bold">3.2GHz</span>
+                    </div>
+                  </div>
+                </div>
+              </DiagramProvider>
             </div>
           </div>
 
@@ -1305,101 +1327,103 @@ const boxes = [
           <div className="bg-white p-4 rounded-lg mb-4 border border-green-200">
             <h4 className="font-semibold text-green-800 mb-3">🔴 라이브 데모</h4>
             <div className="relative w-full h-64 bg-gray-50 border border-gray-200 rounded">
-              {/* 박스들 */}
-              <Box
-                id="free-demo-box1"
-                x={50}
-                y={80}
-                width={100}
-                height={60}
-                text="Box 1"
-                className="bg-blue-500 text-white border-blue-600 border-2 rounded-lg text-sm"
-              />
-              <Box
-                id="free-demo-box2"
-                x={250}
-                y={120}
-                width={100}
-                height={60}
-                text="Box 2"
-                className="bg-green-500 text-white border-green-600 border-2 rounded-lg text-sm"
-              />
-              <Box
-                id="free-demo-box3"
-                x={150}
-                y={200}
-                width={100}
-                height={60}
-                text="Box 3"
-                className="bg-purple-500 text-white border-purple-600 border-2 rounded-lg text-sm"
-              />
+              <DiagramProvider width={400} height={280}>
+                {/* 박스들 */}
+                <Box
+                  id="free-demo-box1"
+                  x={50}
+                  y={80}
+                  width={100}
+                  height={60}
+                  text="Box 1"
+                  className="bg-blue-500 text-white border-blue-600 border-2 rounded-lg text-sm"
+                />
+                <Box
+                  id="free-demo-box2"
+                  x={250}
+                  y={120}
+                  width={100}
+                  height={60}
+                  text="Box 2"
+                  className="bg-green-500 text-white border-green-600 border-2 rounded-lg text-sm"
+                />
+                <Box
+                  id="free-demo-box3"
+                  x={150}
+                  y={200}
+                  width={100}
+                  height={60}
+                  text="Box 3"
+                  className="bg-purple-500 text-white border-purple-600 border-2 rounded-lg text-sm"
+                />
 
-              {/* 자유 포인트 연결 예시들 */}
+                {/* 자유 포인트 연결 예시들 */}
 
-              {/* 1. 절대 좌표 자유 포인트 */}
-              <Connector
-                fromCustomPoint={{ x: 120, y: 90 }}
-                toCustomPoint={{ x: 280, y: 140 }}
-                connectionType="curved"
-                arrowDirection="forward"
-                className="stroke-orange-500 fill-orange-500"
-                strokeWidth={2}
-                arrowColor="orange"
-              />
+                {/* 1. 절대 좌표 자유 포인트 */}
+                <Connector
+                  fromCustomPoint={{ x: 120, y: 90 }}
+                  toCustomPoint={{ x: 280, y: 140 }}
+                  connectionType="curved"
+                  arrowDirection="forward"
+                  className="stroke-orange-500 fill-orange-500"
+                  strokeWidth={2}
+                  arrowColor="orange"
+                />
 
-              {/* 2. 박스 내부 자유 위치 */}
-              <Connector
-                fromBoxCustom={{ id: "free-demo-box1", customPoint: { x: 0.8, y: 0.8 } }}
-                toBoxCustom={{ id: "free-demo-box2", customPoint: { x: 0.2, y: 0.2 } }}
-                connectionType="orthogonal"
-                arrowDirection="forward"
-                className="stroke-red-500 fill-red-500"
-                strokeWidth={2}
-                arrowColor="red"
-              />
+                {/* 2. 박스 내부 자유 위치 */}
+                <Connector
+                  fromBoxCustom={{ id: "free-demo-box1", customPoint: { x: 0.8, y: 0.8 } }}
+                  toBoxCustom={{ id: "free-demo-box2", customPoint: { x: 0.2, y: 0.2 } }}
+                  connectionType="orthogonal"
+                  arrowDirection="forward"
+                  className="stroke-red-500 fill-red-500"
+                  strokeWidth={2}
+                  arrowColor="red"
+                />
 
-              {/* 3. 혼합 연결 */}
-              <Connector
-                fromBox={{ id: "free-demo-box2", position: "bottom" }}
-                toCustomPoint={{ x: 200, y: 190 }}
-                connectionType="stepped"
-                arrowDirection="forward"
-                className="stroke-blue-600 fill-blue-600"
-                strokeWidth={2}
-                arrowColor="blue"
-              />
+                {/* 3. 혼합 연결 */}
+                <Connector
+                  fromBox={{ id: "free-demo-box2", position: "bottom" }}
+                  toCustomPoint={{ x: 200, y: 190 }}
+                  connectionType="stepped"
+                  arrowDirection="forward"
+                  className="stroke-blue-600 fill-blue-600"
+                  strokeWidth={2}
+                  arrowColor="blue"
+                />
 
-              {/* 4. 양방향 자유 포인트 */}
-              <Connector
-                fromBoxCustom={{ id: "free-demo-box3", customPoint: { x: 0.1, y: 0.5 } }}
-                toCustomPoint={{ x: 80, y: 180 }}
-                connectionType="curved"
-                arrowDirection="both"
-                className="stroke-purple-600 fill-purple-600"
-                strokeWidth={3}
-                arrowSize={10}
-                arrowColor="purple"
-              />
+                {/* 4. 양방향 자유 포인트 */}
+                <Connector
+                  fromBoxCustom={{ id: "free-demo-box3", customPoint: { x: 0.1, y: 0.5 } }}
+                  toCustomPoint={{ x: 80, y: 180 }}
+                  connectionType="curved"
+                  arrowDirection="both"
+                  className="stroke-purple-600 fill-purple-600"
+                  strokeWidth={3}
+                  arrowSize={10}
+                  arrowColor="purple"
+                />
 
-              {/* 설명 라벨들 */}
-              <div className="absolute top-2 left-2 text-xs space-y-1">
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-orange-500 rounded-full mr-2"></div>
-                  <span>절대 좌표 자유 포인트</span>
+                {/* 설명 라벨들 */}
+                <div className="absolute top-2 left-2 text-xs space-y-1">
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-orange-500 rounded-full mr-2"></div>
+                    <span>절대 좌표 자유 포인트</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                    <span>박스 내부 자유 위치</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-blue-600 rounded-full mr-2"></div>
+                    <span>혼합 연결</span>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-purple-600 rounded-full mr-2"></div>
+                    <span>양방향 자유 포인트</span>
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-                  <span>박스 내부 자유 위치</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-blue-600 rounded-full mr-2"></div>
-                  <span>혼합 연결</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-purple-600 rounded-full mr-2"></div>
-                  <span>양방향 자유 포인트</span>
-                </div>
-              </div>
+              </DiagramProvider>
             </div>
           </div>
 
@@ -1548,208 +1572,210 @@ const boxes = [
           <div className="bg-white p-4 rounded-lg mb-4 border border-purple-200">
             <h4 className="font-semibold text-purple-800 mb-3">🎬 라이브 애니메이션 데모</h4>
             <div className="relative w-full h-80 bg-gray-50 border border-gray-200 rounded">
-              {/* 전기 예제 */}
-              <Box
-                id="electric-source"
-                x={50}
-                y={50}
-                width={80}
-                height={40}
-                text="전원"
-                className="bg-yellow-400 text-black border-yellow-500 border-2 rounded-lg text-xs"
-              />
-              <Box
-                id="electric-target"
-                x={200}
-                y={50}
-                width={80}
-                height={40}
-                text="모터"
-                className="bg-blue-600 text-white border-blue-700 border-2 rounded-lg text-xs"
-              />
-              <Connector
-                fromBox={{ id: "electric-source", position: "right" }}
-                toBox={{ id: "electric-target", position: "left" }}
-                animated={true}
-                animationType="electric"
-                animationSpeed={1.5}
-                connectionType="straight"
-                className="text-blue-500"
-                strokeWidth={3}
-              />
+              <DiagramProvider width={600} height={320}>
+                {/* 전기 예제 */}
+                <Box
+                  id="electric-source"
+                  x={50}
+                  y={50}
+                  width={80}
+                  height={40}
+                  text="전원"
+                  className="bg-yellow-400 text-black border-yellow-500 border-2 rounded-lg text-xs"
+                />
+                <Box
+                  id="electric-target"
+                  x={200}
+                  y={50}
+                  width={80}
+                  height={40}
+                  text="모터"
+                  className="bg-blue-600 text-white border-blue-700 border-2 rounded-lg text-xs"
+                />
+                <Connector
+                  fromBox={{ id: "electric-source", position: "right" }}
+                  toBox={{ id: "electric-target", position: "left" }}
+                  animated={true}
+                  animationType="electric"
+                  animationSpeed={1.5}
+                  connectionType="straight"
+                  className="text-blue-500"
+                  strokeWidth={3}
+                />
 
-              {/* 물 예제 */}
-              <Box
-                id="water-source"
-                x={50}
-                y={120}
-                width={80}
-                height={40}
-                text="탱크"
-                className="bg-blue-100 text-blue-800 border-blue-300 border-2 rounded-lg text-xs"
-              />
-              <Box
-                id="water-target"
-                x={200}
-                y={120}
-                width={80}
-                height={40}
-                text="출구"
-                className="bg-blue-200 text-blue-800 border-blue-400 border-2 rounded-lg text-xs"
-              />
-              <Connector
-                fromBox={{ id: "water-source", position: "right" }}
-                toBox={{ id: "water-target", position: "left" }}
-                animated={true}
-                animationType="water"
-                animationSpeed={2}
-                connectionType="curved"
-                className="text-blue-600"
-                strokeWidth={4}
-              />
+                {/* 물 예제 */}
+                <Box
+                  id="water-source"
+                  x={50}
+                  y={120}
+                  width={80}
+                  height={40}
+                  text="탱크"
+                  className="bg-blue-100 text-blue-800 border-blue-300 border-2 rounded-lg text-xs"
+                />
+                <Box
+                  id="water-target"
+                  x={200}
+                  y={120}
+                  width={80}
+                  height={40}
+                  text="출구"
+                  className="bg-blue-200 text-blue-800 border-blue-400 border-2 rounded-lg text-xs"
+                />
+                <Connector
+                  fromBox={{ id: "water-source", position: "right" }}
+                  toBox={{ id: "water-target", position: "left" }}
+                  animated={true}
+                  animationType="water"
+                  animationSpeed={2}
+                  connectionType="curved"
+                  className="text-blue-600"
+                  strokeWidth={4}
+                />
 
-              {/* 바람 예제 */}
-              <Box
-                id="wind-source"
-                x={50}
-                y={190}
-                width={80}
-                height={40}
-                text="팬"
-                className="bg-gray-300 text-gray-800 border-gray-400 border-2 rounded-lg text-xs"
-              />
-              <Box
-                id="wind-target"
-                x={200}
-                y={190}
-                width={80}
-                height={40}
-                text="배출구"
-                className="bg-gray-200 text-gray-700 border-gray-400 border-2 rounded-lg text-xs"
-              />
-              <Connector
-                fromBox={{ id: "wind-source", position: "right" }}
-                toBox={{ id: "wind-target", position: "left" }}
-                animated={true}
-                animationType="wind"
-                animationSpeed={0.8}
-                connectionType="straight"
-                className="text-gray-500"
-                strokeWidth={3}
-              />
+                {/* 바람 예제 */}
+                <Box
+                  id="wind-source"
+                  x={50}
+                  y={190}
+                  width={80}
+                  height={40}
+                  text="팬"
+                  className="bg-gray-300 text-gray-800 border-gray-400 border-2 rounded-lg text-xs"
+                />
+                <Box
+                  id="wind-target"
+                  x={200}
+                  y={190}
+                  width={80}
+                  height={40}
+                  text="배출구"
+                  className="bg-gray-200 text-gray-700 border-gray-400 border-2 rounded-lg text-xs"
+                />
+                <Connector
+                  fromBox={{ id: "wind-source", position: "right" }}
+                  toBox={{ id: "wind-target", position: "left" }}
+                  animated={true}
+                  animationType="wind"
+                  animationSpeed={0.8}
+                  connectionType="straight"
+                  className="text-gray-500"
+                  strokeWidth={3}
+                />
 
-              {/* 가스 예제 */}
-              <Box
-                id="gas-source"
-                x={350}
-                y={50}
-                width={80}
-                height={40}
-                text="가스"
-                className="bg-yellow-100 text-yellow-800 border-yellow-300 border-2 rounded-lg text-xs"
-              />
-              <Box
-                id="gas-target"
-                x={500}
-                y={50}
-                width={80}
-                height={40}
-                text="버너"
-                className="bg-red-500 text-white border-red-600 border-2 rounded-lg text-xs"
-              />
-              <Connector
-                fromBox={{ id: "gas-source", position: "right" }}
-                toBox={{ id: "gas-target", position: "left" }}
-                animated={true}
-                animationType="gas"
-                animationSpeed={1.8}
-                connectionType="straight"
-                className="text-yellow-600"
-                strokeWidth={4}
-              />
+                {/* 가스 예제 */}
+                <Box
+                  id="gas-source"
+                  x={350}
+                  y={50}
+                  width={80}
+                  height={40}
+                  text="가스"
+                  className="bg-yellow-100 text-yellow-800 border-yellow-300 border-2 rounded-lg text-xs"
+                />
+                <Box
+                  id="gas-target"
+                  x={500}
+                  y={50}
+                  width={80}
+                  height={40}
+                  text="버너"
+                  className="bg-red-500 text-white border-red-600 border-2 rounded-lg text-xs"
+                />
+                <Connector
+                  fromBox={{ id: "gas-source", position: "right" }}
+                  toBox={{ id: "gas-target", position: "left" }}
+                  animated={true}
+                  animationType="gas"
+                  animationSpeed={1.8}
+                  connectionType="straight"
+                  className="text-yellow-600"
+                  strokeWidth={4}
+                />
 
-              {/* 데이터 예제 */}
-              <Box
-                id="data-source"
-                x={350}
-                y={120}
-                width={80}
-                height={40}
-                text="서버"
-                className="bg-green-600 text-white border-green-700 border-2 rounded-lg text-xs"
-              />
-              <Box
-                id="data-target"
-                x={500}
-                y={120}
-                width={80}
-                height={40}
-                text="클라이언트"
-                className="bg-purple-600 text-white border-purple-700 border-2 rounded-lg text-xs"
-              />
-              <Connector
-                fromBox={{ id: "data-source", position: "right" }}
-                toBox={{ id: "data-target", position: "left" }}
-                animated={true}
-                animationType="data"
-                animationSpeed={1}
-                connectionType="straight"
-                className="text-green-500"
-                strokeWidth={3}
-                arrowDirection="both"
-              />
+                {/* 데이터 예제 */}
+                <Box
+                  id="data-source"
+                  x={350}
+                  y={120}
+                  width={80}
+                  height={40}
+                  text="서버"
+                  className="bg-green-600 text-white border-green-700 border-2 rounded-lg text-xs"
+                />
+                <Box
+                  id="data-target"
+                  x={500}
+                  y={120}
+                  width={80}
+                  height={40}
+                  text="클라이언트"
+                  className="bg-purple-600 text-white border-purple-700 border-2 rounded-lg text-xs"
+                />
+                <Connector
+                  fromBox={{ id: "data-source", position: "right" }}
+                  toBox={{ id: "data-target", position: "left" }}
+                  animated={true}
+                  animationType="data"
+                  animationSpeed={1}
+                  connectionType="straight"
+                  className="text-green-500"
+                  strokeWidth={3}
+                  arrowDirection="both"
+                />
 
-              {/* 대시 예제 */}
-              <Box
-                id="dash-source"
-                x={350}
-                y={190}
-                width={80}
-                height={40}
-                text="소스"
-                className="bg-purple-500 text-white border-purple-600 border-2 rounded-lg text-xs"
-              />
-              <Box
-                id="dash-target"
-                x={500}
-                y={190}
-                width={80}
-                height={40}
-                text="타겟"
-                className="bg-indigo-500 text-white border-indigo-600 border-2 rounded-lg text-xs"
-              />
-              <Connector
-                fromBox={{ id: "dash-source", position: "right" }}
-                toBox={{ id: "dash-target", position: "left" }}
-                animated={true}
-                animationType="dash"
-                animationSpeed={2}
-                connectionType="straight"
-                className="text-purple-500"
-                strokeWidth={3}
-              />
+                {/* 대시 예제 */}
+                <Box
+                  id="dash-source"
+                  x={350}
+                  y={190}
+                  width={80}
+                  height={40}
+                  text="소스"
+                  className="bg-purple-500 text-white border-purple-600 border-2 rounded-lg text-xs"
+                />
+                <Box
+                  id="dash-target"
+                  x={500}
+                  y={190}
+                  width={80}
+                  height={40}
+                  text="타겟"
+                  className="bg-indigo-500 text-white border-indigo-600 border-2 rounded-lg text-xs"
+                />
+                <Connector
+                  fromBox={{ id: "dash-source", position: "right" }}
+                  toBox={{ id: "dash-target", position: "left" }}
+                  animated={true}
+                  animationType="dash"
+                  animationSpeed={2}
+                  connectionType="straight"
+                  className="text-purple-500"
+                  strokeWidth={3}
+                />
 
-              {/* 범례 */}
-              <div className="absolute bottom-2 left-2 text-xs space-y-1">
-                <div className="flex items-center">
-                  <span className="w-3 h-0.5 bg-blue-500 mr-2"></span>전기 (Electric)
+                {/* 범례 */}
+                <div className="absolute bottom-2 left-2 text-xs space-y-1">
+                  <div className="flex items-center">
+                    <span className="w-3 h-0.5 bg-blue-500 mr-2"></span>전기 (Electric)
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-3 h-0.5 bg-blue-600 mr-2"></span>물 (Water)
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-3 h-0.5 bg-gray-500 mr-2"></span>바람 (Wind)
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-3 h-0.5 bg-yellow-600 mr-2"></span>가스 (Gas)
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-3 h-0.5 bg-green-500 mr-2"></span>데이터 (Data)
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-3 h-0.5 bg-purple-500 mr-2"></span>대시 (Dash)
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <span className="w-3 h-0.5 bg-blue-600 mr-2"></span>물 (Water)
-                </div>
-                <div className="flex items-center">
-                  <span className="w-3 h-0.5 bg-gray-500 mr-2"></span>바람 (Wind)
-                </div>
-                <div className="flex items-center">
-                  <span className="w-3 h-0.5 bg-yellow-600 mr-2"></span>가스 (Gas)
-                </div>
-                <div className="flex items-center">
-                  <span className="w-3 h-0.5 bg-green-500 mr-2"></span>데이터 (Data)
-                </div>
-                <div className="flex items-center">
-                  <span className="w-3 h-0.5 bg-purple-500 mr-2"></span>대시 (Dash)
-                </div>
-              </div>
+              </DiagramProvider>
             </div>
           </div>
 
