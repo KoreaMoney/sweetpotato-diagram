@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useDiagram } from "../DiagramContext";
 import { LOG_MESSAGES } from "../constants/groupConstants";
 
 /**
@@ -10,6 +11,15 @@ import { LOG_MESSAGES } from "../constants/groupConstants";
  */
 export const useGroupBoxes = (groupId, groupLabel, groupStyle, registerGroup) => {
   const [groupBoxes, setGroupBoxes] = useState([]);
+
+  // DiagramContext 사용 (선택적)
+  let diagramRegisterBox;
+  try {
+    const context = useDiagram();
+    diagramRegisterBox = context.registerBox;
+  } catch {
+    diagramRegisterBox = null;
+  }
 
   // 그룹 등록
   useEffect(() => {
@@ -42,6 +52,21 @@ export const useGroupBoxes = (groupId, groupLabel, groupStyle, registerGroup) =>
   // 박스 위치 업데이트
   const updateBoxes = (updatedBoxes) => {
     setGroupBoxes(updatedBoxes);
+
+    // 🔧 DiagramContext의 박스 위치도 함께 업데이트
+    if (diagramRegisterBox) {
+      updatedBoxes.forEach((box) => {
+        const boxInfo = {
+          id: box.id,
+          x: box.x,
+          y: box.y,
+          width: box.width,
+          height: box.height,
+          groupId: groupId,
+        };
+        diagramRegisterBox(box.id, boxInfo);
+      });
+    }
   };
 
   return {

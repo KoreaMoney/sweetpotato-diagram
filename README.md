@@ -1,36 +1,54 @@
-# 🍠 Sweet Diagram
+# 🍠 Sweet Diagram v0.4.2
 
-Modern and intuitive React diagram editor components with drag & drop, interactive diagram editing, and automatic connection features.
+Modern and intuitive React diagram editor components with drag & drop, interactive diagram editing, and advanced automatic connection features.
 
-## ✨ New Features
+[![npm version](https://badge.fury.io/js/sweet-diagram.svg)](https://badge.fury.io/js/sweet-diagram)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![React](https://img.shields.io/badge/React-18%2B-blue.svg)](https://reactjs.org/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38B2AC.svg)](https://tailwindcss.com/)
 
-### 🔗 AutoConnect (자동 연결)
+🌐 **Demo**: [https://sweetpotato-diagram.vercel.app](https://sweetpotato-diagram.vercel.app)
+📦 **NPM**: [https://www.npmjs.com/package/sweet-diagram](https://www.npmjs.com/package/sweet-diagram)
+
+## ✨ New Features in v0.4.2
+
+### 🔗 Advanced AutoConnect (고급 자동 연결)
 
 - **Shift + 박스 클릭**으로 자동 연결 모드 시작
 - 다른 지점 클릭으로 자동 연결선 생성
 - 스마트한 연결점 계산 및 다양한 연결 스타일
 - 실시간 설정 변경 및 컴팩트한 설정 UI
+- 향상된 연결 알고리즘과 충돌 방지 기능
 
 ### 📊 Enhanced Box Component
 
-- **세로 텍스트** 지원 (LR, RL 방향)
-- 개선된 텍스트 방향 제어
-- 더 유연한 박스 스타일링
+- **세로 텍스트** 완전 지원 (LR, RL 방향)
+- 개선된 텍스트 방향 제어 및 렌더링
+- 더 유연한 박스 스타일링 및 테마 지원
+- 성능 최적화된 렌더링
 
-### 🎬 Animation Features
+### 🎬 Advanced Animation Features
 
-- 연결선 애니메이션 효과
-- 부드러운 전환 애니메이션
+- 연결선 애니메이션 효과 (부드럽고 자연스러운 흐름)
+- 부드러운 전환 애니메이션 및 상태 변화
 - 커스터마이징 가능한 애니메이션 설정
+- 성능 최적화된 애니메이션 엔진
+
+### 🛠 Component Library Expansion
+
+- 포괄적인 다이어그램 컴포넌트 라이브러리
+- TypeScript 완전 지원
+- 모던한 UI/UX 디자인
+- 확장 가능한 아키텍처
 
 ## 📦 Installation
 
 ```bash
-npm install sweet-diagram
+npm install sweet-diagram@latest
 # or
-yarn add sweet-diagram
+yarn add sweet-diagram@latest
 # or
-pnpm add sweet-diagram
+pnpm add sweet-diagram@latest
 ```
 
 ### TailwindCSS v4 Installation (Required)

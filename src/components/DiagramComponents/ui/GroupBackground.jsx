@@ -77,7 +77,7 @@ const GroupLabel = ({ groupLabel, groupBoxes, groupBackground, isDragging, isHov
   return (
     <div
       className={`absolute px-3 py-1.5 text-xs font-bold rounded-lg shadow-md pointer-events-none 
-        bg-white/95 backdrop-blur-sm transition-all duration-300 ease-out
+        bg-white/95 transition-all duration-300 ease-out
         ${isDragging ? "scale-105 shadow-lg" : isHovering ? "scale-102" : "scale-100"}`}
       style={labelStyles}
     >

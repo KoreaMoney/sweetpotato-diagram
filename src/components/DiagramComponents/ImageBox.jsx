@@ -31,7 +31,7 @@ const ImageBox = ({
   imageScale = 1, // 이미지 크기 비율 (0.1 ~ 2.0)
   imagePadding = 8, // 이미지 주변 여백 (px)
   imageObjectFit = "contain", // 이미지 피팅 방식: contain, cover, fill, scale-down, none
-  className = "bg-gray-100 text-gray-700 border-gray-300 border-2 rounded-lg text-xs hover:shadow-lg hover:scale-105 transition-all duration-200",
+  className = "bg-gray-100 text-gray-700 border-gray-300 border-2 rounded-lg text-xs hover:shadow-lg transition-shadow duration-200",
   onClick = null,
 }) => {
   // 🆕 드래그 상태 관리 (동적 위치로 변경)
@@ -39,6 +39,10 @@ const ImageBox = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const boxRef = useRef(null);
+
+  // 🔧 무한 루프 방지를 위한 ref 추가
+  const previousPositionRef = useRef({ x: initialX, y: initialY });
+  const isUpdatingFromContextRef = useRef(false);
 
   // 현재 위치 (동적 위치 사용)
   const currentX = position.x;
@@ -63,18 +67,41 @@ const ImageBox = ({
 
   // Props로 받은 초기 위치가 변경되면 내부 상태도 업데이트
   useEffect(() => {
-    setPosition({ x: initialX, y: initialY });
-  }, [initialX, initialY]);
+    if (initialX !== previousPositionRef.current.x || initialY !== previousPositionRef.current.y) {
+      setPosition({ x: initialX, y: initialY });
+      previousPositionRef.current = { x: initialX, y: initialY };
 
-  // DiagramContext에서 위치 변화를 감지하고 내부 상태 업데이트 (의존성 최적화)
-  useEffect(() => {
-    if (boxes && id) {
-      const boxFromContext = boxes.get(id);
-      if (boxFromContext && (boxFromContext.x !== position.x || boxFromContext.y !== position.y)) {
-        setPosition({ x: boxFromContext.x, y: boxFromContext.y });
+      // DiagramContext에도 위치 업데이트
+      if (id && registerBox) {
+        const boxInfo = {
+          id,
+          x: initialX,
+          y: initialY,
+          width,
+          height,
+          groupId: groupContext?.groupId || null,
+        };
+        registerBox(id, boxInfo);
       }
     }
-  }, [boxes, id]); // position 의존성 제거하여 무한 루프 방지
+  }, [initialX, initialY, id, registerBox, width, height, groupContext?.groupId]);
+
+  // 🔧 수정: DiagramContext에서 위치 변화를 감지하고 내부 상태 업데이트 (무한 루프 방지)
+  useEffect(() => {
+    if (boxes && id && !isUpdatingFromContextRef.current) {
+      const boxFromContext = boxes.get(id);
+      if (boxFromContext && (boxFromContext.x !== position.x || boxFromContext.y !== position.y)) {
+        isUpdatingFromContextRef.current = true;
+        setPosition({ x: boxFromContext.x, y: boxFromContext.y });
+        previousPositionRef.current = { x: boxFromContext.x, y: boxFromContext.y };
+
+        // 다음 렌더링 사이클에서 플래그 리셋
+        setTimeout(() => {
+          isUpdatingFromContextRef.current = false;
+        }, 0);
+      }
+    }
+  }, [boxes, id]); // 🔧 position.x, position.y 제거
 
   // ImageBox 정보를 DiagramContext에 등록/업데이트 (마운트 시에만)
   useEffect(() => {
@@ -135,8 +162,9 @@ const ImageBox = ({
 
     event.preventDefault();
     const newPosition = {
-      x: event.clientX - dragStart.x,
-      y: event.clientY - dragStart.y,
+      // 🔧 픽셀 경계에 맞추기 위해 정수로 반올림
+      x: Math.round(event.clientX - dragStart.x),
+      y: Math.round(event.clientY - dragStart.y),
     };
 
     setPosition(newPosition);
@@ -151,8 +179,16 @@ const ImageBox = ({
 
     setIsDragging(false);
 
+    // 🔧 최종 위치도 정수로 반올림하여 픽셀 정렬 보장
+    const finalPosition = {
+      x: Math.round(position.x),
+      y: Math.round(position.y),
+    };
+
+    setPosition(finalPosition);
+
     if (onDragEnd) {
-      onDragEnd(position, { id, width, height });
+      onDragEnd(finalPosition, { id, width, height });
     }
   };
 
@@ -189,7 +225,8 @@ const ImageBox = ({
 
   // 🆕 반짝이는 애니메이션 CSS 클래스 생성
   const getSparkleClasses = () => {
-    if (!sparkle) return "";
+    // 🔧 드래그 중에는 애니메이션 효과 비활성화
+    if (!sparkle || isDragging) return "";
 
     const intensityClasses = {
       low: "animate-pulse",
@@ -200,13 +237,14 @@ const ImageBox = ({
     return `${intensityClasses[sparkleIntensity] || intensityClasses.medium}`;
   };
 
-  // 🆕 반짝이는 효과 스타일
+  // 🆕 반짝이는 효과 스타일 생성
   const getSparkleStyles = () => {
-    if (!sparkle) return {};
+    // 🔧 드래그 중에는 효과 비활성화
+    if (!sparkle || isDragging) return {};
 
     return {
-      filter: `drop-shadow(0 0 8px ${sparkleColor}) drop-shadow(0 0 16px ${sparkleColor}40)`,
-      boxShadow: `0 0 20px ${sparkleColor}60, inset 0 0 20px ${sparkleColor}20`,
+      boxShadow: `0 0 10px ${sparkleColor}`,
+      borderColor: sparkleColor,
     };
   };
 
@@ -353,22 +391,30 @@ const ImageBox = ({
           <img
             src={icon}
             alt={text}
-            className={`transition-transform duration-200 hover:scale-110 ${getSparkleClasses()}`}
+            className={`${getSparkleClasses()}`}
             style={{
               ...imageStyle,
               ...sparkleStyle,
               objectFit: imageObjectFit,
+              // 🔧 완전히 순수한 이미지 렌더링 - 모든 최적화 제거
+              display: "block",
+              maxWidth: "100%",
+              maxHeight: "100%",
             }}
+            draggable={false}
           />
         );
 
       case "emoji":
         return (
           <span
-            className={`text-center transition-transform duration-200 hover:scale-110 ${getSparkleClasses()}`}
+            className={`text-center ${getSparkleClasses()}`}
             style={{
               fontSize: `${Math.min(parseInt(imageStyle.width), parseInt(imageStyle.height)) * 0.6}px`,
               ...sparkleStyle,
+              // 🔧 완전히 순수한 텍스트 렌더링 - 모든 최적화 제거
+              display: "block",
+              lineHeight: "1",
             }}
           >
             {icon}
@@ -379,10 +425,12 @@ const ImageBox = ({
       default:
         return (
           <div
-            className={`flex items-center justify-center transition-transform duration-200 hover:scale-110 ${getSparkleClasses()}`}
+            className={`flex items-center justify-center ${getSparkleClasses()}`}
             style={{
               ...imageStyle,
               ...sparkleStyle,
+              // 🔧 완전히 순수한 SVG 렌더링 - 모든 최적화 제거
+              display: "flex",
             }}
             dangerouslySetInnerHTML={{ __html: icon }}
           />
@@ -406,12 +454,16 @@ const ImageBox = ({
   return (
     <div
       ref={boxRef}
-      className={`absolute ${isDragging ? "z-50" : "z-10"} ${
+      className={`absolute ${isDragging ? "z-[1001]" : "z-[100]"} ${
         draggable ? "cursor-move" : "cursor-pointer"
       } ${additionalClasses}`}
       style={{
-        left: `${currentX}px`,
-        top: `${currentY}px`,
+        // 🔧 순수한 위치 기반 렌더링 - 모든 transform 제거
+        left: `${Math.round(currentX)}px`,
+        top: `${Math.round(currentY)}px`,
+        // 🔧 이미지 선명도를 위한 기본 설정만 유지
+        imageRendering: "auto",
+        WebkitImageRendering: "auto",
         ...additionalStyles,
       }}
       data-box-id={id}
@@ -420,12 +472,13 @@ const ImageBox = ({
       {/* 메인 박스 - 이미지만 포함 */}
       <div
         className={`relative select-none focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 ${className} ${
-          isDragging ? "shadow-2xl scale-105" : ""
-        } ${sparkle ? "animate-pulse" : ""}`}
+          isDragging ? "shadow-2xl" : ""
+        } ${sparkle && !isDragging ? "animate-pulse" : ""}`}
         style={{
           width: `${width}px`,
           height: `${height}px`,
           padding: `${imagePadding}px`,
+          // 🔧 순수한 렌더링 - 모든 transform 제거
           ...getSparkleStyles(),
         }}
         onClick={handleClick}

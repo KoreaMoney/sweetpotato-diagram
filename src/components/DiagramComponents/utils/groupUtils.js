@@ -53,7 +53,7 @@ export const calculateGroupLabelPosition = (groupBackground) => {
  * @returns {string} CSS 클래스 문자열
  */
 export const getGroupStyleClasses = (isDraggable, isDragging, isHovering) => {
-  const baseClasses = "absolute select-none transition-all duration-300 ease-out border-2 backdrop-blur-sm";
+  const baseClasses = "absolute select-none transition-all duration-300 ease-out border-2";
 
   const cursorClasses = isDraggable ? "cursor-grab active:cursor-grabbing" : "cursor-pointer";
 
@@ -85,8 +85,7 @@ export const getGroupDynamicStyles = (groupBackground, isDragging, isHovering) =
     borderColor: groupBackground.style.borderColor,
     borderRadius: `${groupBackground.style.borderRadius}px`,
     zIndex: isDragging ? Z_INDEX.DRAGGING : isHovering ? Z_INDEX.HOVER : Z_INDEX.DEFAULT,
-    transform: isDragging ? "translateZ(0)" : isHovering ? "translateZ(0) translateY(-1px)" : "translateZ(0)",
-    willChange: isDragging ? "transform, box-shadow" : "auto",
+    willChange: isDragging ? "box-shadow" : "auto",
   };
 };
 
@@ -104,6 +103,5 @@ export const getGroupLabelStyles = (labelPos, groupBackground, isDragging, isHov
     left: `${labelPos.left}px`,
     color: groupBackground.style.borderColor,
     border: `2px solid ${groupBackground.style.borderColor}`,
-    transform: isDragging ? "translateY(-2px)" : isHovering ? "translateY(-1px)" : "translateY(0)",
   };
 };

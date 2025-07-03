@@ -4,7 +4,7 @@
 
 // 기본 그룹 스타일
 export const DEFAULT_GROUP_STYLE = {
-  backgroundColor: "rgba(59, 130, 246, 0.08)",
+  backgroundColor: "transparent",
   borderColor: "#3b82f6",
   borderWidth: 2,
   borderRadius: 12,
