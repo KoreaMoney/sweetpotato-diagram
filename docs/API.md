@@ -1376,7 +1376,7 @@ import { Triangle } from "@/components/DiagramComponents";
   borderColor="#D97706"
   borderWidth={2}
   filled={true}
-  onClick={(event, info) => console.log("삼각형 클릭", info)}
+  onClick={(event, info) => ("삼각형 클릭", info)}
 />;
 ```
 
@@ -1418,7 +1418,7 @@ import { CodeEditor } from "@/components/DiagramComponents";
   height="400px"
   showLineNumbers={true}
   onCodeChange={(newCode) => {
-    console.log("코드 변경:", newCode);
+    "코드 변경:", newCode;
     // 실시간 미리보기 업데이트
   }}
   onError={(error) => {

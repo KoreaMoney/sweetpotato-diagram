@@ -1,89 +1,72 @@
-# 소스 코드 (빌드된 파일만 포함)
+# Source files
 src/
 public/
-docs/
+index.html
 
-# 개발 의존성
-node_modules/
-.git/
-.github/
+# Development files
+.vscode/
+.idea/
+.DS_Store
+*.log
+*.tmp
+*.temp
 
-# 설정 파일들
+# Test files
+test/
+src/test/
+*.test.js
+*.test.jsx
+*.spec.js
+*.spec.jsx
+test-results/
+coverage/
+playwright-report/
+
+# Build tools
 vite.config.js
+tailwind.config.js
 postcss.config.mjs
 eslint.config.js
 playwright.config.js
-.gitignore
-.yarnrc.yml
 
-# 개발용 파일들
-index.html
-pnpm-lock.yaml
-yarn.lock
-package-lock.json
-
-# 문서 파일들 (README.md와 LICENSE는 포함)
+# Documentation files (keeping only README.md)
+docs/
 *.md
 !README.md
-!LICENSE
 
-# 로그 파일들
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+# CI/CD files
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
 
-# 임시 파일들
-.DS_Store
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# 테스트 관련
-test/
-__tests__/
-*.test.*
-*.spec.*
-test-results/
-playwright-report/
-coverage/
+# Development dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
 # Storybook
 .storybook/
 storybook-static/
+stories/
 
-# 환경 변수 파일들
+# Example files
+examples/
+demo/
+
+# Miscellaneous
+.gitignore
+.editorconfig
+.prettierrc
+.prettierignore
+.babelrc
 .env*
-!.env.example
+*.env
 
-# 기타 불필요한 파일들
-.nyc_output
-.sass-cache
-.cache
-.parcel-cache
-.next
-.nuxt
-.vuepress/dist
-.serverless
-.fusebox/
-.dynamodb/
-.tern-port
-
-# OS 생성 파일들
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-
-# IDE 파일들
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
-
-# 빌드 관련 (dist는 포함)
-build/
-!dist/ 
+# Temporary files
+.tmp/
+temp/
+*.swp
+*.swo
+*~ 
