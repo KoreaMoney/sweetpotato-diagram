@@ -1,10 +1,10 @@
 {
   "name": "sweet-diagram",
-  "version": "0.4.4",
+  "version": "0.4.6",
   "type": "module",
   "author": "KimDowon",
   "license": "MIT",
-  "description": "A modern and intuitive diagram editor component for React applications with advanced auto-connect features, vertical text support, animation effects, and comprehensive component library",
+  "description": "A modern and intuitive diagram editor component for React applications with advanced auto-connect features, Sankey diagrams, Stack functionality, vertical text support, animation effects, and comprehensive component library",
   "keywords": [
     "react",
     "diagram",
@@ -19,7 +19,10 @@
     "component-library",
     "interactive-diagram",
     "typescript",
-    "modern-ui"
+    "modern-ui",
+    "sankey-diagram",
+    "stack-layout",
+    "flow-diagram"
   ],
   "homepage": "https://sweetpotato-diagram.vercel.app",
   "repository": {

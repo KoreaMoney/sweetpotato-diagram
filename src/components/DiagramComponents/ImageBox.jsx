@@ -33,6 +33,10 @@ const ImageBox = ({
   imageObjectFit = "contain", // 이미지 피팅 방식: contain, cover, fill, scale-down, none
   className = "bg-gray-100 text-gray-700 border-gray-300 border-2 rounded-lg text-xs hover:shadow-lg transition-shadow duration-200",
   onClick = null,
+  // 🆕 Z-Index 관련 props
+  zIndex = 100, // 기본 z-index 값
+  priority = null, // 우선순위 (높을수록 위에 표시, null이면 zIndex 사용)
+  maintainPriority = false, // true면 클릭해도 우선순위 변경 안됨
 }) => {
   // 🆕 드래그 상태 관리 (동적 위치로 변경)
   const [position, setPosition] = useState({ x: initialX, y: initialY });
@@ -43,27 +47,51 @@ const ImageBox = ({
   // 🔧 무한 루프 방지를 위한 ref 추가
   const previousPositionRef = useRef({ x: initialX, y: initialY });
   const isUpdatingFromContextRef = useRef(false);
+  const initialZIndexSetRef = useRef(false);
 
   // 현재 위치 (동적 위치 사용)
   const currentX = position.x;
   const currentY = position.y;
 
   // DiagramContext를 optional하게 사용 (에러 로깅 제거)
-  let registerBox, unregisterBox, boxes;
+  let registerBox, unregisterBox, boxes, getBoxZIndex, bringBoxToFront, setBoxZIndex;
   try {
     const context = useDiagram();
     registerBox = context.registerBox;
     unregisterBox = context.unregisterBox;
     boxes = context.boxes;
+    getBoxZIndex = context.getBoxZIndex;
+    bringBoxToFront = context.bringBoxToFront;
+    setBoxZIndex = context.setBoxZIndex;
   } catch (error) {
     // DiagramProvider가 없으면 context 기능을 사용하지 않음 (에러 로깅 제거)
     registerBox = null;
     unregisterBox = null;
     boxes = null;
+    getBoxZIndex = null;
+    bringBoxToFront = null;
+    setBoxZIndex = null;
   }
 
   // 🆕 GroupProvider 컨텍스트 사용
   const groupContext = useGroup();
+
+  // 🆕 초기 zIndex/priority 설정
+  useEffect(() => {
+    if (id && setBoxZIndex && !initialZIndexSetRef.current) {
+      const initialZIndexValue = priority !== null ? priority : zIndex;
+      setBoxZIndex(id, initialZIndexValue);
+      initialZIndexSetRef.current = true;
+    }
+  }, [id, priority, zIndex, setBoxZIndex]);
+
+  // 🆕 priority나 zIndex props가 변경되면 DiagramContext에 반영
+  useEffect(() => {
+    if (id && setBoxZIndex && initialZIndexSetRef.current) {
+      const newZIndexValue = priority !== null ? priority : zIndex;
+      setBoxZIndex(id, newZIndexValue);
+    }
+  }, [priority, zIndex, id, setBoxZIndex]);
 
   // 🆕 최신 상태 참조를 위한 ref 추가
   const latestStateRef = useRef({
@@ -279,7 +307,12 @@ const ImageBox = ({
   }, [isDragging]);
 
   const handleClick = (event) => {
-    if (onClick && !isDragging) {
+    // 🆕 maintainPriority가 true가 아닐 때만 박스를 앞으로 가져오기
+    if (id && bringBoxToFront && !maintainPriority) {
+      bringBoxToFront(id);
+    }
+
+    if (onClick) {
       onClick(event, {
         id,
         x: currentX,
@@ -287,6 +320,9 @@ const ImageBox = ({
         width,
         height,
         groupId: groupContext?.groupId,
+        currentZIndex: getBoxZIndex ? getBoxZIndex(id) : priority !== null ? priority : zIndex,
+        priority,
+        maintainPriority,
       });
     }
   };
@@ -525,16 +561,19 @@ const ImageBox = ({
   const connectionPoints = getConnectionPoints();
   const textPositionStyles = getTextPositionStyles();
 
+  // 🆕 현재 z-index 값 가져오기 (우선순위: DiagramContext > priority prop > zIndex prop)
+  const currentZIndex = getBoxZIndex ? getBoxZIndex(id) : priority !== null ? priority : zIndex;
+
   return (
     <div
       ref={boxRef}
-      className={`absolute ${isDragging ? "z-[1001]" : "z-[100]"} ${
-        draggable ? "cursor-move" : "cursor-pointer"
-      } ${additionalClasses}`}
+      className={`absolute ${draggable ? "cursor-move" : "cursor-pointer"} ${additionalClasses}`}
       style={{
         // 🔧 순수한 위치 기반 렌더링 - 모든 transform 제거
         left: `${Math.round(currentX)}px`,
         top: `${Math.round(currentY)}px`,
+        // 🆕 동적 z-index 적용
+        zIndex: isDragging ? currentZIndex + 1000 : currentZIndex,
         // 🔧 이미지 선명도를 위한 기본 설정만 유지
         imageRendering: "auto",
         WebkitImageRendering: "auto",

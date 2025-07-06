@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useCallback, useRef } from "react";
-import Box from "./Box";
 
 const DiagramContext = createContext();
 
@@ -46,6 +45,10 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
 
   // 그룹 관리 상태
   const [groups, setGroups] = useState(new Map());
+
+  // 🆕 Z-Index 관리 상태
+  const [_maxZIndex, setMaxZIndex] = useState(1000); // 최대 z-index 값
+  const [boxZIndexes, setBoxZIndexes] = useState(new Map()); // 박스별 z-index 저장
 
   const containerRef = useRef(null);
 
@@ -776,6 +779,39 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
     [groups, boxes, updateBoxPosition]
   );
 
+  // 🆕 Z-Index 관리 함수들
+  const getBoxZIndex = useCallback(
+    (boxId) => {
+      return boxZIndexes.get(boxId) || 10; // 기본값 10
+    },
+    [boxZIndexes]
+  );
+
+  const bringBoxToFront = useCallback((boxId) => {
+    setMaxZIndex((prev) => {
+      const newMaxZIndex = prev + 1;
+      setBoxZIndexes((prevIndexes) => {
+        const newIndexes = new Map(prevIndexes);
+        newIndexes.set(boxId, newMaxZIndex);
+        return newIndexes;
+      });
+      return newMaxZIndex;
+    });
+  }, []);
+
+  const setBoxZIndex = useCallback((boxId, zIndex) => {
+    setBoxZIndexes((prev) => {
+      const newIndexes = new Map(prev);
+      newIndexes.set(boxId, zIndex);
+      return newIndexes;
+    });
+  }, []);
+
+  const resetZIndexes = useCallback(() => {
+    setBoxZIndexes(new Map());
+    setMaxZIndex(1000);
+  }, []);
+
   const value = {
     // 박스 관리
     boxes,
@@ -857,6 +893,12 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
 
     // 컨테이너 관련
     containerRef,
+
+    // 🆕 Z-Index 관리
+    getBoxZIndex,
+    bringBoxToFront,
+    setBoxZIndex,
+    resetZIndexes,
   };
 
   // 기본 스타일과 사용자 스타일 병합

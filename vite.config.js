@@ -108,7 +108,7 @@ export default defineConfig(({ mode }) => {
             "@react-three/fiber": "ReactThreeFiber",
             "@react-three/drei": "ReactThreeDrei",
             "lucide-react": "LucideReact",
-            "zustand": "Zustand",
+            zustand: "Zustand",
           },
           assetFileNames: (assetInfo) => {
             if (assetInfo.name === "style.css") return "sweet-diagram.css";
@@ -117,10 +117,11 @@ export default defineConfig(({ mode }) => {
         },
         treeshake: {
           moduleSideEffects: false,
+          propertyReadSideEffects: false,
+          tryCatchDeoptimization: false,
         },
       },
       cssCodeSplit: false,
-      // 번들 크기 최적화
       minify: "terser",
       terserOptions: {
         compress: {
@@ -136,14 +137,31 @@ export default defineConfig(({ mode }) => {
           if_return: true,
           join_vars: true,
           pure_getters: true,
+          sequences: true,
+          conditionals: true,
+          comparisons: true,
+          evaluate: true,
+          hoist_funs: true,
+          hoist_vars: true,
+          inline: true,
+          passes: 2,
+          side_effects: false,
         },
         mangle: {
           safari10: true,
+          toplevel: true,
+          keep_fnames: false,
+          keep_classnames: false,
         },
         format: {
           comments: false,
         },
       },
+      target: "esnext",
+      sourcemap: false,
+      emptyOutDir: true,
+      reportCompressedSize: false,
+      chunkSizeWarningLimit: 1000,
     };
   }
 

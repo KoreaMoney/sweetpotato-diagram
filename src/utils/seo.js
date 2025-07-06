@@ -120,7 +120,9 @@ export const addStructuredData = (data) => {
 export const trackWebVitals = () => {
   // Web Vitals 추적은 현재 비활성화됨
   // 필요시 web-vitals 패키지를 설치한 후 활성화
-  console.log("Web Vitals tracking is disabled");
+  if (import.meta.env.DEV) {
+    console.info("Web Vitals tracking is disabled");
+  }
 };
 
 /**

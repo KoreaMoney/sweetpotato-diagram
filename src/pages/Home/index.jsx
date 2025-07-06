@@ -50,6 +50,18 @@ const TabCard = ({ tab, onTabChange }) => (
   </button>
 );
 
+// 새로운 기능 강조 카드
+const NewFeatureCard = ({ icon, title, description, isNew = true }) => (
+  <div className="bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg p-6 text-center border-2 border-purple-300 relative">
+    {isNew && (
+      <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">NEW</div>
+    )}
+    <div className="text-3xl mb-3">{icon}</div>
+    <h3 className="text-lg font-semibold mb-2 text-gray-800">{title}</h3>
+    <p className="text-sm text-gray-600">{description}</p>
+  </div>
+);
+
 // 코드 데이터 상수
 const CODE_SECTIONS = {
   install: {
@@ -107,10 +119,9 @@ import {
   Arrow,
   Line,
   ImageBox,
+  Sankey,
   useDiagram,
 } from "sweet-diagram";
-
-// Sweet Diagram 컴포넌트들
 
 function MyDiagram() {
   return (
@@ -180,6 +191,81 @@ function MyDiagram() {
 
 export default MyDiagram;`,
   },
+  newFeatures: {
+    title: "🆕 새로운 기능 - Sankey 다이어그램",
+    code: `import React from "react";
+import { Sankey } from "sweet-diagram";
+
+function SankeyExample() {
+  const sankeyData = {
+    nodes: [
+      { id: "A", name: "소스 A", layer: 0 },
+      { id: "B", name: "소스 B", layer: 0 },
+      { id: "C", name: "처리 C", layer: 1 },
+      { id: "D", name: "결과 D", layer: 2 },
+    ],
+    links: [
+      { source: "A", target: "C", value: 20 },
+      { source: "B", target: "C", value: 15 },
+      { source: "C", target: "D", value: 35 },
+    ],
+  };
+
+  return (
+    <Sankey
+      data={sankeyData}
+      width={600}
+      height={300}
+      animated={true}
+      showTooltip={true}
+      className="border border-gray-300 rounded-lg"
+    />
+  );
+}`,
+  },
+  stackFeatures: {
+    title: "📚 Stack 기능 - 박스 쌓기",
+    code: `import React from "react";
+import { DiagramProvider, Box } from "sweet-diagram";
+
+function StackExample() {
+  return (
+    <DiagramProvider width={400} height={300}>
+      {/* 같은 위치에 박스들을 배치하면 자동으로 스택됩니다 */}
+      <Box
+        id="stack1"
+        x={100}
+        y={100}
+        width={100}
+        height={50}
+        text="박스 1"
+        className="bg-blue-500 text-white"
+        priority={3}
+      />
+      <Box
+        id="stack2"
+        x={100}
+        y={100}
+        width={100}
+        height={50}
+        text="박스 2"
+        className="bg-green-500 text-white"
+        priority={2}
+      />
+      <Box
+        id="stack3"
+        x={100}
+        y={100}
+        width={100}
+        height={50}
+        text="박스 3"
+        className="bg-red-500 text-white"
+        priority={1}
+      />
+    </DiagramProvider>
+  );
+}`,
+  },
   hooksUsage: {
     title: "🪝 Hooks 사용법",
     code: `import { DiagramProvider, useDiagram, Box } from "sweet-diagram";
@@ -234,17 +320,51 @@ const AUTOCONNECT_FEATURES = [
   },
 ];
 
+// 새로운 기능 데이터
+const NEW_FEATURES = [
+  {
+    icon: "🌊",
+    title: "Sankey 다이어그램",
+    description: "흐름량을 시각적으로 표현하는 인터랙티브 다이어그램",
+    isNew: true,
+  },
+  {
+    icon: "📚",
+    title: "Stack 기능",
+    description: "박스들을 자동으로 쌓아 올리는 스택 레이아웃",
+    isNew: true,
+  },
+  {
+    icon: "🔧",
+    title: "향상된 최적화",
+    description: "더 빠른 렌더링과 작은 번들 크기",
+    isNew: false,
+  },
+];
+
 const Home = ({ onTabChange }) => {
   return (
     <div className="p-8 text-center">
       <div className="max-w-6xl mx-auto">
         {/* 헤더 섹션 */}
         <div className="mb-8">
-          <h1 className="text-5xl font-bold text-gray-800 mb-4 flex items-center justify-center">Sweet-Diagram</h1>
+          <h1 className="text-5xl font-bold text-gray-800 mb-4 flex items-center justify-center">
+            Sweet-Diagram
+            <span className="ml-3 text-sm bg-blue-500 text-white px-2 py-1 rounded-full">v0.4.6</span>
+          </h1>
           <p className="text-xl text-gray-600 mb-8">
-            Modern and intuitive React diagram editor components with drag & drop and interactive diagram editing
-            features.
+            Modern and intuitive React diagram editor components with drag & drop, Sankey diagrams, and Stack features.
           </p>
+        </div>
+
+        {/* 새로운 기능 강조 섹션 */}
+        <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-8 mb-12 border-2 border-purple-200">
+          <h2 className="text-3xl font-bold text-gray-800 mb-6">🆕 v0.4.6 새로운 기능</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {NEW_FEATURES.map((feature, index) => (
+              <NewFeatureCard key={index} {...feature} />
+            ))}
+          </div>
         </div>
 
         {/* 탭 카드 그리드 */}
@@ -257,7 +377,7 @@ const Home = ({ onTabChange }) => {
         {/* AutoConnect 기능 강조 섹션 */}
         <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-8 text-white mb-12">
           <div className="text-center mb-8">
-            <h2 className="text-4xl font-bold mb-4">⚡ 새로운 AutoConnect 기능!</h2>
+            <h2 className="text-4xl font-bold mb-4">⚡ AutoConnect 기능</h2>
             <p className="text-xl opacity-90">Shift + 클릭으로 박스에서 임의 지점으로 연결하는 혁신적인 기능</p>
           </div>
 

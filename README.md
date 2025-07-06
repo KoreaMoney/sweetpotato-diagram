@@ -1,4 +1,4 @@
-# 🍠 Sweet Diagram v0.4.4
+# 🍠 Sweet Diagram v0.4.6
 
 **Ultra-Lightweight & Optimized React Diagram Editor Components**
 
@@ -23,6 +23,8 @@
 
 - **Drag & Drop** - Intuitive visual editing
 - **Auto-Connect** - Smart connection algorithms
+- **Sankey Diagrams** - Flow visualization with proportional nodes
+- **Stack Layout** - Automatic box stacking with priority system
 - **Vertical Text** - Complete support for LR/RL directions
 - **Animation Effects** - Smooth transitions and flows
 - **TypeScript** - Full type safety and IntelliSense
@@ -66,6 +68,7 @@ import {
   Arrow,
   Line,
   ImageBox,
+  Sankey,
   useDiagram,
 } from "sweet-diagram";
 
@@ -153,9 +156,96 @@ export default MyDiagram;
 - **`Valve`** - Valve indicators
 - **`ImageBox`** - Image containers
 
+### 🆕 New in v0.4.6
+
+- **`Sankey`** - Flow diagrams with proportional node heights
+- **Stack Layout** - Automatic box stacking with priority system
+
 ### Hooks
 
 - **`useDiagram`** - Access diagram context and state
+
+## 🌊 Sankey Diagrams
+
+Visualize flow data with interactive Sankey diagrams:
+
+```jsx
+import { Sankey } from "sweet-diagram";
+
+function SankeyExample() {
+  const data = {
+    nodes: [
+      { id: "A", name: "Source A", layer: 0 },
+      { id: "B", name: "Source B", layer: 0 },
+      { id: "C", name: "Process C", layer: 1 },
+      { id: "D", name: "Result D", layer: 2 },
+    ],
+    links: [
+      { source: "A", target: "C", value: 20 },
+      { source: "B", target: "C", value: 15 },
+      { source: "C", target: "D", value: 35 },
+    ],
+  };
+
+  return (
+    <Sankey
+      data={data}
+      width={600}
+      height={300}
+      animated={true}
+      showTooltip={true}
+      highlightPath={true}
+      className="border border-gray-300 rounded-lg"
+    />
+  );
+}
+```
+
+## 📚 Stack Layout
+
+Automatically stack boxes with priority system:
+
+```jsx
+import { DiagramProvider, Box } from "sweet-diagram";
+
+function StackExample() {
+  return (
+    <DiagramProvider width={400} height={300}>
+      {/* Boxes with same position will automatically stack */}
+      <Box
+        id="stack1"
+        x={100}
+        y={100}
+        width={100}
+        height={50}
+        text="Priority 3"
+        className="bg-blue-500 text-white"
+        priority={3}
+      />
+      <Box
+        id="stack2"
+        x={100}
+        y={100}
+        width={100}
+        height={50}
+        text="Priority 2"
+        className="bg-green-500 text-white"
+        priority={2}
+      />
+      <Box
+        id="stack3"
+        x={100}
+        y={100}
+        width={100}
+        height={50}
+        text="Priority 1"
+        className="bg-red-500 text-white"
+        priority={1}
+      />
+    </DiagramProvider>
+  );
+}
+```
 
 ## 🎨 Styling
 
@@ -179,7 +269,7 @@ You can customize components using:
 | Version | Size  | Improvement     |
 | ------- | ----- | --------------- |
 | v0.4.3  | 1.8MB | -               |
-| v0.4.4  | 328KB | **82% smaller** |
+| v0.4.6  | 328KB | **82% smaller** |
 
 ### Optimization Details
 
@@ -188,72 +278,79 @@ You can customize components using:
 - **Dependency Management**: Peer dependencies for flexibility
 - **Build Optimization**: Advanced Terser configuration
 
-## 🆕 What's New in v0.4.4
+## 🆕 What's New in v0.4.6
 
-### 🔥 Major Optimization
+### 🌊 Sankey Diagrams
 
-- **Ultra-lightweight bundle** - 82% size reduction
-- **Optimized CSS** - Only essential styles included
-- **Peer dependencies** - Better dependency management
-- **Improved performance** - Faster load times
+- **Interactive flow visualization** with proportional node heights
+- **Path highlighting** and connection tracing
+- **Animated flows** with smooth transitions
+- **Custom styling** with TailwindCSS classes
+- **Tooltip support** for detailed information
 
-### 🎯 Enhanced Features
+### 📚 Stack Layout System
 
-- **Vertical text support** - Complete LR/RL direction support
-- **Animation effects** - Smooth transitions and flows
-- **Advanced auto-connect** - Smart connection algorithms
-- **TypeScript support** - Full type safety
+- **Automatic box stacking** when boxes overlap
+- **Priority-based ordering** for z-index management
+- **Flexible positioning** with manual offset control
+- **Group management** for organized layouts
 
-## 📚 Documentation
+### 🔧 Enhanced Features
 
-### Component Props
+- **Improved performance** with optimized rendering
+- **Better TypeScript support** with comprehensive type definitions
+- **Enhanced documentation** with interactive examples
+- **Bug fixes** and stability improvements
 
-#### Box Component
+## 🎯 Advanced Features
+
+### Auto-Connect
+
+Smart connection system with visual feedback:
+
+```jsx
+// Enable auto-connect mode with Shift + Click
+<DiagramProvider autoConnect={true}>
+  <Box id="source" x={100} y={100} text="Click + Shift to connect" />
+  <Box id="target" x={300} y={200} text="Target box" />
+</DiagramProvider>
+```
+
+### Vertical Text
+
+Complete support for vertical text orientation:
 
 ```jsx
 <Box
-  id="unique-id" // Required: Unique identifier
-  x={100} // Required: X position
-  y={100} // Required: Y position
-  width={120} // Required: Box width
-  height={80} // Required: Box height
-  text="Box Text" // Optional: Display text
-  textDirection="horizontal" // Optional: "horizontal" | "vertical"
-  verticalDirection="lr" // Optional: "lr" | "rl" (for vertical text)
-  className="custom-class" // Optional: Custom CSS classes
-  onClick={(event, data) => {}} // Optional: Click handler
+  text="Vertical Text"
+  textDirection="vertical"
+  verticalDirection="lr" // or "rl"
+  className="bg-purple-500 text-white"
 />
 ```
 
-#### Connector Component
+### Animation Effects
+
+Smooth animations and transitions:
 
 ```jsx
 <Connector
   fromBox={{ id: "box1", position: "right" }}
   toBox={{ id: "box2", position: "left" }}
-  connectionType="straight" // "straight" | "curved" | "step"
-  arrowDirection="forward" // "forward" | "backward" | "both"
-  strokeWidth={2} // Line thickness
-  animated={true} // Enable animation
-  className="text-blue-500" // Custom styling
+  animated={true}
+  animationDuration={2000}
+  className="text-blue-500"
 />
 ```
 
-#### DraggableBox Component
+## 📖 Documentation
 
-```jsx
-<DraggableBox
-  id="draggable-1"
-  initialX={100}
-  initialY={100}
-  width={100}
-  height={60}
-  title="Draggable Box"
-  color="blue" // Color theme
-  onDrag={(position) => {}} // Drag handler
-  onDragEnd={(position) => {}} // Drag end handler
-/>
-```
+Visit our comprehensive documentation at [https://sweetpotato-diagram.vercel.app](https://sweetpotato-diagram.vercel.app) for:
+
+- **Interactive examples** and live demos
+- **API reference** with detailed props
+- **Best practices** and usage patterns
+- **Advanced tutorials** for complex scenarios
 
 ## 🤝 Contributing
 
@@ -263,12 +360,10 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## 🌟 Star History
 
-- Built with React 18+ and modern web standards
-- Optimized for performance and bundle size
-- Inspired by modern diagram editing tools
+[![Star History Chart](https://api.star-history.com/svg?repos=KoreaMoney/sweetpotato-diagram&type=Date)](https://star-history.com/#KoreaMoney/sweetpotato-diagram&Date)
 
 ---
 
-**Sweet Diagram** - Making diagram editing sweet and simple! 🍠✨
+**Made with ❤️ by KimDowon**

@@ -11,6 +11,8 @@ import ImageBoxSection from "./documentation/ImageBoxSection";
 import ArrowSection from "./documentation/ArrowSection";
 import LineSection from "./documentation/LineSection";
 import MouseTrackerSection from "./documentation/MouseTrackerSection";
+import SankeySection from "./documentation/SankeySection/SankeySection";
+import StackSection from "./documentation/StackSection";
 import ExamplesSection from "./documentation/ExamplesSection";
 
 const Documentation = () => {
@@ -27,7 +29,9 @@ const Documentation = () => {
     { id: "imagebox", title: "Image Box", icon: "🖼️", color: "from-yellow-500 to-orange-500" },
     { id: "arrow", title: "Arrow", icon: "↗️", color: "from-teal-500 to-cyan-500" },
     { id: "line", title: "Line", icon: "📐", color: "from-pink-500 to-rose-500" },
+    { id: "sankey", title: "Sankey", icon: "🌊", color: "from-blue-600 to-indigo-600" },
     { id: "mousetracker", title: "Mouse Tracker", icon: "🎯", color: "from-violet-500 to-purple-500" },
+    { id: "stack", title: "Stack Priority", icon: "🎯", color: "from-orange-500 to-red-500" },
     { id: "examples", title: "Examples", icon: "✨", color: "from-amber-500 to-yellow-500" },
   ];
 
@@ -75,6 +79,14 @@ const Documentation = () => {
     return <MouseTrackerSection />;
   };
 
+  const renderSankey = () => {
+    return <SankeySection />;
+  };
+
+  const renderStack = () => {
+    return <StackSection />;
+  };
+
   const renderExamples = () => {
     return <ExamplesSection />;
   };
@@ -103,6 +115,10 @@ const Documentation = () => {
         return renderLine();
       case "mousetracker":
         return renderMouseTracker();
+      case "sankey":
+        return renderSankey();
+      case "stack":
+        return renderStack();
       case "examples":
         return renderExamples();
       default:
