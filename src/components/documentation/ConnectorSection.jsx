@@ -198,6 +198,12 @@ const ConnectorSection = () => {
                   <td className="py-3 px-4">50</td>
                   <td className="py-3 px-4">직교 연결 중간점 오프셋</td>
                 </tr>
+                <tr className="border-b border-gray-100 bg-purple-50">
+                  <td className="py-3 px-4 font-mono text-sm">junctionPoints</td>
+                  <td className="py-3 px-4 text-orange-600">JunctionPoint[]</td>
+                  <td className="py-3 px-4">null</td>
+                  <td className="py-3 px-4">🆕 T자 분기점 배열 - 메인 연결선에서 다른 연결선으로 분기</td>
+                </tr>
                 <tr className="border-b border-gray-100">
                   <td className="py-3 px-4 font-mono text-sm">bendPoints</td>
                   <td className="py-3 px-4 text-orange-600">Point[]</td>
@@ -1866,6 +1872,285 @@ const boxes = [
               </li>
               <li>
                 • <strong>색상 조합:</strong> className과 animationType을 맞춰서 사용하면 더 자연스러움
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Junction Points 섹션 */}
+        <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg border border-purple-200">
+          <h3 className="text-xl font-bold text-purple-800 mb-4">🔀 Junction Points (분기점)</h3>
+          <p className="text-gray-700 mb-6">
+            메인 연결선에서 T자 형태로 분기하여 여러 방향으로 연결선을 확장할 수 있는 기능입니다.
+          </p>
+
+          {/* Junction Points 타입 정의 */}
+          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden mb-6">
+            <div className="bg-purple-100 px-4 py-3 border-b border-gray-200">
+              <h4 className="font-semibold text-purple-800">JunctionPoint 타입 정의</h4>
+            </div>
+            <div className="p-4">
+              <pre className="text-sm bg-gray-50 p-3 rounded overflow-x-auto">
+                {`type JunctionPoint = {
+  id: string;                                    // 분기점 고유 ID
+  position: { x: number, y: number } | number;   // 절대 좌표 또는 상대 위치 (0~1)
+  positionType: "absolute" | "relative";         // 위치 타입
+  showJunction: boolean;                         // 분기점 시각화 여부
+  junctionSize: number;                          // 분기점 크기
+  junctionShape: "circle" | "square" | "diamond"; // 분기점 모양
+  branches: BranchPoint[];                       // 분기선 배열
+};
+
+type BranchPoint = {
+  id: string;                                    // 분기선 고유 ID
+  to: { x: number, y: number } |                 // 절대 좌표 또는
+      { boxId: string, position: string };       // 박스 연결
+  arrowDirection: "forward" | "backward" | "both" | "none";
+  arrowSize: number;
+  className: string;
+  strokeWidth: number;
+  connectionType: "straight" | "curved" | "orthogonal";
+};`}
+              </pre>
+            </div>
+          </div>
+
+          {/* Junction Points 미리보기 */}
+          <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+            <h4 className="font-semibold text-gray-800 mb-3">📺 Junction Points 미리보기</h4>
+            <div className="relative bg-gray-50 rounded-lg p-4 h-80">
+              <DiagramProvider>
+                {/* 메인 박스들 */}
+                <Box
+                  id="main-source"
+                  x={50}
+                  y={140}
+                  width={80}
+                  height={40}
+                  text="소스"
+                  className="bg-blue-500 text-white border-blue-600 border-2 rounded-lg text-xs"
+                />
+                <Box
+                  id="main-target"
+                  x={350}
+                  y={140}
+                  width={80}
+                  height={40}
+                  text="타겟"
+                  className="bg-green-500 text-white border-green-600 border-2 rounded-lg text-xs"
+                />
+
+                {/* 분기 박스들 */}
+                <Box
+                  id="branch-up"
+                  x={200}
+                  y={50}
+                  width={70}
+                  height={30}
+                  text="분기A"
+                  className="bg-red-500 text-white border-red-600 border-2 rounded-lg text-xs"
+                />
+                <Box
+                  id="branch-down"
+                  x={200}
+                  y={220}
+                  width={70}
+                  height={30}
+                  text="분기B"
+                  className="bg-purple-500 text-white border-purple-600 border-2 rounded-lg text-xs"
+                />
+
+                {/* Junction Points가 있는 메인 커넥터 */}
+                <Connector
+                  fromBox={{ id: "main-source", position: "right" }}
+                  toBox={{ id: "main-target", position: "left" }}
+                  className="text-blue-600"
+                  strokeWidth={3}
+                  junctionPoints={[
+                    {
+                      id: "junction1",
+                      position: { x: 235, y: 160 },
+                      positionType: "absolute",
+                      showJunction: true,
+                      junctionSize: 5,
+                      junctionShape: "circle",
+                      branches: [
+                        {
+                          id: "branch1",
+                          to: { x: 235, y: 80 },
+                          arrowDirection: "forward",
+                          className: "text-red-500",
+                          strokeWidth: 2,
+                          connectionType: "straight",
+                        },
+                        {
+                          id: "branch2",
+                          to: { x: 235, y: 240 },
+                          arrowDirection: "forward",
+                          className: "text-purple-500",
+                          strokeWidth: 2,
+                          connectionType: "straight",
+                        },
+                      ],
+                    },
+                  ]}
+                />
+
+                {/* 범례 */}
+                <div className="absolute bottom-2 left-2 text-xs space-y-1">
+                  <div className="flex items-center">
+                    <span className="w-3 h-0.5 bg-blue-600 mr-2"></span>메인 연결선
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-3 h-0.5 bg-red-500 mr-2"></span>분기선 A
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-3 h-0.5 bg-purple-500 mr-2"></span>분기선 B
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-2 h-2 bg-blue-600 rounded-full mr-2"></span>분기점
+                  </div>
+                </div>
+              </DiagramProvider>
+            </div>
+          </div>
+
+          {/* Junction Points 코드 예시 */}
+          <div className="bg-gray-900 text-green-400 p-4 rounded-lg mb-4">
+            <h4 className="text-white font-semibold mb-3">💻 Junction Points 코드 예시</h4>
+            <pre className="text-sm overflow-x-auto">
+              {`// 1. 절대 좌표로 분기점 생성
+<Connector
+  fromBox={{ id: "source", position: "right" }}
+  toBox={{ id: "target", position: "left" }}
+  className="text-blue-600"
+  strokeWidth={3}
+  junctionPoints={[
+    {
+      id: "junction1",
+      position: { x: 200, y: 150 },           // 절대 좌표
+      positionType: "absolute",
+      showJunction: true,
+      junctionSize: 5,
+      junctionShape: "circle",
+      branches: [
+        {
+          id: "branch1",
+          to: { x: 200, y: 100 },             // 분기선 끝점
+          arrowDirection: "forward",
+          className: "text-red-500",
+          strokeWidth: 2,
+          connectionType: "straight"
+        }
+      ]
+    }
+  ]}
+/>
+
+// 2. 상대 위치로 분기점 생성
+<Connector
+  startPoint={{ x: 100, y: 150 }}
+  endPoint={{ x: 400, y: 150 }}
+  className="text-green-600"
+  junctionPoints={[
+    {
+      id: "junction2",
+      position: 0.6,                          // 메인 선의 60% 지점
+      positionType: "relative",
+      showJunction: true,
+      junctionSize: 4,
+      junctionShape: "square",
+      branches: [
+        {
+          id: "branch2",
+          to: { boxId: "branch-box", position: "top" }, // 박스 연결
+          arrowDirection: "forward",
+          className: "text-purple-500",
+          strokeWidth: 2,
+          connectionType: "orthogonal"
+        }
+      ]
+    }
+  ]}
+/>
+
+// 3. 여러 분기점과 여러 분기선
+<Connector
+  fromBox={{ id: "main-source", position: "right" }}
+  toBox={{ id: "main-target", position: "left" }}
+  className="text-blue-600"
+  strokeWidth={4}
+  junctionPoints={[
+    {
+      id: "junction3",
+      position: 0.3,
+      positionType: "relative",
+      showJunction: true,
+      junctionSize: 6,
+      junctionShape: "diamond",
+      branches: [
+        {
+          id: "branch3-1",
+          to: { x: 180, y: 80 },
+          arrowDirection: "forward",
+          className: "text-red-500",
+          strokeWidth: 3,
+          connectionType: "curved"
+        },
+        {
+          id: "branch3-2",
+          to: { x: 180, y: 220 },
+          arrowDirection: "forward",
+          className: "text-yellow-500",
+          strokeWidth: 3,
+          connectionType: "curved"
+        }
+      ]
+    },
+    {
+      id: "junction4",
+      position: 0.7,
+      positionType: "relative",
+      showJunction: true,
+      junctionSize: 5,
+      junctionShape: "circle",
+      branches: [
+        {
+          id: "branch4",
+          to: { boxId: "side-box", position: "left" },
+          arrowDirection: "both",
+          className: "text-purple-500",
+          strokeWidth: 2,
+          connectionType: "orthogonal"
+        }
+      ]
+    }
+  ]}
+/>`}
+            </pre>
+          </div>
+
+          {/* Junction Points 설정 팁 */}
+          <div className="bg-purple-100 border-l-4 border-purple-400 p-4">
+            <h4 className="font-medium text-purple-800 mb-2">💡 Junction Points 설정 팁</h4>
+            <ul className="text-sm text-purple-700 space-y-1">
+              <li>
+                • <strong>positionType:</strong> "absolute"는 정확한 좌표, "relative"는 메인 선의 비율(0~1)
+              </li>
+              <li>
+                • <strong>junctionShape:</strong> "circle"은 일반적, "square"는 네트워크, "diamond"는 결정점에 사용
+              </li>
+              <li>
+                • <strong>branches:</strong> 하나의 분기점에서 여러 방향으로 분기선 생성 가능
+              </li>
+              <li>
+                • <strong>connectionType:</strong> 분기선마다 다른 연결 타입 적용 가능
+              </li>
+              <li>
+                • <strong>색상 구분:</strong> 메인 선과 분기선을 다른 색상으로 구분하면 가독성 향상
+              </li>
+              <li>
+                • <strong>박스 연결:</strong> 분기선 끝점도 박스에 연결 가능 (to.boxId 사용)
               </li>
             </ul>
           </div>

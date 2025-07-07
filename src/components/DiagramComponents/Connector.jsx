@@ -2,7 +2,7 @@
  * Connector component
  *
  * A component that draws connection lines between two points or boxes.
- * Supports various connection styles, arrows, and animations.
+ * Supports various connection styles, arrows, animations, and junction points.
  *
  * @param {Object} props - Component props
  *
@@ -31,6 +31,26 @@
  *   - "stepped": Stepped connection
  *   - "custom": Custom path (uses bendPoints)
  *   - "auto": Automatically selected based on box positions
+ *
+ * === Junction Points (T-shaped branches) ===
+ * @param {Array} junctionPoints - Junction points for T-shaped branches
+ *   - Array of objects: [{
+ *       id: string,
+ *       position: { x: number, y: number } | number,
+ *       positionType: "absolute" | "relative",
+ *       showJunction: boolean,
+ *       junctionSize: number,
+ *       junctionShape: "circle" | "square" | "diamond",
+ *       branches: [{
+ *         id: string,
+ *         to: { x: number, y: number } | { boxId: string, position: string },
+ *         arrowDirection: "forward" | "backward" | "both" | "none",
+ *         arrowSize: number,
+ *         className: string,
+ *         strokeWidth: number,
+ *         connectionType: "straight" | "curved" | "orthogonal"
+ *       }]
+ *     }]
  *
  * === Styling ===
  * @param {number} strokeWidth - Line thickness (default: 2)
@@ -150,7 +170,60 @@
  *   className="text-blue-500"
  * />
  *
- * // 11. Box connection with offset
+ * // 11. Junction points with T-shaped branches
+ * <Connector
+ *   startPoint={{ x: 100, y: 100 }}
+ *   endPoint={{ x: 400, y: 100 }}
+ *   junctionPoints={[
+ *     {
+ *       id: "junction1",
+ *       position: { x: 250, y: 100 },
+ *       positionType: "absolute",
+ *       showJunction: true,
+ *       junctionSize: 4,
+ *       junctionShape: "circle",
+ *       branches: [
+ *         {
+ *           id: "branch1",
+ *           to: { x: 250, y: 50 },
+ *           arrowDirection: "forward",
+ *           className: "text-blue-500"
+ *         },
+ *         {
+ *           id: "branch2",
+ *           to: { x: 250, y: 150 },
+ *           arrowDirection: "forward",
+ *           className: "text-red-500"
+ *         }
+ *       ]
+ *     }
+ *   ]}
+ * />
+ *
+ * // 12. Junction with relative positioning
+ * <Connector
+ *   startPoint={{ x: 100, y: 100 }}
+ *   endPoint={{ x: 400, y: 200 }}
+ *   junctionPoints={[
+ *     {
+ *       id: "junction1",
+ *       position: 0.6, // 60% along the main line
+ *       positionType: "relative",
+ *       showJunction: true,
+ *       junctionSize: 5,
+ *       branches: [
+ *         {
+ *           id: "branch1",
+ *           to: { boxId: "box3", position: "left" },
+ *           arrowDirection: "forward",
+ *           connectionType: "orthogonal"
+ *         }
+ *       ]
+ *     }
+ *   ]}
+ * />
+ *
+ * // 13. Box connection with offset
  * <Connector
  *   fromBox={{
  *     id: "box1",
@@ -164,7 +237,7 @@
  *   }}
  * />
  *
- * // 12. Various arrow shapes and colors
+ * // 14. Various arrow shapes and colors
  * <Connector
  *   startPoint={{ x: 100, y: 100 }}
  *   endPoint={{ x: 300, y: 200 }}
@@ -174,7 +247,7 @@
  *   arrowSize={15}
  * />
  *
- * // 13. Circle arrows
+ * // 15. Circle arrows
  * <Connector
  *   fromBox={{ id: "box1", position: "bottom" }}
  *   toBox={{ id: "box2", position: "top" }}
@@ -183,7 +256,7 @@
  *   arrowSize={10}
  * />
  *
- * // 14. Square arrows (unidirectional)
+ * // 16. Square arrows (unidirectional)
  * <Connector
  *   startPoint={{ x: 50, y: 50 }}
  *   endPoint={{ x: 250, y: 150 }}
@@ -193,28 +266,15 @@
  *   connectionType="curved"
  * />
  *
- * // 15. Free point connection (absolute coordinates)
+ * // 17. Free point connection (absolute coordinates)
  * <Connector
  *   fromCustomPoint={{ x: 120, y: 80 }}
  *   toCustomPoint={{ x: 350, y: 220 }}
  *   connectionType="curved"
  * />
- *
- * // 16. Box custom point connection (relative coordinates)
- * <Connector
- *   fromBoxCustom={{
- *     id: "box1",
- *     customPoint: { x: 0.8, y: 0.3 } // 80% right, 30% down from top-left
- *   }}
- *   toBoxCustom={{
- *     id: "box2",
- *     customPoint: { x: 0.2, y: 0.7 } // 20% right, 70% down from top-left
- *   }}
- *   connectionType="straight"
- * />
  */
 
-import React from "react";
+import React, { useContext } from "react";
 import { useDiagram } from "./DiagramContext";
 
 const Connector = ({
@@ -249,6 +309,9 @@ const Connector = ({
   cornerRadius = 0, // 모서리 둥글기
   orthogonalDirection = "auto", // 'horizontal-first', 'vertical-first', 'auto'
   stepOffset = 50, // orthogonal 연결에서 중간 지점 오프셋
+
+  // 새로운 기능: Junction Points (T자 분기점)
+  junctionPoints = null, // 분기점들 [{ id, position, positionType, showJunction, junctionSize, junctionShape, branches }]
 }) => {
   // DiagramContext를 optional하게 사용
   let getBox = null;
@@ -516,6 +579,206 @@ const Connector = ({
 
   const safeArrowSize = typeof arrowSize === "number" && !isNaN(arrowSize) ? arrowSize : 8;
   const safeStrokeWidth = typeof strokeWidth === "number" && !isNaN(strokeWidth) ? strokeWidth : 2;
+
+  // Junction Points 처리 로직
+  const processJunctionPoints = () => {
+    if (!junctionPoints || !Array.isArray(junctionPoints)) {
+      return [];
+    }
+
+    const { x: x1, y: y1 } = safeStartPoint;
+    const { x: x2, y: y2 } = safeEndPoint;
+
+    return junctionPoints.map((junction) => {
+      const {
+        id,
+        position,
+        positionType = "absolute",
+        showJunction = true,
+        junctionSize = 4,
+        junctionShape = "circle",
+        branches = [],
+      } = junction;
+
+      let junctionPoint;
+
+      if (positionType === "relative") {
+        // 상대 위치 (0~1 범위)
+        const ratio = typeof position === "number" ? position : 0.5;
+        junctionPoint = {
+          x: x1 + (x2 - x1) * ratio,
+          y: y1 + (y2 - y1) * ratio,
+        };
+      } else {
+        // 절대 위치
+        junctionPoint = {
+          x: position?.x || x1,
+          y: position?.y || y1,
+        };
+      }
+
+      // 분기점에서 나가는 브랜치들 처리
+      const processedBranches = branches.map((branch) => {
+        const {
+          id: branchId,
+          to,
+          arrowDirection: branchArrowDirection = "forward",
+          arrowSize: branchArrowSize = arrowSize,
+          className: branchClassName = "",
+          strokeWidth: branchStrokeWidth = strokeWidth,
+          connectionType: branchConnectionType = "straight",
+        } = branch;
+
+        let targetPoint;
+
+        if (to?.boxId && getBox) {
+          // 박스 연결
+          const targetBox = getBox(to.boxId);
+          if (targetBox) {
+            targetPoint = getBoxConnectionPoint(
+              { id: to.boxId, position: to.position || "left" },
+              to.position || "left"
+            );
+          } else {
+            console.warn(`⚠️ 박스 '${to.boxId}'를 찾을 수 없습니다.`);
+            targetPoint = { x: junctionPoint.x + 50, y: junctionPoint.y };
+          }
+        } else {
+          // 좌표 연결
+          targetPoint = {
+            x: to?.x || junctionPoint.x + 50,
+            y: to?.y || junctionPoint.y,
+          };
+        }
+
+        return {
+          id: branchId,
+          startPoint: junctionPoint,
+          endPoint: targetPoint,
+          arrowDirection: branchArrowDirection,
+          arrowSize: branchArrowSize,
+          className: branchClassName,
+          strokeWidth: branchStrokeWidth,
+          connectionType: branchConnectionType,
+        };
+      });
+
+      return {
+        id,
+        point: junctionPoint,
+        showJunction,
+        junctionSize,
+        junctionShape,
+        branches: processedBranches,
+      };
+    });
+  };
+
+  const processedJunctions = processJunctionPoints();
+
+  // 분기점 시각화 컴포넌트 렌더링
+  const renderJunctionPoint = (junction, minX, minY) => {
+    const { point, showJunction, junctionSize, junctionShape } = junction;
+
+    if (!showJunction) return null;
+
+    const adjustedX = point.x - minX;
+    const adjustedY = point.y - minY;
+
+    switch (junctionShape) {
+      case "circle":
+        return (
+          <circle
+            key={`junction-${junction.id}`}
+            cx={adjustedX}
+            cy={adjustedY}
+            r={junctionSize}
+            className="fill-current"
+          />
+        );
+      case "square":
+        return (
+          <rect
+            key={`junction-${junction.id}`}
+            x={adjustedX - junctionSize}
+            y={adjustedY - junctionSize}
+            width={junctionSize * 2}
+            height={junctionSize * 2}
+            className="fill-current"
+          />
+        );
+      case "diamond":
+        return (
+          <polygon
+            key={`junction-${junction.id}`}
+            points={`${adjustedX},${adjustedY - junctionSize} ${adjustedX + junctionSize},${adjustedY} ${adjustedX},${
+              adjustedY + junctionSize
+            } ${adjustedX - junctionSize},${adjustedY}`}
+            className="fill-current"
+          />
+        );
+      default:
+        return (
+          <circle
+            key={`junction-${junction.id}`}
+            cx={adjustedX}
+            cy={adjustedY}
+            r={junctionSize}
+            className="fill-current"
+          />
+        );
+    }
+  };
+
+  // 분기선 경로 계산
+  const calculateBranchPath = (branch) => {
+    const { startPoint, endPoint, connectionType: branchConnectionType } = branch;
+
+    switch (branchConnectionType) {
+      case "curved": {
+        const dx = endPoint.x - startPoint.x;
+        const dy = endPoint.y - startPoint.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const controlOffset = Math.min(distance * 0.3, 50);
+
+        const cp1x = startPoint.x + controlOffset;
+        const cp1y = startPoint.y;
+        const cp2x = endPoint.x - controlOffset;
+        const cp2y = endPoint.y;
+
+        return `M ${startPoint.x} ${startPoint.y} C ${cp1x} ${cp1y} ${cp2x} ${cp2y} ${endPoint.x} ${endPoint.y}`;
+      }
+      case "orthogonal": {
+        const midX = startPoint.x + (endPoint.x - startPoint.x) * 0.5;
+        return `M ${startPoint.x} ${startPoint.y} L ${midX} ${startPoint.y} L ${midX} ${endPoint.y} L ${endPoint.x} ${endPoint.y}`;
+      }
+      default:
+        return `M ${startPoint.x} ${startPoint.y} L ${endPoint.x} ${endPoint.y}`;
+    }
+  };
+
+  // 분기선 화살표 계산
+  const calculateBranchArrow = (branch) => {
+    const { startPoint, endPoint, arrowDirection: branchArrowDirection, arrowSize: branchArrowSize } = branch;
+
+    const dx = endPoint.x - startPoint.x;
+    const dy = endPoint.y - startPoint.y;
+    const angle = Math.atan2(dy, dx);
+
+    const arrowHead1 = {
+      x: endPoint.x - branchArrowSize * Math.cos(angle - Math.PI / 6),
+      y: endPoint.y - branchArrowSize * Math.sin(angle - Math.PI / 6),
+    };
+
+    const arrowHead2 = {
+      x: endPoint.x - branchArrowSize * Math.cos(angle + Math.PI / 6),
+      y: endPoint.y - branchArrowSize * Math.sin(angle + Math.PI / 6),
+    };
+
+    const shouldShowArrow = branchArrowDirection === "forward" || branchArrowDirection === "both";
+
+    return shouldShowArrow ? { arrowHead1, arrowHead2 } : null;
+  };
 
   // 자동 연결 타입 결정 (박스 연결시)
   const getAutoConnectionType = () => {
@@ -906,13 +1169,23 @@ const Connector = ({
     ? calculateStartArrowMarker()
     : { startArrowHead1: null, startArrowHead2: null };
 
-  // SVG 영역 계산 (bendPoints 포함)
+  // SVG 영역 계산 (bendPoints 및 junctionPoints 포함)
   const filteredBendPoints = safeBendPoints
     ? safeBendPoints.filter(
         (p) => p && typeof p.x === "number" && typeof p.y === "number" && !isNaN(p.x) && !isNaN(p.y)
       )
     : [];
-  const allPoints = [safeStartPoint, safeEndPoint, ...filteredBendPoints];
+
+  // 분기점들과 분기선 끝점들을 포함한 모든 점들 수집
+  const junctionAllPoints = [];
+  processedJunctions.forEach((junction) => {
+    junctionAllPoints.push(junction.point);
+    junction.branches.forEach((branch) => {
+      junctionAllPoints.push(branch.endPoint);
+    });
+  });
+
+  const allPoints = [safeStartPoint, safeEndPoint, ...filteredBendPoints, ...junctionAllPoints];
   const minX = Math.min(...allPoints.map((p) => p.x)) - safeArrowSize;
   const minY = Math.min(...allPoints.map((p) => p.y)) - safeArrowSize;
   const maxX = Math.max(...allPoints.map((p) => p.x)) + safeArrowSize;
@@ -1271,6 +1544,52 @@ const Connector = ({
           )}
         </>
       )}
+
+      {/* 분기점들과 분기선들 */}
+      {processedJunctions.map((junction) => (
+        <g key={`junction-group-${junction.id}`}>
+          {/* 분기점 시각화 */}
+          {renderJunctionPoint(junction, minX, minY)}
+
+          {/* 분기선들 */}
+          {junction.branches.map((branch) => {
+            const branchPath = calculateBranchPath(branch);
+            const branchArrow = calculateBranchArrow(branch);
+
+            return (
+              <g key={`branch-${branch.id}`}>
+                {/* 분기선 */}
+                <path
+                  d={branchPath}
+                  strokeWidth={branch.strokeWidth}
+                  fill="none"
+                  className={`stroke-current ${branch.className}`}
+                  transform={`translate(${-minX}, ${-minY})`}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+
+                {/* 분기선 화살표 */}
+                {branchArrow && (
+                  <polygon
+                    points={createArrowShape(
+                      branch.endPoint.x,
+                      branch.endPoint.y,
+                      branchArrow.arrowHead1.x,
+                      branchArrow.arrowHead1.y,
+                      branchArrow.arrowHead2.x,
+                      branchArrow.arrowHead2.y,
+                      branch.arrowSize
+                    )}
+                    className={getArrowColorClass()}
+                    transform={`translate(${-minX}, ${-minY})`}
+                  />
+                )}
+              </g>
+            );
+          })}
+        </g>
+      ))}
     </svg>
   );
 };
