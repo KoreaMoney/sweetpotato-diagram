@@ -33,7 +33,7 @@ const InteractiveSection = () => {
             <code className="text-gray-300">
               <span className="text-purple-400">import</span> <span className="text-yellow-300">{"{"}</span>{" "}
               <span className="text-white">Sankey</span> <span className="text-yellow-300">{"}"}</span>{" "}
-              <span className="text-purple-400">from</span> <span className="text-green-300">"hy-diagram"</span>;{"\n"}
+              <span className="text-purple-400">from</span> <span className="text-green-300">"sweet-diagram"</span>;{"\n"}
               <span className="text-purple-400">import</span> <span className="text-yellow-300">{"{"}</span>{" "}
               <span className="text-white">useState</span> <span className="text-yellow-300">{"}"}</span>{" "}
               <span className="text-purple-400">from</span> <span className="text-green-300">"react"</span>;{"\n"}

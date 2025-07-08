@@ -581,7 +581,6 @@ import { ImageBox } from "sweet-diagram";
     console.log("드래그 중:", position, info);
   }}
   onDragEnd={(position, info) => {
-    console.log("드래그 완료:", position, info);
     alert(`새 위치: (${Math.round(position.x)}, ${Math.round(position.y)})`);
   }}
   onClick={() => alert("로켓 클릭!")}

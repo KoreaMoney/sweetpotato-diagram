@@ -1,6 +1,6 @@
 {
   "name": "sweet-diagram",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "type": "module",
   "author": "KimDowon",
   "license": "MIT",
@@ -22,7 +22,11 @@
     "modern-ui",
     "sankey-diagram",
     "stack-layout",
-    "flow-diagram"
+    "flow-diagram",
+    "junction-points",
+    "undo-redo",
+    "history-management",
+    "json-import-export"
   ],
   "homepage": "https://sweetpotato-diagram.vercel.app",
   "repository": {

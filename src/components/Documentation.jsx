@@ -13,6 +13,7 @@ import LineSection from "./documentation/LineSection";
 import MouseTrackerSection from "./documentation/MouseTrackerSection";
 import SankeySection from "./documentation/SankeySection/SankeySection";
 import StackSection from "./documentation/StackSection";
+import UndoRedoSection from "./documentation/UndoRedoSection";
 import ExamplesSection from "./documentation/ExamplesSection";
 
 const Documentation = () => {
@@ -32,6 +33,7 @@ const Documentation = () => {
     { id: "sankey", title: "Sankey", icon: "🌊", color: "from-blue-600 to-indigo-600" },
     { id: "mousetracker", title: "Mouse Tracker", icon: "🎯", color: "from-violet-500 to-purple-500" },
     { id: "stack", title: "Stack Priority", icon: "🎯", color: "from-orange-500 to-red-500" },
+    { id: "undoredo", title: "Undo/Redo", icon: "↩️", color: "from-emerald-500 to-teal-500" },
     { id: "examples", title: "Examples", icon: "✨", color: "from-amber-500 to-yellow-500" },
   ];
 
@@ -87,6 +89,10 @@ const Documentation = () => {
     return <StackSection />;
   };
 
+  const renderUndoRedo = () => {
+    return <UndoRedoSection />;
+  };
+
   const renderExamples = () => {
     return <ExamplesSection />;
   };
@@ -119,6 +125,8 @@ const Documentation = () => {
         return renderSankey();
       case "stack":
         return renderStack();
+      case "undoredo":
+        return renderUndoRedo();
       case "examples":
         return renderExamples();
       default:

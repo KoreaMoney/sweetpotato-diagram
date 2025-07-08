@@ -1,52 +1,62 @@
-# 🍠 Sweet Diagram v0.4.6
-
-**Ultra-Lightweight & Optimized React Diagram Editor Components**
+🍠 Sweet Diagram
 
 [![npm version](https://badge.fury.io/js/sweet-diagram.svg)](https://badge.fury.io/js/sweet-diagram)
+[![Downloads](https://img.shields.io/npm/dm/sweet-diagram.svg)](https://www.npmjs.com/package/sweet-diagram)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![React](https://img.shields.io/badge/React-18%2B-blue.svg)](https://reactjs.org/)
-[![Bundle Size](https://img.shields.io/badge/Bundle%20Size-328KB-brightgreen.svg)](https://bundlephobia.com/package/sweet-diagram)
 
-🌐 **Demo**: [https://sweetpotato-diagram.vercel.app](https://sweetpotato-diagram.vercel.app)
-📦 **NPM**: [https://www.npmjs.com/package/sweet-diagram](https://www.npmjs.com/package/sweet-diagram)
+**현대적이고 직관적인 React 다이어그램 에디터 컴포넌트** with advanced auto-connect features, Sankey diagrams, Stack functionality, vertical text support, animation effects, and comprehensive component library.
 
-## 🚀 Why Choose Sweet Diagram?
+🌐 **Live Demo**: [https://sweetpotato-diagram.vercel.app](https://sweetpotato-diagram.vercel.app)
 
-### ⚡ Ultra-Lightweight & Optimized
+![Sweet Diagram Preview](https://raw.githubusercontent.com/KoreaMoney/sweetpotato-diagram/main/public/main.png)
 
-- **82% smaller bundle size** - From 1.8MB to just **328KB**
-- **Optimized CSS** - Only 2.6KB of essential styles
-- **Tree-shakable** - Import only what you need
-- **Zero bloat** - No unnecessary dependencies bundled
+## ✨ Key Features
 
-### 🎯 Production-Ready Features
+- 🎯 **Complete Diagram Solution** - Box, Connector, Arrow, Triangle, Valve, Line, ImageBox components
+- 🌊 **Sankey Diagrams** - Interactive flow diagrams with proportional connections and JSON import/export
+- 📚 **Stack Layout System** - Automatic stacking with priority-based positioning
+- 🔄 **Auto-Connect** - Intelligent connection system with multiple algorithms
+- 🔗 **Junction Points** - Advanced connection points for complex diagram layouts
+- ↩️ **Undo/Redo System** - Complete history management with keyboard shortcuts (Ctrl+Z/Ctrl+Y)
+- 📝 **Vertical Text Support** - Both horizontal and vertical text orientations
+- 🎨 **Modern Styling** - Built with TailwindCSS for beautiful designs
+- 🖱️ **Interactive & Draggable** - Full mouse and touch support
+- ⚡ **High Performance** - Optimized for large diagrams
+- 🎭 **Animation Support** - Smooth transitions and effects
+- 📱 **Responsive Design** - Works on all screen sizes
+- 🔧 **TypeScript Ready** - Full type definitions included
+- 🎪 **Zero Config** - Works out of the box
 
-- **Drag & Drop** - Intuitive visual editing
-- **Auto-Connect** - Smart connection algorithms
-- **Sankey Diagrams** - Flow visualization with proportional nodes
-- **Stack Layout** - Automatic box stacking with priority system
-- **Vertical Text** - Complete support for LR/RL directions
-- **Animation Effects** - Smooth transitions and flows
-- **TypeScript** - Full type safety and IntelliSense
+## 🚀 Quick Installation & Usage
 
-### 🔧 Developer-Friendly
-
-- **Flexible Dependencies** - Use your preferred versions
-- **Modern Architecture** - Built with React 18+ and latest standards
-- **Customizable** - Easy theming and styling
-- **Performance Optimized** - Minimal runtime overhead
-
-## 📦 Installation
+### Step 1: Install Package
 
 ```bash
-# Install the core library
+# NPM으로 설치
 npm install sweet-diagram
 
-# Install peer dependencies
-npm install react react-dom @react-three/drei @react-three/fiber three lucide-react zustand
+# 또는 Yarn으로 설치
+yarn add sweet-diagram
+
+# 또는 PNPM으로 설치
+pnpm add sweet-diagram
 ```
 
-### Why Peer Dependencies?
+### Step 2: Install Required Dependencies
+
+Sweet Diagram uses peer dependencies for better flexibility:
+
+```bash
+# React (required)
+npm install react react-dom
+
+# TailwindCSS (highly recommended for styling)
+npm install tailwindcss
+
+# Additional peer dependencies (if using advanced features)
+npm install @react-three/drei @react-three/fiber three lucide-react zustand
+```
 
 We moved heavy dependencies to peer dependencies to give you:
 
@@ -54,7 +64,209 @@ We moved heavy dependencies to peer dependencies to give you:
 - **Smaller bundle** - Avoid duplicate dependencies
 - **Better performance** - Shared dependencies across your app
 
-## 🎯 Quick Start
+### Step 3: Import CSS & Components
+
+```jsx
+import React from "react";
+import { DiagramProvider, Box, Connector, Sankey, Triangle, Valve } from "sweet-diagram";
+import "sweet-diagram/dist/sweet-diagram.css";
+
+function MyApp() {
+  return (
+    <div className="w-full h-full">
+      <DiagramProvider width={800} height={600}>
+        <Box
+          id="box1"
+          x={100}
+          y={100}
+          width={120}
+          height={80}
+          text="시작점"
+          className="bg-blue-500 text-white rounded-lg"
+        />
+
+        <Box
+          id="box2"
+          x={300}
+          y={200}
+          width={120}
+          height={80}
+          text="끝점"
+          className="bg-green-500 text-white rounded-lg"
+        />
+
+        <Connector
+          fromBox={{ id: "box1", position: "right" }}
+          toBox={{ id: "box2", position: "left" }}
+          connectionType="straight"
+          showArrow={true}
+        />
+      </DiagramProvider>
+    </div>
+  );
+}
+
+export default MyApp;
+```
+
+## 🌊 Sankey Diagram Usage
+
+```jsx
+import React from "react";
+import { Sankey } from "sweet-diagram";
+import "sweet-diagram/dist/sweet-diagram.css";
+
+function SankeyExample() {
+  const data = {
+    nodes: [
+      { id: "A", name: "소스 A", layer: 0 },
+      { id: "B", name: "소스 B", layer: 0 },
+      { id: "C", name: "중간 처리", layer: 1 },
+      { id: "D", name: "최종 결과", layer: 2 },
+    ],
+    links: [
+      { id: "link1", source: "A", target: "C", value: 30 },
+      { id: "link2", source: "B", target: "C", value: 20 },
+      { id: "link3", source: "C", target: "D", value: 50 },
+    ],
+  };
+
+  return (
+    <div className="w-full h-96">
+      <Sankey data={data} width={600} height={400} className="mx-auto border rounded-lg" />
+    </div>
+  );
+}
+```
+
+### Sankey with JSON Import/Export
+
+```jsx
+import React, { useState } from "react";
+import { Sankey } from "sweet-diagram";
+
+function SankeyWithImport() {
+  const [sankeyData, setSankeyData] = useState(null);
+
+  const handleImportJSON = (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        setSankeyData(data);
+      } catch (error) {
+        console.error("Invalid JSON file:", error);
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleExportJSON = () => {
+    if (sankeyData) {
+      const blob = new Blob([JSON.stringify(sankeyData, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "sankey-data.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  return (
+    <div>
+      <input type="file" accept=".json" onChange={(e) => handleImportJSON(e.target.files[0])} />
+      <button onClick={handleExportJSON}>Export JSON</button>
+      {sankeyData && <Sankey data={sankeyData} width={600} height={400} />}
+    </div>
+  );
+}
+```
+
+## 🔗 Junction Points Usage
+
+```jsx
+import React from "react";
+import { DiagramProvider, Box, Connector, Junction } from "sweet-diagram";
+
+function JunctionExample() {
+  return (
+    <DiagramProvider width={800} height={600}>
+      <Box id="input1" x={50} y={100} width={100} height={60} text="Input 1" />
+      <Box id="input2" x={50} y={200} width={100} height={60} text="Input 2" />
+      <Box id="output" x={600} y={150} width={100} height={60} text="Output" />
+
+      {/* Junction Point for merging connections */}
+      <Junction id="junction1" x={400} y={150} size={8} className="fill-red-500 stroke-red-700" />
+
+      {/* Connections to junction */}
+      <Connector fromBox={{ id: "input1" }} toBox={{ id: "junction1" }} connectionType="orthogonal" />
+      <Connector fromBox={{ id: "input2" }} toBox={{ id: "junction1" }} connectionType="orthogonal" />
+
+      {/* Connection from junction to output */}
+      <Connector fromBox={{ id: "junction1" }} toBox={{ id: "output" }} connectionType="straight" />
+    </DiagramProvider>
+  );
+}
+```
+
+## ↩️ Undo/Redo System Usage
+
+```jsx
+import React from "react";
+import { DiagramProvider, DraggableBox, UndoRedoButtons, useDiagram } from "sweet-diagram";
+
+function UndoRedoExample() {
+  const DebugInfo = () => {
+    const { getDiagramStats } = useDiagram();
+    const stats = getDiagramStats();
+
+    return (
+      <div className="absolute top-4 left-4 bg-white p-3 rounded shadow">
+        <div>Undo 가능: {stats.canUndo ? "✅" : "❌"}</div>
+        <div>Redo 가능: {stats.canRedo ? "✅" : "❌"}</div>
+        <div>히스토리: {stats.historyIndex + 1}개</div>
+      </div>
+    );
+  };
+
+  return (
+    <DiagramProvider width={800} height={600}>
+      {/* Draggable boxes that support undo/redo */}
+      <DraggableBox
+        id="box1"
+        initialX={100}
+        initialY={100}
+        width={120}
+        height={80}
+        title="드래그해보세요"
+        color="blue"
+      />
+
+      <DraggableBox id="box2" initialX={300} initialY={200} width={120} height={80} title="박스 2" color="green" />
+
+      {/* Undo/Redo Buttons with various styles */}
+      <UndoRedoButtons position="top-right" variant="gradient" showLabels={true} enableKeyboardShortcuts={true} />
+
+      {/* Custom styled undo/redo buttons */}
+      <UndoRedoButtons
+        position="bottom-right"
+        customStyle={{
+          undo: "bg-red-500 hover:bg-red-600 text-white shadow-lg rounded-full",
+          redo: "bg-green-500 hover:bg-green-600 text-white shadow-lg rounded-full",
+        }}
+        customLabels={{ undo: "되돌리기", redo: "앞으로" }}
+      />
+
+      <DebugInfo />
+    </DiagramProvider>
+  );
+}
+```
+
+## 🎯 Full Example
 
 ```jsx
 import React from "react";
@@ -165,192 +377,55 @@ export default MyDiagram;
 
 - **`useDiagram`** - Access diagram context and state
 
-## 🌊 Sankey Diagrams
+## 📦 Package.json Configuration
 
-Visualize flow data with interactive Sankey diagrams:
+Make sure your `package.json` includes:
 
-```jsx
-import { Sankey } from "sweet-diagram";
-
-function SankeyExample() {
-  const data = {
-    nodes: [
-      { id: "A", name: "Source A", layer: 0 },
-      { id: "B", name: "Source B", layer: 0 },
-      { id: "C", name: "Process C", layer: 1 },
-      { id: "D", name: "Result D", layer: 2 },
-    ],
-    links: [
-      { source: "A", target: "C", value: 20 },
-      { source: "B", target: "C", value: 15 },
-      { source: "C", target: "D", value: 35 },
-    ],
-  };
-
-  return (
-    <Sankey
-      data={data}
-      width={600}
-      height={300}
-      animated={true}
-      showTooltip={true}
-      highlightPath={true}
-      className="border border-gray-300 rounded-lg"
-    />
-  );
+```json
+{
+  "dependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "sweet-diagram": "^0.4.6"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^3.0.0"
+  }
 }
 ```
 
-## 📚 Stack Layout
+## 🎨 TailwindCSS Integration
 
-Automatically stack boxes with priority system:
+Sweet Diagram is designed to work perfectly with TailwindCSS. Add this to your `tailwind.config.js`:
 
-```jsx
-import { DiagramProvider, Box } from "sweet-diagram";
-
-function StackExample() {
-  return (
-    <DiagramProvider width={400} height={300}>
-      {/* Boxes with same position will automatically stack */}
-      <Box
-        id="stack1"
-        x={100}
-        y={100}
-        width={100}
-        height={50}
-        text="Priority 3"
-        className="bg-blue-500 text-white"
-        priority={3}
-      />
-      <Box
-        id="stack2"
-        x={100}
-        y={100}
-        width={100}
-        height={50}
-        text="Priority 2"
-        className="bg-green-500 text-white"
-        priority={2}
-      />
-      <Box
-        id="stack3"
-        x={100}
-        y={100}
-        width={100}
-        height={50}
-        text="Priority 1"
-        className="bg-red-500 text-white"
-        priority={1}
-      />
-    </DiagramProvider>
-  );
-}
+```javascript
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}", "./node_modules/sweet-diagram/**/*.{js,jsx}"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
 ```
 
-## 🎨 Styling
+## 📚 Documentation
 
-Sweet Diagram uses minimal CSS for maximum flexibility:
+Visit our [comprehensive documentation](https://sweetpotato-diagram.vercel.app) for:
 
-```css
-/* Only 2.6KB of essential styles */
-@import "sweet-diagram/dist/sweet-diagram.css";
+- 📖 Complete API reference
+- 🎯 Interactive examples
+- 🎨 Styling guides
+- ⚡ Performance tips
+- 🛠️ Advanced usage patterns
+
+## 🧪 TypeScript Support
+
+Full TypeScript definitions are included:
+
+```typescript
+import { BoxProps, ConnectorProps, SankeyData, DiagramContextType } from "sweet-diagram";
 ```
-
-You can customize components using:
-
-- **Tailwind classes** - `className="bg-blue-500 text-white"`
-- **Custom CSS** - Style with your preferred method
-- **Inline styles** - Direct style props
-
-## 🚀 Performance Benefits
-
-### Bundle Size Comparison
-
-| Version | Size  | Improvement     |
-| ------- | ----- | --------------- |
-| v0.4.3  | 1.8MB | -               |
-| v0.4.6  | 328KB | **82% smaller** |
-
-### Optimization Details
-
-- **CSS Optimization**: 124KB → 2.6KB (98% reduction)
-- **JavaScript Optimization**: Tree-shaking and dead code elimination
-- **Dependency Management**: Peer dependencies for flexibility
-- **Build Optimization**: Advanced Terser configuration
-
-## 🆕 What's New in v0.4.6
-
-### 🌊 Sankey Diagrams
-
-- **Interactive flow visualization** with proportional node heights
-- **Path highlighting** and connection tracing
-- **Animated flows** with smooth transitions
-- **Custom styling** with TailwindCSS classes
-- **Tooltip support** for detailed information
-
-### 📚 Stack Layout System
-
-- **Automatic box stacking** when boxes overlap
-- **Priority-based ordering** for z-index management
-- **Flexible positioning** with manual offset control
-- **Group management** for organized layouts
-
-### 🔧 Enhanced Features
-
-- **Improved performance** with optimized rendering
-- **Better TypeScript support** with comprehensive type definitions
-- **Enhanced documentation** with interactive examples
-- **Bug fixes** and stability improvements
-
-## 🎯 Advanced Features
-
-### Auto-Connect
-
-Smart connection system with visual feedback:
-
-```jsx
-// Enable auto-connect mode with Shift + Click
-<DiagramProvider autoConnect={true}>
-  <Box id="source" x={100} y={100} text="Click + Shift to connect" />
-  <Box id="target" x={300} y={200} text="Target box" />
-</DiagramProvider>
-```
-
-### Vertical Text
-
-Complete support for vertical text orientation:
-
-```jsx
-<Box
-  text="Vertical Text"
-  textDirection="vertical"
-  verticalDirection="lr" // or "rl"
-  className="bg-purple-500 text-white"
-/>
-```
-
-### Animation Effects
-
-Smooth animations and transitions:
-
-```jsx
-<Connector
-  fromBox={{ id: "box1", position: "right" }}
-  toBox={{ id: "box2", position: "left" }}
-  animated={true}
-  animationDuration={2000}
-  className="text-blue-500"
-/>
-```
-
-## 📖 Documentation
-
-Visit our comprehensive documentation at [https://sweetpotato-diagram.vercel.app](https://sweetpotato-diagram.vercel.app) for:
-
-- **Interactive examples** and live demos
-- **API reference** with detailed props
-- **Best practices** and usage patterns
-- **Advanced tutorials** for complex scenarios
 
 ## 🤝 Contributing
 
@@ -358,12 +433,12 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ## 📄 License
 
-MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) file for details.
 
-## 🌟 Star History
+## 🌟 Show Your Support
 
-[![Star History Chart](https://api.star-history.com/svg?repos=KoreaMoney/sweetpotato-diagram&type=Date)](https://star-history.com/#KoreaMoney/sweetpotato-diagram&Date)
+Give us a ⭐️ if this project helped you!
 
 ---
 
-**Made with ❤️ by KimDowon**
+**Made with ❤️ by the Sweet Diagram Team**

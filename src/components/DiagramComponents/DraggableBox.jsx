@@ -14,18 +14,24 @@ const DraggableBox = ({
   ...props
 }) => {
   // DiagramContext를 optional하게 사용
-  let registerBox, unregisterBox, updateBoxPosition;
+  let registerBox, unregisterBox, updateBoxPosition, saveState, boxes, historyIndex;
   try {
     const context = useDiagram();
     registerBox = context.registerBox;
     unregisterBox = context.unregisterBox;
     updateBoxPosition = context.updateBoxPosition;
+    saveState = context.saveState;
+    boxes = context.boxes;
+    historyIndex = context.historyIndex; // undo/redo 감지용
   } catch (error) {
     console.error("DiagramContext 사용 오류:", error);
     // DiagramProvider가 없으면 context 기능을 사용하지 않음
     registerBox = null;
     unregisterBox = null;
     updateBoxPosition = null;
+    saveState = null;
+    boxes = null;
+    historyIndex = null;
   }
 
   const boxRef = useRef(null);
@@ -44,6 +50,8 @@ const DraggableBox = ({
   // 등록된 여부를 추적하여 중복 등록 방지
   const isRegisteredRef = useRef(false);
   const lastPositionRef = useRef({ x: initialX, y: initialY });
+  const dragStartPositionRef = useRef({ x: 0, y: 0 }); // 드래그 시작 위치
+  const lastContextPositionRef = useRef({ x: undefined, y: undefined }); // 마지막 context 위치
 
   // initialX, initialY가 변경되면 즉시 position 업데이트
   useEffect(() => {
@@ -53,6 +61,85 @@ const DraggableBox = ({
     setPosition({ x: newX, y: newY });
     lastPositionRef.current = { x: newX, y: newY };
   }, [initialX, initialY, id, width, height]);
+
+  // DiagramContext에서 현재 박스 정보 가져오기
+  const contextBox = boxes?.get(id);
+  const contextX = contextBox?.x;
+  const contextY = contextBox?.y;
+
+  // 🎯 강력한 DiagramContext 동기화 - undo/redo 감지
+  useEffect(() => {
+    if (isDragging || !boxes) return;
+
+    const contextBox = boxes.get(id);
+    if (!contextBox) return;
+
+    const { x: contextX, y: contextY } = contextBox;
+
+    // 유효한 좌표인지 확인
+    if (typeof contextX === "number" && typeof contextY === "number") {
+      const currentPos = lastPositionRef.current;
+      const positionDiff = Math.abs(contextX - currentPos.x) + Math.abs(contextY - currentPos.y);
+
+      // 위치 차이가 있으면 즉시 동기화
+      if (positionDiff > 0.1) {
+        // 더 민감하게 감지
+        // 강제 위치 업데이트
+        setPosition({ x: contextX, y: contextY });
+        lastPositionRef.current = { x: contextX, y: contextY };
+        lastContextPositionRef.current = { x: contextX, y: contextY };
+
+        // 추가: DOM 요소 직접 업데이트 (더블 보장)
+        if (boxRef.current) {
+          boxRef.current.style.left = `${contextX}px`;
+          boxRef.current.style.top = `${contextY}px`;
+        }
+      }
+    }
+  }, [boxes, isDragging, id]); // boxes Map 변경 감지
+
+  // 추가: contextX, contextY 개별 변경 감지
+  useEffect(() => {
+    if (isDragging) return;
+
+    if (typeof contextX === "number" && typeof contextY === "number") {
+      const currentPos = lastPositionRef.current;
+      const positionDiff = Math.abs(contextX - currentPos.x) + Math.abs(contextY - currentPos.y);
+
+      if (positionDiff > 0.1) {
+        setPosition({ x: contextX, y: contextY });
+        lastPositionRef.current = { x: contextX, y: contextY };
+      }
+    }
+  }, [contextX, contextY, isDragging, id]);
+
+  // 🎯 historyIndex 변경을 감지하여 undo/redo 작업 감지
+  useEffect(() => {
+    if (isDragging || !boxes || historyIndex === null) return;
+
+    const contextBox = boxes.get(id);
+    if (contextBox && typeof contextBox.x === "number" && typeof contextBox.y === "number") {
+      const currentPos = lastPositionRef.current;
+      const positionDiff = Math.abs(contextBox.x - currentPos.x) + Math.abs(contextBox.y - currentPos.y);
+
+      if (positionDiff > 0.1) {
+        // 즉시 위치 동기화
+        setPosition({ x: contextBox.x, y: contextBox.y });
+        lastPositionRef.current = { x: contextBox.x, y: contextBox.y };
+
+        // DOM도 즉시 업데이트
+        if (boxRef.current) {
+          boxRef.current.style.left = `${contextBox.x}px`;
+          boxRef.current.style.top = `${contextBox.y}px`;
+        }
+      }
+    }
+  }, [historyIndex, isDragging, id, boxes]); // historyIndex 변경 감지
+
+  // position 상태 변경 시 ref 업데이트
+  useEffect(() => {
+    lastPositionRef.current = { x: position.x, y: position.y };
+  }, [position.x, position.y]);
 
   // 초기 박스 등록 (한 번만 실행)
   useEffect(() => {
@@ -110,16 +197,28 @@ const DraggableBox = ({
     }
   }, [position.x, position.y, isDragging, id, updateBoxPosition]); // updateBoxPosition 의존성 추가
 
-  const handleMouseDown = useCallback((e) => {
-    e.preventDefault();
-    setIsDragging(true);
+  const handleMouseDown = useCallback(
+    (e) => {
+      e.preventDefault();
 
-    const rect = boxRef.current.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left;
-    const offsetY = e.clientY - rect.top;
-    setDragOffset({ x: offsetX, y: offsetY });
-    setDragPosition({ x: 0, y: 0 }); // transform 초기화
-  }, []);
+      // 🎯 드래그 시작 전에 현재 상태를 히스토리에 저장 (첫 번째 드래그에서 실행취소 가능하도록)
+      if (saveState) {
+        saveState();
+      }
+
+      setIsDragging(true);
+
+      // 드래그 시작 위치 저장
+      dragStartPositionRef.current = { x: position.x, y: position.y };
+
+      const rect = boxRef.current.getBoundingClientRect();
+      const offsetX = e.clientX - rect.left;
+      const offsetY = e.clientY - rect.top;
+      setDragOffset({ x: offsetX, y: offsetY });
+      setDragPosition({ x: 0, y: 0 }); // transform 초기화
+    },
+    [position.x, position.y, saveState]
+  );
 
   const handleMouseMove = useCallback(
     (e) => {
@@ -169,9 +268,21 @@ const DraggableBox = ({
     const finalX = position.x + dragPosition.x;
     const finalY = position.y + dragPosition.y;
 
+    // 위치가 실제로 변경되었는지 확인
+    const positionChanged =
+      Math.abs(finalX - dragStartPositionRef.current.x) > 1 || Math.abs(finalY - dragStartPositionRef.current.y) > 1;
+
     setPosition({ x: finalX, y: finalY });
     setDragPosition({ x: 0, y: 0 }); // transform 초기화
-  }, [isDragging, position, dragPosition]);
+
+    // 🎯 드래그 완료 후 새로운 위치를 히스토리에 저장 (undo/redo를 위해)
+    if (positionChanged && saveState) {
+      // 위치 변경이 완전히 적용된 후 saveState 호출
+      setTimeout(() => {
+        saveState();
+      }, 10);
+    }
+  }, [isDragging, position, dragPosition, saveState]);
 
   // 전역 마우스 이벤트 리스너
   useEffect(() => {
