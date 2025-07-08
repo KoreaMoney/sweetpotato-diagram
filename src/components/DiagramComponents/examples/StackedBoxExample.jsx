@@ -13,9 +13,6 @@ const StackedBoxExample = () => {
       ...prev,
       [boxInfo.id]: (prev[boxInfo.id] || 0) + 1,
     }));
-
-    // 클릭된 박스 정보를 콘솔에 출력
-    console.log(`클릭된 박스: ${boxInfo.id}`, boxInfo);
   };
 
   const handleReset = () => {

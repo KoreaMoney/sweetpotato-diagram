@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useRef } from "react";
+import { createContext, useContext, useState, useCallback, useRef, useEffect } from "react";
 
 const DiagramContext = createContext();
 
@@ -51,6 +51,24 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
   const [boxZIndexes, setBoxZIndexes] = useState(new Map()); // 박스별 z-index 저장
 
   const containerRef = useRef(null);
+
+  // 🎯 초기 상태 저장 - 컴포넌트 마운트 시 한 번만 실행
+  const initialStateSavedRef = useRef(false);
+  useEffect(() => {
+    if (!initialStateSavedRef.current) {
+      // 초기 상태를 히스토리에 저장
+      const initialState = {
+        boxes: new Map(),
+        connections: [],
+        dynamicBoxes: new Map(),
+        timestamp: Date.now(),
+      };
+
+      setDiagramHistory([initialState]);
+      setHistoryIndex(0);
+      initialStateSavedRef.current = true;
+    }
+  }, []);
 
   // Box 등록 - 위치 정보 포함
   const registerBox = useCallback((id, boxInfo) => {
@@ -851,6 +869,7 @@ export const DiagramProvider = ({ children, className = "", style = {}, width = 
     redo,
     saveState,
     clearDiagram,
+    historyIndex, // undo/redo 감지용
 
     // 뷰 관리
     scale,

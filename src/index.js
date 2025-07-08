@@ -8,9 +8,13 @@ export {
   Arrow,
   Line,
   Triangle,
+  Diamond,
   Valve,
   ImageBox,
   DraggableBox,
+  Sankey,
+  CircularSegment,
+  InfoBox,
   DiagramProvider,
   useDiagram,
 } from "./components/DiagramComponents";
